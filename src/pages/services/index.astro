@@ -1,0 +1,90 @@
+---
+import { db } from "@/lib/db";
+import { services } from "@/lib/db/schema";
+import { desc } from "drizzle-orm";
+import Layout from "@/layouts/default.astro";
+import ServiceCard from "@/components/catalog/service-card.astro";
+
+// Fetch all services directly from DB
+const allServices = await db
+  .select()
+  .from(services)
+  .orderBy(services.displayOrder, desc(services.createdAt));
+---
+
+<Layout title="Services">
+  <section class="services-hero">
+    <div class="content text-center">
+      <h1>Custom <span class="text-primary">Manufacturing Services</span></h1>
+      <p class="max-w-3xl mx-auto text-muted-foreground">
+        From concept to production, we offer comprehensive manufacturing
+        solutions tailored to your specific needs across multiple industries.
+      </p>
+    </div>
+  </section>
+
+  <section class="services-grid-section">
+    <div class="content">
+      <div class="services-grid">
+        {
+          allServices.map((service) => (
+            <ServiceCard
+              title={service.title}
+              description={service.description}
+              features={service.features || []}
+              iconName={service.iconName}
+              imageUrl={service.imageUrl}
+              googleFormUrl={service.googleFormUrl}
+            />
+          ))
+        }
+      </div>
+
+      {
+        allServices.length === 0 && (
+          <div class="empty-state">
+            <p>No services available yet.</p>
+          </div>
+        )
+      }
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .services-hero {
+    background: linear-gradient(to bottom, var(--secondary), var(--background));
+  }
+
+  .services-hero h1 {
+    margin-bottom: 1rem;
+  }
+
+  .services-grid-section {
+    padding-bottom: 4rem;
+  }
+
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 1.5rem;
+  }
+
+  @media (min-width: 768px) {
+    .services-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .services-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: var(--muted-foreground);
+  }
+</style>

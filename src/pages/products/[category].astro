@@ -1,0 +1,202 @@
+---
+import ProductSearch from "@/components/catalog/product-search.tsx";
+import Layout from "@/layouts/default.astro";
+import { db } from "@/lib/db";
+import {
+  categories,
+  categoryAttributes,
+  customizationAttributes,
+  pricingTiers,
+  productAttributes,
+  products,
+} from "@/lib/db/schema";
+import { eq, inArray, sql } from "drizzle-orm";
+
+// Enable static generation for this dynamic route
+export const prerender = true;
+
+// Generate static paths for all categories
+export async function getStaticPaths() {
+  const allCategories = await db.select().from(categories);
+
+  return allCategories.map((category) => ({
+    params: {
+      category: category.name
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/(^-|-$)/g, ""),
+    },
+    props: { categoryData: category },
+  }));
+}
+
+interface Props {
+  categoryData: typeof categories.$inferSelect;
+}
+
+const { categoryData } = Astro.props;
+
+// Fetch products for this category
+const categoryProducts = await db
+  .select({
+    id: products.id,
+    sku: products.sku,
+    name: products.name,
+    description: products.description,
+    images: products.images,
+    minimumOrderQuantity: products.minimumOrderQuantity,
+    categoryId: products.categoryId,
+  })
+  .from(products)
+  .where(eq(products.categoryId, categoryData.id))
+  .orderBy(products.name);
+
+// Get minimum prices for each product
+const productIds = categoryProducts.map((p) => p.id);
+let priceMap: Record<string, string> = {};
+
+if (productIds.length > 0) {
+  const tiers = await db
+    .select({
+      productId: pricingTiers.productId,
+      minPrice: sql<string>`min(${pricingTiers.pricePerUnit})`,
+    })
+    .from(pricingTiers)
+    .where(sql`${pricingTiers.productId} IN ${productIds}`)
+    .groupBy(pricingTiers.productId);
+
+  priceMap = Object.fromEntries(tiers.map((t) => [t.productId, t.minPrice]));
+}
+
+// Combine products with prices
+const productsWithPrices = categoryProducts.map((product) => ({
+  ...product,
+  price: priceMap[product.id] || null,
+}));
+
+// Fetch category attributes with their definitions
+const catAttrs = await db
+  .select({
+    id: categoryAttributes.id,
+    attributeId: categoryAttributes.attributeId,
+    displayOrder: categoryAttributes.displayOrder,
+    activeOptions: categoryAttributes.activeOptions,
+    name: customizationAttributes.name,
+    attributeType: customizationAttributes.attributeType,
+    options: customizationAttributes.options,
+  })
+  .from(categoryAttributes)
+  .innerJoin(
+    customizationAttributes,
+    eq(categoryAttributes.attributeId, customizationAttributes.id),
+  )
+  .where(eq(categoryAttributes.categoryId, categoryData.id))
+  .orderBy(categoryAttributes.displayOrder);
+
+// Fetch product attributes for all products in this category
+let productAttrMap: Record<string, Record<string, string[]>> = {};
+
+if (productIds.length > 0) {
+  const prodAttrs = await db
+    .select({
+      productId: productAttributes.productId,
+      attributeId: productAttributes.attributeId,
+      supportedOptions: productAttributes.supportedOptions,
+    })
+    .from(productAttributes)
+    .where(inArray(productAttributes.productId, productIds));
+
+  // Build mapping: { productId: { attributeId: [options] } }
+  for (const pa of prodAttrs) {
+    if (!productAttrMap[pa.productId]) {
+      productAttrMap[pa.productId] = {};
+    }
+    productAttrMap[pa.productId][pa.attributeId] = pa.supportedOptions || [];
+  }
+}
+
+// Transform category attributes for the component
+const attributeFilters = catAttrs.map((attr) => ({
+  id: attr.attributeId,
+  name: attr.name,
+  type: attr.attributeType,
+  options: attr.activeOptions || attr.options || [],
+}));
+---
+
+<Layout title={categoryData.name}>
+  <section class="category-header">
+    <div class="content">
+      <a href="/products" class="back-link">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="m12 19-7-7 7-7"></path>
+          <path d="M19 12H5"></path>
+        </svg>
+        Back to Categories
+      </a>
+      <h1>{categoryData.name}</h1>
+      {
+        categoryData.description && (
+          <p class="category-description">{categoryData.description}</p>
+        )
+      }
+    </div>
+  </section>
+
+  <section class="products-section">
+    <div class="content">
+      <ProductSearch
+        client:load
+        products={productsWithPrices}
+        categoryName={categoryData.name}
+        attributeFilters={attributeFilters}
+        productAttributeMap={productAttrMap}
+      />
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .category-header {
+    background: linear-gradient(to bottom, var(--secondary), var(--background));
+  }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--primary);
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-bottom: 1rem;
+    text-decoration: none;
+    transition: gap 200ms ease;
+  }
+
+  .back-link:hover {
+    gap: 0.75rem;
+  }
+
+  .category-header h1 {
+    margin-bottom: 0.5rem;
+  }
+
+  .category-description {
+    color: var(--muted-foreground);
+    max-width: 48rem;
+  }
+
+  .products-section {
+    padding-bottom: 4rem;
+  }
+</style>

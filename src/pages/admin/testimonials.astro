@@ -1,0 +1,27 @@
+---
+import "@/styles/global.css";
+
+import { AdminTestimonialsPage } from "@/components/admin/pages/admin-testimonials-page";
+import { TailwindIndicator } from "@/components/elements/tailwind-indicator.tsx";
+import Meta from "@/components/layout/meta.astro";
+import { SITE } from "@/lib/config";
+
+const user = Astro.locals.user;
+const session = Astro.locals.session;
+
+if (!user || !session) {
+  return Astro.redirect("/signin?redirect=/admin/testimonials");
+}
+---
+
+<!doctype html>
+<html lang="en" class="dark">
+  <Meta
+    title={`Testimonials | Admin | ${SITE.title}`}
+    description="Manage Testimonials"
+  />
+  <body class="bg-zinc-950 text-zinc-50 antialiased">
+    <AdminTestimonialsPage client:only="react" user={user} />
+    {import.meta.env.DEV && <TailwindIndicator client:load />}
+  </body>
+</html>

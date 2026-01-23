@@ -1,0 +1,111 @@
+---
+import { db } from "@/lib/db";
+import { categories, products } from "@/lib/db/schema";
+import { count, eq } from "drizzle-orm";
+import Layout from "@/layouts/default.astro";
+import CategoryCard from "@/components/catalog/category-card.astro";
+
+// Fetch all categories
+const allCategories = await db
+  .select()
+  .from(categories)
+  .orderBy(categories.displayOrder, categories.name);
+
+// Get product counts per category
+const productCounts = await db
+  .select({
+    categoryId: products.categoryId,
+    count: count(),
+  })
+  .from(products)
+  .groupBy(products.categoryId);
+
+const countMap = new Map(productCounts.map((pc) => [pc.categoryId, pc.count]));
+
+// Combine categories with their counts
+const categoriesWithCounts = allCategories.map((cat) => ({
+  ...cat,
+  productCount: countMap.get(cat.id) || 0,
+}));
+
+// Helper to create URL-friendly slug
+function slugify(name: string): string {
+  return name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+}
+---
+
+<Layout title="Products">
+  <section class="products-hero">
+    <div class="content">
+      <h1>Our <span class="text-primary">Products</span></h1>
+      <p class="max-w-2xl mx-auto text-center text-muted-foreground">
+        Browse our comprehensive catalog of manufacturing solutions, from
+        precision cartridges to custom packaging.
+      </p>
+    </div>
+  </section>
+
+  <section class="products-grid-section">
+    <div class="content">
+      <div class="categories-grid">
+        {
+          categoriesWithCounts.map((category) => (
+            <CategoryCard
+              name={category.name}
+              description={category.description}
+              imageUrl={category.imageUrl}
+              productCount={category.productCount}
+              href={`/products/${slugify(category.name)}`}
+            />
+          ))
+        }
+      </div>
+
+      {
+        categoriesWithCounts.length === 0 && (
+          <div class="empty-state">
+            <p>No product categories available yet.</p>
+          </div>
+        )
+      }
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .products-hero {
+    background: linear-gradient(to bottom, var(--secondary), var(--background));
+    text-align: center;
+  }
+
+  .products-hero h1 {
+    margin-bottom: 1rem;
+  }
+
+  .categories-grid {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 1.5rem;
+  }
+
+  @media (min-width: 640px) {
+    .categories-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .categories-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: var(--muted-foreground);
+  }
+</style>

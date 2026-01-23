@@ -1,0 +1,29 @@
+---
+import "@/styles/global.css";
+
+import { AdminCategoriesPage } from "@/components/admin/pages/admin-categories-page";
+import { TailwindIndicator } from "@/components/elements/tailwind-indicator.tsx";
+import Meta from "@/components/layout/meta.astro";
+import { SITE } from "@/lib/config";
+
+// Check if user is authenticated and has admin access
+const user = Astro.locals.user;
+const session = Astro.locals.session;
+
+// Redirect if not authenticated
+if (!user || !session) {
+  return Astro.redirect("/signin?redirect=/admin/categories");
+}
+---
+
+<!doctype html>
+<html lang="en" class="dark">
+  <Meta
+    title={`Categories | Admin | ${SITE.title}`}
+    description="Manage Categories"
+  />
+  <body class="bg-zinc-950 text-zinc-50 antialiased">
+    <AdminCategoriesPage client:only="react" user={user} />
+    {import.meta.env.DEV && <TailwindIndicator client:load />}
+  </body>
+</html>

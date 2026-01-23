@@ -1,0 +1,220 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  features: string[];
+  iconName?: string | null;
+  imageUrl?: string | null;
+  googleFormUrl?: string | null;
+}
+
+const { title, description, features, iconName, imageUrl, googleFormUrl } =
+  Astro.props;
+
+// Map common icon names to SVG paths (fallback when no image)
+const iconPaths: Record<string, string> = {
+  Package:
+    '<path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/>',
+  Cpu: '<rect width="16" height="16" x="4" y="4" rx="2"/><rect width="6" height="6" x="9" y="9" rx="1"/><path d="M15 2v2"/><path d="M15 20v2"/><path d="M2 15h2"/><path d="M2 9h2"/><path d="M20 15h2"/><path d="M20 9h2"/><path d="M9 2v2"/><path d="M9 20v2"/>',
+  Zap: '<path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/>',
+  Settings:
+    '<path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/>',
+  Leaf: '<path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>',
+};
+
+const iconPath =
+  iconName && iconPaths[iconName] ? iconPaths[iconName] : iconPaths["Package"];
+---
+
+<article class="service-card">
+  <div class="service-visual">
+    {
+      imageUrl ? (
+        <img src={imageUrl} alt={title} loading="lazy" />
+      ) : (
+        <div class="service-icon">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="48"
+            height="48"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            set:html={iconPath}
+          />
+        </div>
+      )
+    }
+  </div>
+
+  <div class="service-content">
+    <h3 class="service-title">{title}</h3>
+    <p class="service-description">{description}</p>
+
+    {
+      features.length > 0 && (
+        <ul class="service-features">
+          {features.map((feature) => (
+            <li>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                stroke="none"
+              >
+                <circle cx="12" cy="12" r="4" />
+              </svg>
+              {feature}
+            </li>
+          ))}
+        </ul>
+      )
+    }
+
+    {
+      googleFormUrl && (
+        <a
+          href={googleFormUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="service-cta"
+        >
+          Tell us about your project
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M5 12h14" />
+            <path d="m12 5 7 7-7 7" />
+          </svg>
+        </a>
+      )
+    }
+  </div>
+</article>
+
+<style>
+  .service-card {
+    display: flex;
+    flex-direction: column;
+    background: var(--card);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
+    overflow: hidden;
+    transition:
+      border-color 200ms ease,
+      box-shadow 200ms ease;
+  }
+
+  .service-card:hover {
+    border-color: color-mix(in srgb, var(--primary) 40%, transparent);
+    box-shadow: 0 8px 24px color-mix(in srgb, var(--primary) 10%, transparent);
+  }
+
+  .service-visual {
+    aspect-ratio: 16 / 9;
+    background: var(--secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .service-visual img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .service-icon {
+    width: 5rem;
+    height: 5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: color-mix(in srgb, var(--primary) 20%, transparent);
+    border: 2px solid var(--primary);
+    border-radius: var(--radius-lg);
+    color: var(--primary);
+  }
+
+  .service-content {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    flex: 1;
+  }
+
+  .service-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin: 0;
+    line-height: 1.3;
+  }
+
+  .service-description {
+    font-size: 0.875rem;
+    color: var(--muted-foreground);
+    margin: 0;
+    line-height: 1.6;
+  }
+
+  .service-features {
+    list-style: none;
+    padding: 0;
+    margin: 0.5rem 0 0 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .service-features li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    font-size: 0.8125rem;
+    color: var(--muted-foreground);
+  }
+
+  .service-features li svg {
+    flex-shrink: 0;
+    margin-top: 0.25rem;
+    color: var(--primary);
+  }
+
+  .service-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: auto;
+    padding: 0.75rem 1.25rem;
+    background: var(--primary);
+    color: var(--primary-foreground);
+    border-radius: var(--radius-md);
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition:
+      background 200ms ease,
+      gap 200ms ease;
+  }
+
+  .service-cta:hover {
+    background: oklch(from var(--primary) l c calc(h * 1.3));
+    gap: 0.75rem;
+  }
+</style>

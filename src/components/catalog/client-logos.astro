@@ -1,0 +1,95 @@
+---
+import type { ClientLogo } from "@/lib/db/schema";
+
+interface Props {
+  clients: ClientLogo[];
+}
+
+const { clients } = Astro.props;
+---
+
+<div class="client-logos">
+  {
+    clients.map((client) => (
+      <a
+        href={client.externalLink}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="client-logo"
+        title={client.companyName}
+      >
+        <img src={client.logoUrl} alt={client.companyName} loading="lazy" />
+      </a>
+    ))
+  }
+</div>
+
+<style>
+  .client-logos {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  @media (min-width: 480px) {
+    .client-logos {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  @media (min-width: 768px) {
+    .client-logos {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .client-logos {
+      grid-template-columns: repeat(5, 1fr);
+      gap: 1.5rem;
+    }
+  }
+
+  @media (min-width: 1280px) {
+    .client-logos {
+      grid-template-columns: repeat(6, 1fr);
+    }
+  }
+
+  .client-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 3 / 2;
+    padding: 1rem;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    transition:
+      transform 200ms ease,
+      border-color 200ms ease,
+      box-shadow 200ms ease;
+  }
+
+  .client-logo:hover {
+    transform: translateY(-2px);
+    border-color: color-mix(in srgb, var(--primary) 40%, transparent);
+    box-shadow: 0 8px 24px color-mix(in srgb, var(--primary) 10%, transparent);
+  }
+
+  .client-logo img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    filter: grayscale(100%);
+    opacity: 0.6;
+    transition:
+      filter 200ms ease,
+      opacity 200ms ease;
+  }
+
+  .client-logo:hover img {
+    filter: grayscale(0%);
+    opacity: 1;
+  }
+</style>
