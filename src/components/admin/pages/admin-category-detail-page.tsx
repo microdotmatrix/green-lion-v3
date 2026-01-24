@@ -1,5 +1,3 @@
-"use client";
-
 import AdminSidebar from "@/components/admin/admin-sidebar";
 import CategoryDetailPage from "@/components/admin/categories/category-detail-page";
 

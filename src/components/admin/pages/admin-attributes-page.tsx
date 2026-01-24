@@ -1,5 +1,3 @@
-"use client";
-
 import AdminSidebar from "@/components/admin/admin-sidebar";
 import AttributesPage from "@/components/admin/attributes/attributes-page";
 

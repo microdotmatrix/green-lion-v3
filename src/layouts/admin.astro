@@ -1,11 +1,8 @@
 ---
 import "@/styles/global.css";
 
-import AdminSidebar from "@/components/admin/admin-sidebar";
 import { TailwindIndicator } from "@/components/elements/tailwind-indicator.tsx";
 import Meta from "@/components/layout/meta.astro";
-
-import { QueryProvider } from "@/components/providers/query-provider";
 import { SITE } from "@/lib/config";
 
 interface Props {
@@ -35,11 +32,7 @@ if (!user || !session) {
 <html lang="en" class="dark">
   <Meta title={`${title} | Admin | ${SITE.title}`} description={description} />
   <body class="bg-zinc-950 text-zinc-50 antialiased">
-    <QueryProvider client:only="react">
-      <AdminSidebar client:only="react" user={user}>
-        <slot />
-      </AdminSidebar>
-    </QueryProvider>
+    <slot />
     {import.meta.env.DEV && <TailwindIndicator client:load />}
   </body>
 </html>

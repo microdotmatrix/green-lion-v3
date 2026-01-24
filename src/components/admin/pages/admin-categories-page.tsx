@@ -1,9 +1,7 @@
-"use client";
-
-import { AdminLayout } from "@/components/admin/admin-layout";
+import AdminSidebar from "@/components/admin/admin-sidebar";
 import CategoriesPage from "@/components/admin/categories/categories-page";
 
-interface AdminCategoriesPageProps {
+interface Props {
   user: {
     id: string;
     name: string;
@@ -12,10 +10,10 @@ interface AdminCategoriesPageProps {
   };
 }
 
-export function AdminCategoriesPage({ user }: AdminCategoriesPageProps) {
+export function AdminCategoriesPage({ user }: Props) {
   return (
-    <AdminLayout user={user}>
+    <AdminSidebar user={user}>
       <CategoriesPage />
-    </AdminLayout>
+    </AdminSidebar>
   );
 }

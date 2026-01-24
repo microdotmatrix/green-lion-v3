@@ -1,29 +1,10 @@
 ---
-import "@/styles/global.css";
-
 import { AdminAttributesPage } from "@/components/admin/pages/admin-attributes-page";
-import { TailwindIndicator } from "@/components/elements/tailwind-indicator.tsx";
-import Meta from "@/components/layout/meta.astro";
-import { SITE } from "@/lib/config";
+import AdminLayout from "@/layouts/admin.astro";
 
-// Check if user is authenticated and has admin access
 const user = Astro.locals.user;
-const session = Astro.locals.session;
-
-// Redirect if not authenticated
-if (!user || !session) {
-  return Astro.redirect("/signin?redirect=/admin/attributes");
-}
 ---
 
-<!doctype html>
-<html lang="en" class="dark">
-  <Meta
-    title={`Attributes | Admin | ${SITE.title}`}
-    description="Manage Attributes"
-  />
-  <body class="bg-zinc-950 text-zinc-50 antialiased">
-    <AdminAttributesPage client:only="react" user={user} />
-    {import.meta.env.DEV && <TailwindIndicator client:load />}
-  </body>
-</html>
+<AdminLayout title="Attributes" description="Manage Attributes">
+  <AdminAttributesPage client:load user={user!} />
+</AdminLayout>

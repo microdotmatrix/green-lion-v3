@@ -1,9 +1,7 @@
-"use client";
-
-import { AdminLayout } from "@/components/admin/admin-layout";
+import AdminSidebar from "@/components/admin/admin-sidebar";
 import AdminDashboard from "@/components/admin/dashboard";
 
-interface AdminDashboardPageProps {
+interface Props {
   user: {
     id: string;
     name: string;
@@ -12,10 +10,10 @@ interface AdminDashboardPageProps {
   };
 }
 
-export function AdminDashboardPage({ user }: AdminDashboardPageProps) {
+export function AdminDashboardPage({ user }: Props) {
   return (
-    <AdminLayout user={user}>
+    <AdminSidebar user={user}>
       <AdminDashboard />
-    </AdminLayout>
+    </AdminSidebar>
   );
 }

@@ -1,9 +1,7 @@
-"use client";
-
-import { AdminLayout } from "@/components/admin/admin-layout";
+import AdminSidebar from "@/components/admin/admin-sidebar";
 import QuotesPage from "@/components/admin/quotes/quotes-page";
 
-interface AdminQuotesPageProps {
+interface Props {
   user: {
     id: string;
     name: string;
@@ -12,10 +10,10 @@ interface AdminQuotesPageProps {
   };
 }
 
-export function AdminQuotesPage({ user }: AdminQuotesPageProps) {
+export function AdminQuotesPage({ user }: Props) {
   return (
-    <AdminLayout user={user}>
+    <AdminSidebar user={user}>
       <QuotesPage />
-    </AdminLayout>
+    </AdminSidebar>
   );
 }

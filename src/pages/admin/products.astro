@@ -1,29 +1,10 @@
 ---
-import "@/styles/global.css";
-
 import { AdminProductsPage } from "@/components/admin/pages/admin-products-page";
-import { TailwindIndicator } from "@/components/elements/tailwind-indicator.tsx";
-import Meta from "@/components/layout/meta.astro";
-import { SITE } from "@/lib/config";
+import AdminLayout from "@/layouts/admin.astro";
 
-// Check if user is authenticated and has admin access
 const user = Astro.locals.user;
-const session = Astro.locals.session;
-
-// Redirect if not authenticated
-if (!user || !session) {
-  return Astro.redirect("/signin?redirect=/admin/products");
-}
 ---
 
-<!doctype html>
-<html lang="en" class="dark">
-  <Meta
-    title={`Products | Admin | ${SITE.title}`}
-    description="Manage Products"
-  />
-  <body class="bg-zinc-950 text-zinc-50 antialiased">
-    <AdminProductsPage client:only="react" user={user} />
-    {import.meta.env.DEV && <TailwindIndicator client:load />}
-  </body>
-</html>
+<AdminLayout title="Products" description="Manage Products">
+  <AdminProductsPage client:load user={user!} />
+</AdminLayout>

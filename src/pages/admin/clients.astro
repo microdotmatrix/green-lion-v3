@@ -1,27 +1,10 @@
 ---
-import "@/styles/global.css";
-
 import { AdminClientsPage } from "@/components/admin/pages/admin-clients-page";
-import { TailwindIndicator } from "@/components/elements/tailwind-indicator.tsx";
-import Meta from "@/components/layout/meta.astro";
-import { SITE } from "@/lib/config";
+import AdminLayout from "@/layouts/admin.astro";
 
 const user = Astro.locals.user;
-const session = Astro.locals.session;
-
-if (!user || !session) {
-  return Astro.redirect("/signin?redirect=/admin/clients");
-}
 ---
 
-<!doctype html>
-<html lang="en" class="dark">
-  <Meta
-    title={`Clients | Admin | ${SITE.title}`}
-    description="Manage Client Logos"
-  />
-  <body class="bg-zinc-950 text-zinc-50 antialiased">
-    <AdminClientsPage client:only="react" user={user} />
-    {import.meta.env.DEV && <TailwindIndicator client:load />}
-  </body>
-</html>
+<AdminLayout title="Clients" description="Manage Client Logos">
+  <AdminClientsPage client:load user={user!} />
+</AdminLayout>

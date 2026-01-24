@@ -1,27 +1,10 @@
 ---
-import "@/styles/global.css";
-
 import { AdminCaseStudiesPage } from "@/components/admin/pages/admin-case-studies-page";
-import { TailwindIndicator } from "@/components/elements/tailwind-indicator.tsx";
-import Meta from "@/components/layout/meta.astro";
-import { SITE } from "@/lib/config";
+import AdminLayout from "@/layouts/admin.astro";
 
 const user = Astro.locals.user;
-const session = Astro.locals.session;
-
-if (!user || !session) {
-  return Astro.redirect("/signin?redirect=/admin/case-studies");
-}
 ---
 
-<!doctype html>
-<html lang="en" class="dark">
-  <Meta
-    title={`Case Studies | Admin | ${SITE.title}`}
-    description="Manage Case Studies"
-  />
-  <body class="bg-zinc-950 text-zinc-50 antialiased">
-    <AdminCaseStudiesPage client:only="react" user={user} />
-    {import.meta.env.DEV && <TailwindIndicator client:load />}
-  </body>
-</html>
+<AdminLayout title="Case Studies" description="Manage Case Studies">
+  <AdminCaseStudiesPage client:load user={user!} />
+</AdminLayout>

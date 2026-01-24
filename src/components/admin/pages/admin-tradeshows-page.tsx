@@ -1,9 +1,7 @@
-"use client";
-
-import { AdminLayout } from "@/components/admin/admin-layout";
+import AdminSidebar from "@/components/admin/admin-sidebar";
 import TradeshowsPage from "@/components/admin/tradeshows/tradeshows-page";
 
-interface AdminTradeshowsPageProps {
+interface Props {
   user: {
     id: string;
     name: string;
@@ -12,10 +10,10 @@ interface AdminTradeshowsPageProps {
   };
 }
 
-export function AdminTradeshowsPage({ user }: AdminTradeshowsPageProps) {
+export function AdminTradeshowsPage({ user }: Props) {
   return (
-    <AdminLayout user={user}>
+    <AdminSidebar user={user}>
       <TradeshowsPage />
-    </AdminLayout>
+    </AdminSidebar>
   );
 }
