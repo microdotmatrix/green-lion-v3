@@ -15,6 +15,13 @@
       "when": 1768871059600,
       "tag": "0001_smart_cargill",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1769295141355,
+      "tag": "0002_invites_and_approval",
+      "breakpoints": true
     }
   ]
 }

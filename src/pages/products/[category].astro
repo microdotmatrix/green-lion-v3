@@ -122,6 +122,12 @@ const attributeFilters = catAttrs.map((attr) => ({
   type: attr.attributeType,
   options: attr.activeOptions || attr.options || [],
 }));
+
+// Compute category slug (same logic as getStaticPaths)
+const categorySlug = categoryData.name
+  .toLowerCase()
+  .replace(/[^a-z0-9]+/g, "-")
+  .replace(/(^-|-$)/g, "");
 ---
 
 <Layout title={categoryData.name}>
@@ -159,6 +165,7 @@ const attributeFilters = catAttrs.map((attr) => ({
         client:load
         products={productsWithPrices}
         categoryName={categoryData.name}
+        categorySlug={categorySlug}
         attributeFilters={attributeFilters}
         productAttributeMap={productAttrMap}
       />

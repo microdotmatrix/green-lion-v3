@@ -3,6 +3,7 @@ import "@/styles/global.css";
 
 import { TailwindIndicator } from "@/components/elements/tailwind-indicator.tsx";
 import Meta from "@/components/layout/meta.astro";
+import UploadSSR from "@/components/providers/upload-ssr.astro";
 import { SITE } from "@/lib/config";
 
 interface Props {
@@ -31,6 +32,7 @@ if (!user || !session) {
 <!doctype html>
 <html lang="en" class="dark">
   <Meta title={`${title} | Admin | ${SITE.title}`} description={description} />
+  <UploadSSR />
   <body class="bg-zinc-950 text-zinc-50 antialiased">
     <slot />
     {import.meta.env.DEV && <TailwindIndicator client:load />}

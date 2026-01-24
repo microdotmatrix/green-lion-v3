@@ -28,6 +28,7 @@ interface AttributeFilter {
 interface ProductSearchProps {
   products: Product[];
   categoryName: string;
+  categorySlug: string;
   attributeFilters?: AttributeFilter[];
   productAttributeMap?: Record<string, Record<string, string[]>>;
 }
@@ -38,6 +39,7 @@ type SortDir = "asc" | "desc";
 export default function ProductSearch({
   products,
   categoryName,
+  categorySlug,
   attributeFilters = [],
   productAttributeMap = {},
 }: ProductSearchProps) {
@@ -338,37 +340,47 @@ export default function ProductSearch({
       <div className="products-grid">
         {filteredProducts.map((product) => (
           <article key={product.id} className="product-card">
-            <div className="product-image">
-              {product.images?.[0] ? (
-                <img
-                  src={product.images[0]}
-                  alt={product.name}
-                  loading="lazy"
-                />
-              ) : (
-                <div className="product-placeholder">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="40"
-                    height="40"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <rect width="18" height="18" x="3" y="3" rx="2" ry="2" />
-                    <circle cx="9" cy="9" r="2" />
-                    <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" />
-                  </svg>
-                </div>
-              )}
-            </div>
+            <a
+              href={`/products/${categorySlug}/${product.sku.toLowerCase()}`}
+              className="product-image-link"
+            >
+              <div className="product-image">
+                {product.images?.[0] ? (
+                  <img
+                    src={product.images[0]}
+                    alt={product.name}
+                    loading="lazy"
+                  />
+                ) : (
+                  <div className="product-placeholder">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="40"
+                      height="40"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <rect width="18" height="18" x="3" y="3" rx="2" ry="2" />
+                      <circle cx="9" cy="9" r="2" />
+                      <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" />
+                    </svg>
+                  </div>
+                )}
+              </div>
+            </a>
 
             <div className="product-content">
               <span className="product-sku">{product.sku}</span>
-              <h4 className="product-name">{product.name}</h4>
+              <a
+                href={`/products/${categorySlug}/${product.sku.toLowerCase()}`}
+                className="product-name-link"
+              >
+                <h4 className="product-name">{product.name}</h4>
+              </a>
               <p className="product-description">{product.description}</p>
 
               <div className="product-meta">
@@ -852,6 +864,20 @@ export default function ProductSearch({
         .add-to-quote-btn:disabled {
           opacity: 0.8;
           cursor: default;
+        }
+
+        .product-image-link {
+          display: block;
+          text-decoration: none;
+        }
+
+        .product-name-link {
+          text-decoration: none;
+          color: inherit;
+        }
+
+        .product-name-link:hover .product-name {
+          color: var(--primary);
         }
 
         .empty-state {

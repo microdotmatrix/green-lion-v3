@@ -8,6 +8,8 @@ import {
   Sliders,
   Trash2,
 } from "lucide-react";
+
+import { ImageUpload } from "@/components/admin/image-upload";
 import * as React from "react";
 
 import {
@@ -241,18 +243,15 @@ function CategoryFormDialog({
             />
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="imageUrl">Image URL</Label>
-            <Input
-              id="imageUrl"
-              value={formData.imageUrl}
-              onChange={(e) =>
-                setFormData((prev) => ({ ...prev, imageUrl: e.target.value }))
-              }
-              placeholder="https://example.com/image.jpg"
-              type="url"
-            />
-          </div>
+          <ImageUpload
+            label="Category Image"
+            value={formData.imageUrl}
+            onChange={(url) =>
+              setFormData((prev) => ({ ...prev, imageUrl: url }))
+            }
+            categoryId={category?.id}
+            description="Upload an image, paste a URL, or select from product images"
+          />
 
           <div className="space-y-2">
             <Label htmlFor="displayOrder">Display Order</Label>

@@ -11,6 +11,8 @@ import {
   Trash2,
   X,
 } from "lucide-react";
+
+import { ImageUpload } from "@/components/admin/image-upload";
 import * as React from "react";
 
 import {
@@ -424,6 +426,18 @@ function ProductFormDialog({
                 required
               />
             </div>
+
+            <ImageUpload
+              label="Product Image"
+              value={formData.images[0] || ""}
+              onChange={(url) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  images: url ? [url] : [],
+                }))
+              }
+              description="Upload an image or paste a URL"
+            />
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
