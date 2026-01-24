@@ -1,0 +1,94 @@
+---
+import QuoteBuilder from "@/components/quote/quote-builder.tsx";
+import Layout from "@/layouts/default.astro";
+import { db } from "@/lib/db";
+import { categories, pricingTiers, products } from "@/lib/db/schema";
+import { sql } from "drizzle-orm";
+
+// Fetch all products with pricing for the product browser
+const allProducts = await db
+  .select({
+    id: products.id,
+    sku: products.sku,
+    name: products.name,
+    description: products.description,
+    images: products.images,
+    minimumOrderQuantity: products.minimumOrderQuantity,
+    orderQuantityIncrement: products.orderQuantityIncrement,
+    categoryId: products.categoryId,
+  })
+  .from(products)
+  .orderBy(products.name);
+
+// Get minimum prices for each product
+const productIds = allProducts.map((p) => p.id);
+let priceMap: Record<string, string> = {};
+
+if (productIds.length > 0) {
+  const tiers = await db
+    .select({
+      productId: pricingTiers.productId,
+      minPrice: sql<string>`min(${pricingTiers.pricePerUnit})`,
+    })
+    .from(pricingTiers)
+    .where(sql`${pricingTiers.productId} IN ${productIds}`)
+    .groupBy(pricingTiers.productId);
+
+  priceMap = Object.fromEntries(tiers.map((t) => [t.productId, t.minPrice]));
+}
+
+// Combine products with prices
+const productsWithPrices = allProducts.map((product) => ({
+  ...product,
+  price: priceMap[product.id] || null,
+}));
+
+// Fetch all categories for filtering
+const allCategories = await db
+  .select({
+    id: categories.id,
+    name: categories.name,
+  })
+  .from(categories)
+  .orderBy(categories.displayOrder);
+---
+
+<Layout title="Request a Quote">
+  <section class="quote-header">
+    <div class="content">
+      <h1>Quote <span class="text-primary">Request</span></h1>
+      <p class="quote-subtitle">
+        Complete the form below to request a custom quote.
+      </p>
+    </div>
+  </section>
+
+  <section class="quote-section">
+    <div class="content">
+      <QuoteBuilder
+        client:load
+        products={productsWithPrices}
+        categories={allCategories}
+      />
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .quote-header {
+    background: linear-gradient(to bottom, var(--secondary), var(--background));
+  }
+
+  .quote-header h1 {
+    margin-bottom: 0.5rem;
+  }
+
+  .quote-subtitle {
+    color: var(--muted-foreground);
+    max-width: 48rem;
+  }
+
+  .quote-section {
+    padding-bottom: 4rem;
+  }
+</style>
