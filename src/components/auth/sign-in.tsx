@@ -10,7 +10,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { authClient } from "@/lib/auth/client";
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
 import { toast } from "sonner";
 
 type SignInState = {
@@ -51,6 +51,15 @@ export default function SignIn() {
     error: null,
     success: false,
   });
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("pending") === "1") {
+      toast.success(
+        "Your account is pending approval. You'll get access once approved.",
+      );
+    }
+  }, []);
 
   // Show error toast when state changes
   if (state.error) {

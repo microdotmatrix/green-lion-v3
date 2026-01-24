@@ -25,6 +25,11 @@ async function signUpAction(
   const name = formData.get("name") as string;
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
+  const inviteToken = formData.get("inviteToken") as string;
+
+  if (!inviteToken) {
+    return { error: "Invite token is missing", success: false };
+  }
 
   if (!name || !email || !password) {
     return { error: "Please fill in all fields", success: false };
@@ -32,11 +37,18 @@ async function signUpAction(
 
   return new Promise((resolve) => {
     authClient.signUp.email(
-      { email, password, name },
+      { email, password, name, inviteToken } as {
+        email: string;
+        password: string;
+        name: string;
+        inviteToken: string;
+      },
       {
         onSuccess: () => {
-          toast.success("Account created successfully");
-          window.location.href = "/";
+          toast.success(
+            "Account created. You'll get access after approval by an admin.",
+          );
+          window.location.href = "/signin?pending=1";
           resolve({ error: null, success: true });
         },
         onError: (ctx) => {
@@ -47,7 +59,11 @@ async function signUpAction(
   });
 }
 
-export default function SignUp() {
+export default function SignUp({
+  inviteToken,
+}: {
+  inviteToken?: string;
+}) {
   const [state, formAction, isPending] = useActionState(signUpAction, {
     error: null,
     success: false,
@@ -58,6 +74,27 @@ export default function SignUp() {
     toast.error(state.error);
   }
 
+  if (!inviteToken) {
+    return (
+      <Card className="w-full max-w-md mx-auto">
+        <CardHeader>
+          <CardTitle>Invite Required</CardTitle>
+          <CardDescription>
+            You need an invite link from an admin to create an account.
+          </CardDescription>
+        </CardHeader>
+        <CardFooter className="flex flex-col gap-2">
+          <div className="text-sm text-center text-muted-foreground">
+            Already have an account?{" "}
+            <a href="/signin" className="underline hover:text-primary">
+              Sign in
+            </a>
+          </div>
+        </CardFooter>
+      </Card>
+    );
+  }
+
   return (
     <Card className="w-full max-w-md mx-auto">
       <CardHeader>
@@ -66,6 +103,7 @@ export default function SignUp() {
       </CardHeader>
       <form action={formAction}>
         <CardContent className="space-y-4">
+          <input type="hidden" name="inviteToken" value={inviteToken} />
           <div className="space-y-2">
             <Label htmlFor="name">Name</Label>
             <Input

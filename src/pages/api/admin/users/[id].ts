@@ -72,11 +72,22 @@ export const PUT: APIRoute = async ({ params, request, locals }) => {
 
   try {
     const body = await request.json();
-    const { name, emailVerified } = body;
+    const { name, emailVerified, approved } = body;
+
+    if (approved === false && id === locals.user.id) {
+      return new Response(
+        JSON.stringify({ error: "Cannot revoke your own approval" }),
+        {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        },
+      );
+    }
 
     const updateData: Record<string, unknown> = {};
     if (name !== undefined) updateData.name = name;
     if (emailVerified !== undefined) updateData.emailVerified = emailVerified;
+    if (approved !== undefined) updateData.approved = approved;
 
     if (Object.keys(updateData).length === 0) {
       return new Response(JSON.stringify({ error: "No fields to update" }), {

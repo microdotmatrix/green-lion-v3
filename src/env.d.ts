@@ -11,8 +11,11 @@ interface ImportMeta {
 /// <reference path="../.astro/types.d.ts" />
 
 declare namespace App {
+  type AuthSession = typeof import("@/lib/auth").auth.$Infer.Session;
+  type AuthUser = AuthSession["user"];
+
   interface Locals {
-    user: import("better-auth").User | null;
-    session: import("better-auth").Session | null;
+    user: AuthUser | null;
+    session: AuthSession | null;
   }
 }

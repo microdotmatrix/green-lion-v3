@@ -19,6 +19,7 @@ export const GET: APIRoute = async ({ locals }) => {
         name: user.name,
         email: user.email,
         emailVerified: user.emailVerified,
+        approved: user.approved,
         image: user.image,
         createdAt: user.createdAt,
         updatedAt: user.updatedAt,
