@@ -1,1 +1,11 @@
+export { default as Battery } from "./battery.astro";
 export { default as Copyright } from "./copyright.astro";
+export { default as Design } from "./design.astro";
+export { default as Factory } from "./factory.astro";
+export { default as Innovation } from "./innovation.astro";
+export { default as LaserTool } from "./laser-tool.astro";
+export { default as Manufacturing } from "./manufacturing.astro";
+export { default as Package } from "./package.astro";
+export { default as Precision } from "./precision.astro";
+export { default as RobotArm } from "./robot-arm.astro";
+export { default as Source } from "./source.astro";

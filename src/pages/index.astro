@@ -2,6 +2,7 @@
 import About from "../components/sections/about.astro";
 import Hero from "../components/sections/hero.astro";
 import Mission from "../components/sections/mission.astro";
+import Services from "../components/sections/services.astro";
 import Layout from "../layouts/default.astro";
 ---
 
@@ -17,6 +18,12 @@ import Layout from "../layouts/default.astro";
   </section>
   <section id="mission" class="fl-px-4/8 md:fl-px-8/24 border-b">
     <Mission />
+  </section>
+  <section
+    id="services"
+    class="fl-py-12/24 bg-gradient-to-b from-secondary to-transparent max-w-full"
+  >
+    <Services />
   </section>
 </Layout>
 
