@@ -2,15 +2,15 @@ import * as React from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import {
+  ResponsiveModal,
+  ResponsiveModalContent,
+  ResponsiveModalDescription,
+  ResponsiveModalFooter,
+  ResponsiveModalHeader,
+  ResponsiveModalTitle,
+} from "@/components/ui/responsive-modal";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 
@@ -104,15 +104,15 @@ export function ServiceFormDialog({
   const isLoading = createMut.isPending || updateMut.isPending;
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent
+    <ResponsiveModal open={open} onOpenChange={onOpenChange}>
+      <ResponsiveModalContent
         className="sm:max-w-[600px]"
         onInteractOutside={(event) => event.preventDefault()}
       >
-        <DialogHeader>
-          <DialogTitle>{isEditing ? "Edit Service" : "Add Service"}</DialogTitle>
-          <DialogDescription>Manage service details</DialogDescription>
-        </DialogHeader>
+        <ResponsiveModalHeader>
+          <ResponsiveModalTitle>{isEditing ? "Edit Service" : "Add Service"}</ResponsiveModalTitle>
+          <ResponsiveModalDescription>Manage service details</ResponsiveModalDescription>
+        </ResponsiveModalHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
@@ -230,7 +230,7 @@ export function ServiceFormDialog({
               }
             />
           </div>
-          <DialogFooter>
+          <ResponsiveModalFooter>
             <Button
               type="button"
               variant="outline"
@@ -241,9 +241,9 @@ export function ServiceFormDialog({
             <Button type="submit" disabled={isLoading}>
               {isLoading ? "Saving..." : isEditing ? "Update" : "Create"}
             </Button>
-          </DialogFooter>
+          </ResponsiveModalFooter>
         </form>
-      </DialogContent>
-    </Dialog>
+      </ResponsiveModalContent>
+    </ResponsiveModal>
   );
 }

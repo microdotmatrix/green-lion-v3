@@ -1,15 +1,15 @@
 import * as React from "react";
 
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import {
+  ResponsiveModal,
+  ResponsiveModalContent,
+  ResponsiveModalDescription,
+  ResponsiveModalFooter,
+  ResponsiveModalHeader,
+  ResponsiveModalTitle,
+} from "@/components/ui/responsive-modal";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 
@@ -85,17 +85,16 @@ export function TestimonialFormDialog({
   const error = createMut.error || updateMut.error;
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent
-        className="sm:max-w-[500px]"
+    <ResponsiveModal open={open} onOpenChange={onOpenChange}>
+      <ResponsiveModalContent
         onInteractOutside={(event) => event.preventDefault()}
       >
-        <DialogHeader>
-          <DialogTitle>
+        <ResponsiveModalHeader>
+          <ResponsiveModalTitle>
             {isEditing ? "Edit Testimonial" : "Add Testimonial"}
-          </DialogTitle>
-          <DialogDescription>Manage testimonial details</DialogDescription>
-        </DialogHeader>
+          </ResponsiveModalTitle>
+          <ResponsiveModalDescription>Manage testimonial details</ResponsiveModalDescription>
+        </ResponsiveModalHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           {error && (
             <div className="text-sm text-destructive bg-destructive/10 p-3 rounded-md">
@@ -197,7 +196,7 @@ export function TestimonialFormDialog({
               />
             </div>
           </div>
-          <DialogFooter>
+          <ResponsiveModalFooter>
             <Button
               type="button"
               variant="outline"
@@ -208,9 +207,9 @@ export function TestimonialFormDialog({
             <Button type="submit" disabled={isLoading}>
               {isLoading ? "Saving..." : isEditing ? "Update" : "Create"}
             </Button>
-          </DialogFooter>
+          </ResponsiveModalFooter>
         </form>
-      </DialogContent>
-    </Dialog>
+      </ResponsiveModalContent>
+    </ResponsiveModal>
   );
 }

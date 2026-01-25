@@ -2,15 +2,15 @@ import * as React from "react";
 
 import { ImageUpload } from "@/components/admin/image-upload";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import {
+  ResponsiveModal,
+  ResponsiveModalContent,
+  ResponsiveModalDescription,
+  ResponsiveModalFooter,
+  ResponsiveModalHeader,
+  ResponsiveModalTitle,
+} from "@/components/ui/responsive-modal";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 
@@ -77,19 +77,18 @@ export function CategoryFormDialog({
   const error = createMut.error || updateMut.error;
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent
-        className="sm:max-w-[500px]"
+    <ResponsiveModal open={open} onOpenChange={onOpenChange}>
+      <ResponsiveModalContent
         onInteractOutside={(event) => event.preventDefault()}
       >
-        <DialogHeader>
-          <DialogTitle>{isEditing ? "Edit Category" : "Create Category"}</DialogTitle>
-          <DialogDescription>
+        <ResponsiveModalHeader>
+          <ResponsiveModalTitle>{isEditing ? "Edit Category" : "Create Category"}</ResponsiveModalTitle>
+          <ResponsiveModalDescription>
             {isEditing
               ? "Update the category details below."
               : "Add a new category to organize your products."}
-          </DialogDescription>
-        </DialogHeader>
+          </ResponsiveModalDescription>
+        </ResponsiveModalHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {error && (
@@ -159,7 +158,7 @@ export function CategoryFormDialog({
             </p>
           </div>
 
-          <DialogFooter>
+          <ResponsiveModalFooter>
             <Button
               type="button"
               variant="outline"
@@ -170,9 +169,9 @@ export function CategoryFormDialog({
             <Button type="submit" disabled={isLoading}>
               {isLoading ? "Saving..." : isEditing ? "Update" : "Create"}
             </Button>
-          </DialogFooter>
+          </ResponsiveModalFooter>
         </form>
-      </DialogContent>
-    </Dialog>
+      </ResponsiveModalContent>
+    </ResponsiveModal>
   );
 }

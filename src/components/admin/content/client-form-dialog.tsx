@@ -1,15 +1,15 @@
 import * as React from "react";
 
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import {
+  ResponsiveModal,
+  ResponsiveModalContent,
+  ResponsiveModalDescription,
+  ResponsiveModalFooter,
+  ResponsiveModalHeader,
+  ResponsiveModalTitle,
+} from "@/components/ui/responsive-modal";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 
@@ -78,15 +78,14 @@ export function ClientFormDialog({
   const isLoading = createMut.isPending || updateMut.isPending;
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent
-        className="sm:max-w-[500px]"
+    <ResponsiveModal open={open} onOpenChange={onOpenChange}>
+      <ResponsiveModalContent
         onInteractOutside={(event) => event.preventDefault()}
       >
-        <DialogHeader>
-          <DialogTitle>{isEditing ? "Edit Client" : "Add Client"}</DialogTitle>
-          <DialogDescription>Manage client logo details</DialogDescription>
-        </DialogHeader>
+        <ResponsiveModalHeader>
+          <ResponsiveModalTitle>{isEditing ? "Edit Client" : "Add Client"}</ResponsiveModalTitle>
+          <ResponsiveModalDescription>Manage client logo details</ResponsiveModalDescription>
+        </ResponsiveModalHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <Label>Company Name *</Label>
@@ -154,7 +153,7 @@ export function ClientFormDialog({
               />
             </div>
           </div>
-          <DialogFooter>
+          <ResponsiveModalFooter>
             <Button
               type="button"
               variant="outline"
@@ -165,9 +164,9 @@ export function ClientFormDialog({
             <Button type="submit" disabled={isLoading}>
               {isLoading ? "Saving..." : isEditing ? "Update" : "Create"}
             </Button>
-          </DialogFooter>
+          </ResponsiveModalFooter>
         </form>
-      </DialogContent>
-    </Dialog>
+      </ResponsiveModalContent>
+    </ResponsiveModal>
   );
 }
