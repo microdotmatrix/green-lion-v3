@@ -25,6 +25,15 @@ export interface Product {
   priceRange: { min: string; max: string } | null;
 }
 
+export type ProductSortBy =
+  | "createdAt"
+  | "title"
+  | "sku"
+  | "category"
+  | "price";
+
+export type ProductSortDir = "asc" | "desc";
+
 export interface ProductsResponse {
   products: Product[];
   pagination: {

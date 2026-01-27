@@ -73,7 +73,7 @@ export const GET: APIRoute = async ({ url, locals }) => {
       );
 
     // Status counts for tabs
-    const statusCounts = await db
+    const statusCountsQuery = db
       .select({
         status: quoteRequests.status,
         count: sql<number>`count(*)`,
@@ -81,7 +81,11 @@ export const GET: APIRoute = async ({ url, locals }) => {
       .from(quoteRequests)
       .groupBy(quoteRequests.status);
 
-    const [quotes, countResult] = await Promise.all([quotesQuery, countQuery]);
+    const [quotes, countResult, statusCounts] = await db.batch([
+      quotesQuery,
+      countQuery,
+      statusCountsQuery,
+    ] as const);
     const total = countResult[0]?.count ?? 0;
 
     const statusCountMap = Object.fromEntries(

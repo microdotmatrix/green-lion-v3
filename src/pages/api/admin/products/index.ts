@@ -3,6 +3,7 @@ import {
   categories,
   insertProductSchema,
   pricingTiers,
+  productAttributes,
   products,
 } from "@/lib/db/schema";
 import type { APIRoute } from "astro";
@@ -23,8 +24,9 @@ export const GET: APIRoute = async ({ url, locals }) => {
     const limit = parseInt(searchParams.get("limit") || "25");
     const search = searchParams.get("search") || "";
     const categoryId = searchParams.get("categoryId") || "";
+    const attributeId = searchParams.get("attributeId") || "";
     const sortBy = searchParams.get("sortBy") || "createdAt";
-    const sortDir = searchParams.get("sortDir") || "desc";
+    const sortDir = searchParams.get("sortDir") === "asc" ? "asc" : "desc";
 
     const offset = (page - 1) * limit;
 
@@ -41,6 +43,35 @@ export const GET: APIRoute = async ({ url, locals }) => {
     if (categoryId) {
       conditions.push(eq(products.categoryId, categoryId));
     }
+    if (attributeId) {
+      conditions.push(
+        sql`exists (
+          select 1 from ${productAttributes}
+          where ${productAttributes.productId} = ${products.id}
+            and ${productAttributes.attributeId} = ${attributeId}
+        )`,
+      );
+    }
+
+    const minPriceSubquery = db
+      .select({
+        productId: pricingTiers.productId,
+        minPrice: sql<number>`min(${pricingTiers.pricePerUnit})`,
+      })
+      .from(pricingTiers)
+      .groupBy(pricingTiers.productId)
+      .as("min_price");
+
+    const sortMap = {
+      createdAt: products.createdAt,
+      title: products.name,
+      sku: products.sku,
+      category: categories.name,
+    } as const;
+    const sortColumn =
+      sortBy === "price"
+        ? minPriceSubquery.minPrice
+        : sortMap[sortBy as keyof typeof sortMap] ?? products.createdAt;
 
     // Fetch products with category names
     const productsQuery = db
@@ -61,16 +92,13 @@ export const GET: APIRoute = async ({ url, locals }) => {
       })
       .from(products)
       .leftJoin(categories, eq(products.categoryId, categories.id))
+      .leftJoin(minPriceSubquery, eq(products.id, minPriceSubquery.productId))
       .where(
         conditions.length > 0
           ? sql`${conditions.reduce((a, b) => sql`${a} AND ${b}`)}`
           : undefined,
       )
-      .orderBy(
-        sortDir === "asc"
-          ? asc(products[sortBy as keyof typeof products] as any)
-          : desc(products[sortBy as keyof typeof products] as any),
-      )
+      .orderBy(sortDir === "asc" ? asc(sortColumn) : desc(sortColumn))
       .limit(limit)
       .offset(offset);
 
@@ -84,10 +112,10 @@ export const GET: APIRoute = async ({ url, locals }) => {
           : undefined,
       );
 
-    const [productsList, countResult] = await Promise.all([
+    const [productsList, countResult] = await db.batch([
       productsQuery,
       countQuery,
-    ]);
+    ] as const);
     const total = countResult[0]?.count ?? 0;
 
     // Get price ranges for each product

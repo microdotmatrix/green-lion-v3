@@ -4,18 +4,26 @@ import type {
   ProductDetail,
   ProductFormData,
   ProductsResponse,
+  ProductSortBy,
+  ProductSortDir,
 } from "./types";
 
 export async function fetchProducts(params: {
   page: number;
   search: string;
   categoryId: string;
+  attributeId: string;
+  sortBy: ProductSortBy;
+  sortDir: ProductSortDir;
 }): Promise<ProductsResponse> {
   const searchParams = new URLSearchParams({
     page: params.page.toString(),
     limit: "25",
     search: params.search,
     categoryId: params.categoryId,
+    attributeId: params.attributeId,
+    sortBy: params.sortBy,
+    sortDir: params.sortDir,
   });
   const response = await fetch(`/api/admin/products?${searchParams}`);
   if (!response.ok) throw new Error("Failed to fetch products");

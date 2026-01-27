@@ -8,6 +8,13 @@ import {
 import type { APIRoute } from "astro";
 import { count, desc, eq, gte } from "drizzle-orm";
 
+let cachedStats:
+  | {
+      expiresAtMs: number;
+      value: unknown;
+    }
+  | undefined;
+
 export const GET: APIRoute = async ({ locals }) => {
   // Check authentication
   if (!locals.user || !locals.session) {
@@ -18,11 +25,23 @@ export const GET: APIRoute = async ({ locals }) => {
   }
 
   try {
+    const nowMs = Date.now();
+    if (cachedStats && cachedStats.expiresAtMs > nowMs) {
+      return new Response(JSON.stringify(cachedStats.value), {
+        status: 200,
+        headers: {
+          "Content-Type": "application/json",
+          "Cache-Control": "private, max-age=30",
+        },
+      });
+    }
+
     // Get current month start for leads count
     const now = new Date();
     const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
 
-    // Fetch all stats in parallel
+    // neon-http runs each query as a separate HTTP request unless batched.
+    // Batching keeps latency low for the dashboard.
     const [
       productsCount,
       categoriesCount,
@@ -31,7 +50,7 @@ export const GET: APIRoute = async ({ locals }) => {
       leadsThisMonth,
       recentQuotes,
       recentLeads,
-    ] = await Promise.all([
+    ] = await db.batch([
       // Total products
       db.select({ count: count() }).from(products),
 
@@ -84,7 +103,7 @@ export const GET: APIRoute = async ({ locals }) => {
         .from(tradeshowLeads)
         .orderBy(desc(tradeshowLeads.createdAt))
         .limit(5),
-    ]);
+    ] as const);
 
     const stats = {
       products: productsCount[0]?.count ?? 0,
@@ -98,9 +117,17 @@ export const GET: APIRoute = async ({ locals }) => {
       recentLeads,
     };
 
+    cachedStats = {
+      expiresAtMs: nowMs + 30_000,
+      value: stats,
+    };
+
     return new Response(JSON.stringify(stats), {
       status: 200,
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "Cache-Control": "private, max-age=30",
+      },
     });
   } catch (error) {
     console.error("Error fetching admin stats:", error);

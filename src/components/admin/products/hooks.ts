@@ -9,17 +9,29 @@ import {
   fetchProducts,
   updateProduct,
 } from "./api";
-import type { ProductFormData } from "./types";
+import type { ProductFormData, ProductSortBy, ProductSortDir } from "./types";
 
 export function useProducts(params: {
   page: number;
   search: string;
   categoryId: string;
+  attributeId: string;
+  sortBy: ProductSortBy;
+  sortDir: ProductSortDir;
 }) {
-  const { page, search, categoryId } = params;
+  const { page, search, categoryId, attributeId, sortBy, sortDir } = params;
   return useQuery({
-    queryKey: ["admin-products", page, search, categoryId],
-    queryFn: () => fetchProducts({ page, search, categoryId }),
+    queryKey: [
+      "admin-products",
+      page,
+      search,
+      categoryId,
+      attributeId,
+      sortBy,
+      sortDir,
+    ],
+    queryFn: () =>
+      fetchProducts({ page, search, categoryId, attributeId, sortBy, sortDir }),
   });
 }
 

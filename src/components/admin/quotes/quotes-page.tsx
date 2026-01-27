@@ -1,17 +1,53 @@
 import * as React from "react";
 
 import { Card, CardContent } from "@/components/ui/card";
+import { useUrlFilters } from "@/hooks/use-url-filters";
 
 import { QuoteDetailView } from "./quote-detail-view";
 import { QuotesFilters } from "./quotes-filters";
 import { QuotesTable } from "./quotes-table";
 import { useQuotes } from "./hooks";
 
+const DEFAULT_PAGE = 1;
+const DEFAULT_STATUS = "all";
+const QUOTE_STATUS_VALUES = new Set([
+  "all",
+  "pending",
+  "reviewed",
+  "quoted",
+  "closed",
+]);
+
+type QuoteFilters = {
+  page: number;
+  status: string;
+  search: string;
+};
+
+const QUOTES_FILTER_SCHEMA = {
+  page: {
+    param: "page",
+    default: DEFAULT_PAGE,
+    parse: (value: string) => {
+      const parsed = Number(value);
+      return Number.isFinite(parsed) && parsed > 0 ? parsed : DEFAULT_PAGE;
+    },
+    serialize: (value: number) => (value > DEFAULT_PAGE ? String(value) : null),
+  },
+  status: {
+    param: "status",
+    default: DEFAULT_STATUS,
+    parse: (value: string) =>
+      QUOTE_STATUS_VALUES.has(value) ? value : DEFAULT_STATUS,
+  },
+  search: { param: "search", default: "" },
+} as const;
+
 export default function QuotesPage() {
-  const [page, setPage] = React.useState(1);
-  const [status, setStatus] = React.useState("all");
-  const [search, setSearch] = React.useState("");
-  const [debouncedSearch, setDebouncedSearch] = React.useState("");
+  const { filters, setFilters } =
+    useUrlFilters<QuoteFilters>(QUOTES_FILTER_SCHEMA);
+  const { page, status, search } = filters;
+  const [debouncedSearch, setDebouncedSearch] = React.useState(search);
   const [selectedQuoteId, setSelectedQuoteId] = React.useState<string | null>(
     null,
   );
@@ -19,7 +55,6 @@ export default function QuotesPage() {
   React.useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearch(search);
-      setPage(1);
     }, 300);
     return () => clearTimeout(timer);
   }, [search]);
@@ -52,11 +87,20 @@ export default function QuotesPage() {
       <QuotesFilters
         status={status}
         onStatusChange={(value) => {
-          setStatus(value);
-          setPage(1);
+          setFilters((prev) => ({
+            ...prev,
+            status: value,
+            page: DEFAULT_PAGE,
+          }));
         }}
         search={search}
-        onSearchChange={setSearch}
+        onSearchChange={(value) =>
+          setFilters((prev) => ({
+            ...prev,
+            search: value,
+            page: DEFAULT_PAGE,
+          }))
+        }
         statusCounts={data?.statusCounts}
       />
 
@@ -76,7 +120,9 @@ export default function QuotesPage() {
         status={status}
         debouncedSearch={debouncedSearch}
         page={page}
-        onPageChange={setPage}
+        onPageChange={(nextPage) =>
+          setFilters((prev) => ({ ...prev, page: nextPage }))
+        }
         onView={(quoteId) => setSelectedQuoteId(quoteId)}
       />
     </div>

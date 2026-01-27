@@ -4,18 +4,68 @@ import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 
+import { useAttributes } from "@/components/admin/attributes/hooks";
+import { useUrlFilters } from "@/hooks/use-url-filters";
 import { DeleteProductDialog } from "./delete-product-dialog";
 import { useCategories, useProductMutations, useProducts } from "./hooks";
 import { ProductFormDialog } from "./product-form-dialog";
 import { ProductsFilters } from "./products-filters";
 import { ProductsTable } from "./products-table";
-import type { Product } from "./types";
+import type { Product, ProductSortBy, ProductSortDir } from "./types";
+
+const DEFAULT_PAGE = 1;
+const DEFAULT_SORT_BY: ProductSortBy = "createdAt";
+const DEFAULT_SORT_DIR: ProductSortDir = "desc";
+const SORT_BY_VALUES = new Set<ProductSortBy>([
+  "createdAt",
+  "title",
+  "sku",
+  "category",
+  "price",
+]);
+
+type ProductFilters = {
+  page: number;
+  search: string;
+  categoryId: string;
+  attributeId: string;
+  sortBy: ProductSortBy;
+  sortDir: ProductSortDir;
+};
+
+const PRODUCT_FILTER_SCHEMA = {
+  page: {
+    param: "page",
+    default: DEFAULT_PAGE,
+    parse: (value: string) => {
+      const parsed = Number(value);
+      return Number.isFinite(parsed) && parsed > 0 ? parsed : DEFAULT_PAGE;
+    },
+    serialize: (value: number) => (value > DEFAULT_PAGE ? String(value) : null),
+  },
+  search: { param: "search", default: "" },
+  categoryId: { param: "categoryId", default: "all" },
+  attributeId: { param: "attributeId", default: "all" },
+  sortBy: {
+    param: "sortBy",
+    default: DEFAULT_SORT_BY,
+    parse: (value: string) =>
+      SORT_BY_VALUES.has(value as ProductSortBy)
+        ? (value as ProductSortBy)
+        : DEFAULT_SORT_BY,
+  },
+  sortDir: {
+    param: "sortDir",
+    default: DEFAULT_SORT_DIR,
+    parse: (value: string) => (value === "asc" ? "asc" : DEFAULT_SORT_DIR),
+  },
+} as const;
 
 export default function ProductsPage() {
-  const [page, setPage] = React.useState(1);
-  const [search, setSearch] = React.useState("");
-  const [debouncedSearch, setDebouncedSearch] = React.useState("");
-  const [categoryFilter, setCategoryFilter] = React.useState("all");
+  const { filters, setFilters, resetFilters } =
+    useUrlFilters<ProductFilters>(PRODUCT_FILTER_SCHEMA);
+  const { page, search, categoryId, attributeId, sortBy, sortDir } = filters;
+  const [debouncedSearch, setDebouncedSearch] = React.useState(search);
   const [isFormOpen, setIsFormOpen] = React.useState(false);
   const [editingProductId, setEditingProductId] = React.useState<string | null>(
     null,
@@ -27,17 +77,20 @@ export default function ProductsPage() {
   React.useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearch(search);
-      setPage(1);
     }, 300);
     return () => clearTimeout(timer);
   }, [search]);
 
   const { data: categoriesData } = useCategories();
+  const { data: attributesData } = useAttributes();
 
   const { data, isLoading, error } = useProducts({
     page,
     search: debouncedSearch,
-    categoryId: categoryFilter === "all" ? "" : categoryFilter,
+    categoryId: categoryId === "all" ? "" : categoryId,
+    attributeId: attributeId === "all" ? "" : attributeId,
+    sortBy,
+    sortDir,
   });
 
   const { deleteProductMut, duplicateProductMut } = useProductMutations();
@@ -81,13 +134,51 @@ export default function ProductsPage() {
 
       <ProductsFilters
         search={search}
-        onSearchChange={(value) => setSearch(value)}
-        categoryFilter={categoryFilter}
+        onSearchChange={(value) => {
+          setFilters((prev) => ({
+            ...prev,
+            search: value,
+            page: DEFAULT_PAGE,
+          }));
+        }}
+        categoryFilter={categoryId}
         onCategoryChange={(value) => {
-          setCategoryFilter(value);
-          setPage(1);
+          setFilters((prev) => ({
+            ...prev,
+            categoryId: value,
+            page: DEFAULT_PAGE,
+          }));
+        }}
+        attributeFilter={attributeId}
+        onAttributeChange={(value) => {
+          setFilters((prev) => ({
+            ...prev,
+            attributeId: value,
+            page: DEFAULT_PAGE,
+          }));
+        }}
+        sortBy={sortBy}
+        onSortByChange={(value) => {
+          setFilters((prev) => ({
+            ...prev,
+            sortBy: value,
+            page: DEFAULT_PAGE,
+          }));
+        }}
+        sortDir={sortDir}
+        onSortDirChange={(value) => {
+          setFilters((prev) => ({
+            ...prev,
+            sortDir: value,
+            page: DEFAULT_PAGE,
+          }));
+        }}
+        onReset={() => {
+          resetFilters();
+          setDebouncedSearch("");
         }}
         categories={categoriesData || []}
+        attributes={attributesData || []}
       />
 
       {error && (
@@ -104,9 +195,12 @@ export default function ProductsPage() {
         data={data}
         isLoading={isLoading}
         debouncedSearch={debouncedSearch}
-        categoryFilter={categoryFilter}
+        categoryFilter={categoryId}
+        attributeFilter={attributeId}
         page={page}
-        onPageChange={setPage}
+        onPageChange={(nextPage) =>
+          setFilters((prev) => ({ ...prev, page: nextPage }))
+        }
         onEdit={handleEdit}
         onDuplicate={handleDuplicate}
         onDelete={(product) => setDeletingProduct(product)}

@@ -10,8 +10,21 @@ export const onRequest = defineMiddleware(async (context, next) => {
   }
 
   const url = new URL(context.request.url);
-  const isAdminApi = url.pathname.startsWith("/api/admin");
-  const isAdminPage = url.pathname.startsWith("/admin");
+  const pathname = url.pathname;
+
+  // Skip expensive session lookups for static assets.
+  // (In dev, these can still be routed through middleware.)
+  if (pathname.startsWith("/_astro/")) {
+    return next();
+  }
+
+  const isAdminApi = pathname.startsWith("/api/admin");
+  const isAdminPage = pathname.startsWith("/admin");
+
+  // Only admin routes need auth context today.
+  if (!isAdminApi && !isAdminPage) {
+    return next();
+  }
 
   const isAuthed = await auth.api.getSession({
     headers: context.request.headers,
@@ -44,7 +57,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
   if (isAdminPage) {
     if (!isAuthed?.user || !isAuthed?.session) {
       const redirect = new URL(
-        `/signin?redirect=${encodeURIComponent(url.pathname)}`,
+        `/signin?redirect=${encodeURIComponent(pathname)}`,
         url,
       );
       return Response.redirect(redirect, 302);

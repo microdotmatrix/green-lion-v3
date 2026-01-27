@@ -41,6 +41,7 @@ type ProductsTableProps = {
   isLoading: boolean;
   debouncedSearch: string;
   categoryFilter: string;
+  attributeFilter: string;
   page: number;
   onPageChange: (page: number) => void;
   onEdit: (product: Product) => void;
@@ -53,6 +54,7 @@ export function ProductsTable({
   isLoading,
   debouncedSearch,
   categoryFilter,
+  attributeFilter,
   page,
   onPageChange,
   onEdit,
@@ -79,7 +81,9 @@ export function ProductsTable({
             <Package className="h-12 w-12 mx-auto text-muted-foreground" />
             <h3 className="mt-4 text-lg font-semibold">No products found</h3>
             <p className="text-muted-foreground">
-              {debouncedSearch || categoryFilter !== "all"
+              {debouncedSearch ||
+              categoryFilter !== "all" ||
+              attributeFilter !== "all"
                 ? "Try adjusting your filters"
                 : "Create your first product"}
             </p>
