@@ -1,3 +1,5 @@
+import { SITE_URL } from "astro:env/client";
+
 export type Site = {
   website: string;
   author: string;
@@ -10,7 +12,7 @@ export type Site = {
 
 // Global site metadata
 export const SITE: Site = {
-  website: import.meta.env.SITE_URL,
+  website: SITE_URL,
   author: "John Polinski",
   profile: "https://github.com/microdotmatrix",
   desc: "Green Lion Innovations is a Denver, CO based business strategy firm focused on product development and manufacturing.",

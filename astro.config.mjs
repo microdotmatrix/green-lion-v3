@@ -30,6 +30,12 @@ export default defineConfig({
         access: "secret",
       }),
       BETTER_AUTH_URL: envField.string({ context: "server", access: "public" }),
+      SITE_URL: envField.string({
+        context: "client",
+        access: "public",
+        optional: true,
+        default: "https://greenlioninnovations.com",
+      }),
     },
   },
 });
