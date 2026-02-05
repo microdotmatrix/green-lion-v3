@@ -1,0 +1,10 @@
+---
+import { AdminFeedbackPage } from "@/components/admin/pages/admin-feedback-page";
+import AdminLayout from "@/layouts/admin.astro";
+
+const user = Astro.locals.user;
+---
+
+<AdminLayout title="Feedback" description="Manage Feedback">
+  <AdminFeedbackPage client:load user={user!} />
+</AdminLayout>

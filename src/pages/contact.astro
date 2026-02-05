@@ -1,0 +1,41 @@
+---
+import { ContactForm } from "@/components/contact/contact-form.tsx";
+import Layout from "@/layouts/default.astro";
+---
+
+<Layout title="Contact Us">
+  <section class="contact-header">
+    <div class="content">
+      <h1>Contact <span class="text-primary">Us</span></h1>
+      <p class="contact-subtitle">
+        Have a question or want to learn more about our manufacturing solutions?
+        We&#39;d love to hear from you.
+      </p>
+    </div>
+  </section>
+
+  <section class="contact-section">
+    <div class="content max-w-7xl">
+      <ContactForm client:load />
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .contact-header {
+    background: linear-gradient(to bottom, var(--secondary), var(--background));
+  }
+
+  .contact-header h1 {
+    margin-bottom: 0.5rem;
+  }
+
+  .contact-subtitle {
+    color: var(--muted-foreground);
+    max-width: 48rem;
+  }
+
+  .contact-section {
+    padding-bottom: 4rem;
+  }
+</style>

@@ -401,9 +401,50 @@ export const contactSubmissions = pgTable("contact_submissions", {
   companyName: text("company_name").notNull(),
   title: text("title").notNull(),
   message: text("message"),
-  status: text("status").notNull().default("new"), // 'new', 'contacted', 'closed'
+  type: text("type").notNull().default("general"), // 'general', 'feedback', 'quote_inquiry', 'support'
+  status: text("status").notNull().default("open"), // 'open', 'needs_review', 'closed'
   createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at")
+    .defaultNow()
+    .$onUpdate(() => /* @__PURE__ */ new Date())
+    .notNull(),
 });
+
+export const contactSubmissionsRelations = relations(
+  contactSubmissions,
+  ({ many }) => ({
+    replies: many(feedbackReplies),
+  }),
+);
+
+// Admin replies to contact/feedback submissions
+export const feedbackReplies = pgTable("feedback_replies", {
+  id: varchar("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
+  submissionId: varchar("submission_id")
+    .notNull()
+    .references(() => contactSubmissions.id, { onDelete: "cascade" }),
+  adminUserId: text("admin_user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "set null" }),
+  message: text("message").notNull(),
+  sentAt: timestamp("sent_at").defaultNow().notNull(),
+});
+
+export const feedbackRepliesRelations = relations(
+  feedbackReplies,
+  ({ one }) => ({
+    submission: one(contactSubmissions, {
+      fields: [feedbackReplies.submissionId],
+      references: [contactSubmissions.id],
+    }),
+    adminUser: one(user, {
+      fields: [feedbackReplies.adminUserId],
+      references: [user.id],
+    }),
+  }),
+);
 
 // Services offered by the company
 export const services = pgTable("services", {
@@ -616,7 +657,10 @@ export const insertClientLogoSchema = createInsertSchema(clientLogos).omit({
 });
 export const insertContactSubmissionSchema = createInsertSchema(
   contactSubmissions,
-).omit({ id: true, createdAt: true });
+).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertFeedbackReplySchema = createInsertSchema(
+  feedbackReplies,
+).omit({ id: true, sentAt: true });
 export const insertServiceSchema = createInsertSchema(services).omit({
   id: true,
   createdAt: true,
@@ -661,6 +705,7 @@ export type Testimonial = typeof testimonials.$inferSelect;
 export type CaseStudy = typeof caseStudies.$inferSelect;
 export type ClientLogo = typeof clientLogos.$inferSelect;
 export type ContactSubmission = typeof contactSubmissions.$inferSelect;
+export type FeedbackReply = typeof feedbackReplies.$inferSelect;
 export type Service = typeof services.$inferSelect;
 export type TradeshowRep = typeof tradeshowReps.$inferSelect;
 export type TradeshowRepCategory = typeof tradeshowRepCategories.$inferSelect;
@@ -690,6 +735,7 @@ export type InsertClientLogo = z.infer<typeof insertClientLogoSchema>;
 export type InsertContactSubmission = z.infer<
   typeof insertContactSubmissionSchema
 >;
+export type InsertFeedbackReply = z.infer<typeof insertFeedbackReplySchema>;
 export type InsertService = z.infer<typeof insertServiceSchema>;
 export type InsertTradeshowRep = z.infer<typeof insertTradeshowRepSchema>;
 export type InsertTradeshowRepCategory = z.infer<

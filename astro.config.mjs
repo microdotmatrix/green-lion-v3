@@ -30,6 +30,10 @@ export default defineConfig({
         access: "secret",
       }),
       BETTER_AUTH_URL: envField.string({ context: "server", access: "public" }),
+      RESEND_API_KEY: envField.string({
+        context: "server",
+        access: "secret",
+      }),
       SITE_URL: envField.string({
         context: "client",
         access: "public",

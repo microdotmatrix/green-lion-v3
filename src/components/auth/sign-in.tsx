@@ -35,7 +35,7 @@ async function signInAction(
       {
         onSuccess: () => {
           toast.success("Signed in successfully");
-          window.location.href = "/";
+          window.location.href = "/admin";
           resolve({ error: null, success: true });
         },
         onError: (ctx) => {

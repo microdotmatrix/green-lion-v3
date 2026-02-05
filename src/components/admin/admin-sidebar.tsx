@@ -7,6 +7,7 @@ import {
   Image,
   LayoutDashboard,
   LogOut,
+  MessageSquare,
   MessageSquareQuote,
   Package,
   Sliders,
@@ -84,6 +85,11 @@ const businessNavItems = [
     title: "Quotes",
     url: "/admin/quotes",
     icon: FileText,
+  },
+  {
+    title: "Feedback",
+    url: "/admin/feedback",
+    icon: MessageSquare,
   },
   {
     title: "Trade Shows",
