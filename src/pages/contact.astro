@@ -1,6 +1,18 @@
 ---
-import { ContactForm } from "@/components/contact/contact-form.tsx";
 import Layout from "@/layouts/default.astro";
+import { actions, isInputError } from "astro:actions";
+
+const CONTACT_TYPES = [
+  { value: "general", label: "General Inquiry" },
+  { value: "feedback", label: "Feedback" },
+  { value: "quote_inquiry", label: "Quote Inquiry" },
+  { value: "support", label: "Support Request" },
+] as const;
+
+const result = Astro.getActionResult(actions.contact);
+const isSuccess = result && !result.error;
+const inputErrors =
+  result?.error && isInputError(result.error) ? result.error.fields : null;
 ---
 
 <Layout title="Contact Us">
@@ -16,7 +28,186 @@ import Layout from "@/layouts/default.astro";
 
   <section class="contact-section">
     <div class="content max-w-7xl">
-      <ContactForm client:load />
+      {
+        isSuccess ? (
+          <div class="card success-card">
+            <div class="success-icon">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="32"
+                height="32"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z" />
+                <path d="m21.854 2.147-10.94 10.939" />
+              </svg>
+            </div>
+            <h2 class="text-2xl font-bold">Thank You!</h2>
+            <p class="text-muted-foreground max-w-md mx-auto">
+              Your message has been received. Our team will review it and get
+              back to you as soon as possible.
+            </p>
+            <a href="/contact" class="btn-outline">
+              Send Another Message
+            </a>
+          </div>
+        ) : (
+          <div class="card">
+            <div class="card-header">
+              <h2 class="card-title">Get in Touch</h2>
+              <p class="card-description">
+                Fill out the form below and we&#39;ll get back to you as soon as
+                possible.
+              </p>
+            </div>
+
+            {result?.error && !isInputError(result.error) && (
+              <div class="form-error-banner">
+                {result.error.message ||
+                  "Something went wrong. Please try again."}
+              </div>
+            )}
+
+            <form method="POST" action={actions.contact} class="form-grid">
+              <div class="grid gap-4 sm:grid-cols-2">
+                <div class="field">
+                  <label for="firstName">
+                    First Name <span class="text-destructive">*</span>
+                  </label>
+                  <input
+                    id="firstName"
+                    name="firstName"
+                    type="text"
+                    placeholder="John"
+                    required
+                  />
+                  {inputErrors?.firstName && (
+                    <p class="field-error">{inputErrors.firstName}</p>
+                  )}
+                </div>
+                <div class="field">
+                  <label for="lastName">
+                    Last Name <span class="text-destructive">*</span>
+                  </label>
+                  <input
+                    id="lastName"
+                    name="lastName"
+                    type="text"
+                    placeholder="Doe"
+                    required
+                  />
+                  {inputErrors?.lastName && (
+                    <p class="field-error">{inputErrors.lastName}</p>
+                  )}
+                </div>
+              </div>
+
+              <div class="grid gap-4 sm:grid-cols-2">
+                <div class="field">
+                  <label for="email">
+                    Email <span class="text-destructive">*</span>
+                  </label>
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    placeholder="john@company.com"
+                    required
+                  />
+                  {inputErrors?.email && (
+                    <p class="field-error">{inputErrors.email}</p>
+                  )}
+                </div>
+                <div class="field">
+                  <label for="phone">Phone</label>
+                  <input
+                    id="phone"
+                    name="phone"
+                    type="tel"
+                    placeholder="+1 (555) 000-0000"
+                  />
+                </div>
+              </div>
+
+              <div class="grid gap-4 sm:grid-cols-2">
+                <div class="field">
+                  <label for="companyName">
+                    Company <span class="text-destructive">*</span>
+                  </label>
+                  <input
+                    id="companyName"
+                    name="companyName"
+                    type="text"
+                    placeholder="Acme Inc."
+                    required
+                  />
+                  {inputErrors?.companyName && (
+                    <p class="field-error">{inputErrors.companyName}</p>
+                  )}
+                </div>
+                <div class="field">
+                  <label for="type">Request Type</label>
+                  <select id="type" name="type">
+                    {CONTACT_TYPES.map((t) => (
+                      <option value={t.value}>{t.label}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div class="field">
+                <label for="title">
+                  Subject <span class="text-destructive">*</span>
+                </label>
+                <input
+                  id="title"
+                  name="title"
+                  type="text"
+                  placeholder="How can we help?"
+                  required
+                />
+                {inputErrors?.title && (
+                  <p class="field-error">{inputErrors.title}</p>
+                )}
+              </div>
+
+              <div class="field">
+                <label for="message">Message</label>
+                <textarea
+                  id="message"
+                  name="message"
+                  placeholder="Tell us more about your inquiry..."
+                  rows="5"
+                />
+              </div>
+
+              <button type="submit" class="submit-btn">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="mr-2"
+                >
+                  <path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z" />
+                  <path d="m21.854 2.147-10.94 10.939" />
+                </svg>
+                Send Message
+              </button>
+            </form>
+          </div>
+        )
+      }
     </div>
   </section>
 </Layout>
@@ -37,5 +228,170 @@ import Layout from "@/layouts/default.astro";
 
   .contact-section {
     padding-bottom: 4rem;
+  }
+
+  .card {
+    max-width: 42rem;
+    margin-inline: auto;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--card-foreground);
+    padding: 1.5rem;
+  }
+
+  .success-card {
+    padding-block: 4rem;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .success-icon {
+    display: flex;
+    height: 4rem;
+    width: 4rem;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9999px;
+    background: hsl(var(--primary) / 0.1);
+    color: var(--primary);
+  }
+
+  .btn-outline {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius);
+    border: 1px solid var(--input);
+    background: var(--background);
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition:
+      background-color 0.15s,
+      color 0.15s;
+  }
+  .btn-outline:hover {
+    background: var(--accent);
+    color: var(--accent-foreground);
+  }
+
+  .card-header {
+    margin-bottom: 1.5rem;
+  }
+
+  .card-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: -0.025em;
+  }
+
+  .card-description {
+    margin-top: 0.375rem;
+    font-size: 0.875rem;
+    color: var(--muted-foreground);
+  }
+
+  .form-error-banner {
+    margin-bottom: 1rem;
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius);
+    background: hsl(var(--destructive) / 0.1);
+    color: var(--destructive);
+    font-size: 0.875rem;
+  }
+
+  .form-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .field label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    line-height: 1;
+  }
+
+  .field input,
+  .field select,
+  .field textarea {
+    display: flex;
+    width: 100%;
+    border-radius: var(--radius);
+    border: 1px solid var(--input);
+    background: transparent;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    color: var(--foreground);
+    transition:
+      border-color 0.15s,
+      box-shadow 0.15s;
+  }
+
+  .field input::placeholder,
+  .field textarea::placeholder {
+    color: var(--muted-foreground);
+  }
+
+  .field input:focus-visible,
+  .field select:focus-visible,
+  .field textarea:focus-visible {
+    outline: none;
+    border-color: var(--ring);
+    box-shadow: 0 0 0 2px hsl(var(--ring) / 0.2);
+  }
+
+  .field select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2371717a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    padding-right: 2.5rem;
+  }
+
+  .field textarea {
+    min-height: 5rem;
+    resize: vertical;
+  }
+
+  .field-error {
+    font-size: 0.8125rem;
+    color: var(--destructive);
+  }
+
+  .submit-btn {
+    display: inline-flex;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: var(--radius);
+    background: var(--primary);
+    color: var(--primary-foreground);
+    padding: 0.625rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    transition: opacity 0.15s;
+  }
+  .submit-btn:hover {
+    opacity: 0.9;
+  }
+  .submit-btn:disabled {
+    pointer-events: none;
+    opacity: 0.5;
   }
 </style>

@@ -1,5 +1,5 @@
 import { formatDistanceToNow } from "date-fns";
-import { Copy, Trash2, UserPlus } from "lucide-react";
+import { Copy, Mail, MailPlus, Trash2, UserPlus } from "lucide-react";
 import * as React from "react";
 import { toast } from "sonner";
 
@@ -75,9 +75,14 @@ export function InvitesCard({
         toast.success("Invite created");
       }
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Failed to create invite");
+      toast.error(
+        err instanceof Error ? err.message : "Failed to create invite",
+      );
     }
   };
+
+  const [sendingEmail, setSendingEmail] = React.useState(false);
+  const [resendingId, setResendingId] = React.useState<string | null>(null);
 
   const handleCopyLatestInvite = async () => {
     if (!latestInvite) return;
@@ -89,12 +94,66 @@ export function InvitesCard({
     }
   };
 
+  const handleSendInviteEmail = async () => {
+    if (!latestInvite) return;
+    setSendingEmail(true);
+    try {
+      const res = await fetch("/api/admin/invites/send-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: latestInvite.email,
+          inviteUrl: latestInvite.inviteUrl,
+          expiresAt: latestInvite.expiresAt,
+        }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error ?? "Failed to send email");
+      }
+      toast.success(`Invite email sent to ${latestInvite.email}`);
+    } catch (err) {
+      toast.error(
+        err instanceof Error ? err.message : "Failed to send invite email",
+      );
+    } finally {
+      setSendingEmail(false);
+    }
+  };
+
+  const handleResendInviteEmail = async (invite: {
+    id: string;
+    email: string;
+  }) => {
+    setResendingId(invite.id);
+    try {
+      const res = await fetch("/api/admin/invites/resend", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: invite.id }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error ?? "Failed to resend email");
+      }
+      toast.success(`Invite email resent to ${invite.email}`);
+    } catch (err) {
+      toast.error(
+        err instanceof Error ? err.message : "Failed to resend invite email",
+      );
+    } finally {
+      setResendingId(null);
+    }
+  };
+
   const handleRevokeInvite = async (id: string) => {
     try {
       await onRevokeInvite(id);
       toast.success("Invite revoked");
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Failed to revoke invite");
+      toast.error(
+        err instanceof Error ? err.message : "Failed to revoke invite",
+      );
     }
   };
 
@@ -102,7 +161,9 @@ export function InvitesCard({
     <Card>
       <CardHeader>
         <CardTitle>Invites</CardTitle>
-        <CardDescription>Invite new admins and sales associates</CardDescription>
+        <CardDescription>
+          Invite new admins and sales associates
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <form
@@ -140,20 +201,31 @@ export function InvitesCard({
                   {latestInvite.inviteUrl}
                 </p>
               </div>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={handleCopyLatestInvite}
-              >
-                <Copy className="mr-2 h-4 w-4" />
-                Copy Link
-              </Button>
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handleCopyLatestInvite}
+                >
+                  <Copy className="mr-2 h-4 w-4" />
+                  Copy Link
+                </Button>
+                <Button
+                  type="button"
+                  variant="default"
+                  onClick={handleSendInviteEmail}
+                  disabled={sendingEmail}
+                >
+                  <Mail className="mr-2 h-4 w-4" />
+                  {sendingEmail ? "Sending..." : "Send Email"}
+                </Button>
+              </div>
             </div>
           </div>
         )}
 
         <div className="mt-6">
-          {error && (
+          {!!error && (
             <p className="text-sm text-destructive">Failed to load invites.</p>
           )}
 
@@ -209,14 +281,25 @@ export function InvitesCard({
                     </TableCell>
                     <TableCell>
                       {invite.status === "pending" && (
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleRevokeInvite(invite.id)}
-                          disabled={revokePending}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
+                        <div className="flex items-center gap-1">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleResendInviteEmail(invite)}
+                            disabled={resendingId === invite.id}
+                            title="Resend invite email"
+                          >
+                            <MailPlus className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleRevokeInvite(invite.id)}
+                            disabled={revokePending}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
                       )}
                     </TableCell>
                   </TableRow>

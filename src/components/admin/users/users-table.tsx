@@ -6,7 +6,6 @@ import {
   Users,
   XCircle,
 } from "lucide-react";
-import * as React from "react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -75,7 +74,7 @@ export function UsersTable({
         <CardDescription>{users?.length ?? 0} users</CardDescription>
       </CardHeader>
       <CardContent>
-        {error && (
+        {!!error && (
           <div className="mb-4 rounded-md border border-destructive/50 bg-destructive/5 p-3">
             <p className="text-sm text-destructive">Failed to load users.</p>
           </div>
