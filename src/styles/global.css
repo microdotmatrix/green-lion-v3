@@ -135,6 +135,25 @@
   * {
     @apply border-border;
   }
+  /* Thin styled scrollbars for dialogs & drawers */
+  [data-slot="dialog-content"],
+  [data-slot="drawer-content"] > div {
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    &::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 9999px;
+      &:hover {
+        background: var(--muted-foreground);
+      }
+    }
+  }
   /* Remove all animations and transitions for people that prefer not to see them */
   @media (prefers-reduced-motion: reduce) {
     * {

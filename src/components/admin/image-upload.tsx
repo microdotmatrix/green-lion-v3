@@ -182,7 +182,7 @@ export function ImageUpload({
               label: "text-sm text-muted-foreground",
               allowedContent: "text-xs text-muted-foreground/75",
               button:
-                "bg-primary text-primary-foreground hover:bg-primary/90 ut-uploading:bg-primary/70",
+                "bg-primary text-primary-foreground hover:bg-primary/90 ut-uploading:bg-primary/70 px-4 py-2 rounded-md text-sm font-medium",
             }}
           />
         </TabsContent>
@@ -205,20 +205,24 @@ export function ImageUpload({
                   }
                 }}
               />
-              <Button type="button" onClick={handleUrlSubmit} disabled={!urlInput.trim()}>
+              <Button
+                type="button"
+                onClick={handleUrlSubmit}
+                disabled={!urlInput.trim()}
+              >
                 Add
               </Button>
             </div>
-            {urlError && (
-              <p className="text-xs text-destructive">{urlError}</p>
-            )}
+            {urlError && <p className="text-xs text-destructive">{urlError}</p>}
           </div>
         </TabsContent>
 
         {categoryId && (
           <TabsContent value="products" className="mt-3">
             {isLoadingProducts ? (
-              <p className="text-sm text-muted-foreground">Loading products...</p>
+              <p className="text-sm text-muted-foreground">
+                Loading products...
+              </p>
             ) : fetchError ? (
               <p className="text-sm text-destructive">{fetchError}</p>
             ) : productImages.length === 0 ? (
@@ -239,7 +243,9 @@ export function ImageUpload({
                           alt={product.name}
                           className="h-6 w-6 rounded object-cover"
                         />
-                        <span className="truncate max-w-[200px]">{product.name}</span>
+                        <span className="truncate max-w-[200px]">
+                          {product.name}
+                        </span>
                       </div>
                     </SelectItem>
                   ))}
