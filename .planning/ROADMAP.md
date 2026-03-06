@@ -27,11 +27,11 @@ Decimal phases appear between their surrounding integers in numeric order.
   1. `productCatalogs`, `blogCategories`, and `blogPosts` tables exist in the Neon database after running Drizzle migrations
   2. An admin user can upload a PDF file via the UploadThing upload button without a file-size or type rejection error
   3. The Netlify build pipeline runs the Drizzle migration step so schema changes reach production automatically
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 01-01: Add `productCatalogs`, `blogCategories`, `blogPosts` Drizzle schema tables and generate + push migration
-- [ ] 01-02: Extend UploadThing router with `pdfUploader` route (32 MB limit, correct auth) and confirm CDN header behavior
+- [ ] 01-01-PLAN.md — Add `productCatalogs`, `blogCategories`, `blogPosts` schema tables, generate migration, create netlify.toml
+- [ ] 01-02-PLAN.md — Extend UploadThing router with `pdfUploader` route (32 MB, approved-user auth) and update `imageUploader` auth
 
 ### Phase 2: PDF Catalog
 **Goal**: Admin can manage versioned PDF catalogs and visitors can view the active catalog on the site
