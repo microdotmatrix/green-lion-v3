@@ -1,0 +1,8 @@
+---
+import { CatalogsPage } from "@/components/admin/catalogs/catalogs-page";
+import AdminLayout from "@/layouts/admin.astro";
+---
+
+<AdminLayout title="Catalogs" description="Manage PDF Catalog Versions">
+  <CatalogsPage client:load />
+</AdminLayout>
