@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: planning
-stopped_at: Phase 1 context gathered
-last_updated: "2026-03-06T07:57:05.464Z"
-last_activity: 2026-03-06 — Roadmap created; phases derived from 14 v1 requirements across PDF catalog and blog features
+status: executing
+stopped_at: "Completed 01-foundation/01-01-PLAN.md"
+last_updated: "2026-03-06T17:09:19Z"
+last_activity: 2026-03-06 — Completed plan 01-01; added productCatalogs, blogCategories, blogPosts tables and netlify.toml build pipeline
 progress:
   total_phases: 4
   completed_phases: 0
-  total_plans: 0
-  completed_plans: 0
-  percent: 0
+  total_plans: 2
+  completed_plans: 1
+  percent: 12
 ---
 
 # Project State
@@ -26,27 +26,27 @@ See: .planning/PROJECT.md (updated 2026-03-05)
 ## Current Position
 
 Phase: 1 of 4 (Foundation)
-Plan: 0 of 2 in current phase
-Status: Ready to plan
-Last activity: 2026-03-06 — Roadmap created; phases derived from 14 v1 requirements across PDF catalog and blog features
+Plan: 1 of 2 in current phase
+Status: Executing
+Last activity: 2026-03-06 — Completed plan 01-01; added productCatalogs, blogCategories, blogPosts tables and netlify.toml build pipeline
 
-Progress: [░░░░░░░░░░] 0%
+Progress: [█░░░░░░░░░] 12%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 0
-- Average duration: —
-- Total execution time: 0 hours
+- Total plans completed: 1
+- Average duration: 2 min
+- Total execution time: 0.03 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| - | - | - | - |
+| 01-foundation | 1 | 2 min | 2 min |
 
 **Recent Trend:**
-- Last 5 plans: —
+- Last 5 plans: 01-01 (2 min)
 - Trend: —
 
 *Updated after each plan completion*
@@ -62,6 +62,10 @@ Recent decisions affecting current work:
 - [Pre-phase]: UploadThing for PDF storage — extend existing router with `pdfUploader` route, 32 MB limit
 - [Pre-phase]: Catalog supports multiple versions, one marked active — enforced via Drizzle transaction
 - [Pre-phase]: Blog categories as first-class entities — enables category pages and filtering
+- [01-01]: uploadedBy and authorId use text() columns because user.id is text, not varchar — mixing types would cause FK type mismatch
+- [01-01]: categoryId in blogPosts uses varchar() to match blogCategories.id which is varchar
+- [01-01]: netlify.toml omits [functions] section — @astrojs/netlify adapter handles Functions directory automatically
+- [01-01]: Migration file committed to git before deploy — drizzle-kit migrate reads committed files from ./drizzle/
 
 ### Pending Todos
 
@@ -69,12 +73,12 @@ None yet.
 
 ### Blockers/Concerns
 
-- [Phase 1]: Verify whether Netlify build pipeline includes `drizzle-kit migrate` — must be confirmed before Phase 1 is considered complete
+- [Phase 1 - RESOLVED 2026-03-06]: netlify.toml now confirmed with `drizzle-kit migrate` in build pipeline
 - [Phase 2]: UploadThing CDN `X-Frame-Options` behavior for PDFs is unconfirmed — build fallback download link from the start rather than retrofitting; verify headers on a real uploaded PDF URL before shipping `/catalog`
 - [Phase 3]: Verify `@uiw/react-md-editor` React 19 runtime behavior after `pnpm install` before committing to it for the blog form dialog
 
 ## Session Continuity
 
-Last session: 2026-03-06T07:57:05.462Z
-Stopped at: Phase 1 context gathered
-Resume file: .planning/phases/01-foundation/01-CONTEXT.md
+Last session: 2026-03-06T17:09:19Z
+Stopped at: Completed 01-foundation/01-01-PLAN.md
+Resume file: .planning/phases/01-foundation/01-02-PLAN.md

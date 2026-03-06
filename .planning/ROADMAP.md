@@ -30,7 +30,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans**: 2 plans
 
 Plans:
-- [ ] 01-01-PLAN.md — Add `productCatalogs`, `blogCategories`, `blogPosts` schema tables, generate migration, create netlify.toml
+- [x] 01-01-PLAN.md — Add `productCatalogs`, `blogCategories`, `blogPosts` schema tables, generate migration, create netlify.toml
 - [ ] 01-02-PLAN.md — Extend UploadThing router with `pdfUploader` route (32 MB, approved-user auth) and update `imageUploader` auth
 
 ### Phase 2: PDF Catalog
@@ -89,7 +89,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 0/2 | Not started | - |
+| 1. Foundation | 1/2 | In progress | - |
 | 2. PDF Catalog | 0/3 | Not started | - |
 | 3. Blog Admin | 0/3 | Not started | - |
 | 4. Blog Frontend | 0/1 | Not started | - |
