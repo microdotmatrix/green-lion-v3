@@ -114,6 +114,8 @@ export const adminInvite = pgTable(
 export const userRelations = relations(user, ({ many }) => ({
   sessions: many(session),
   accounts: many(account),
+  productCatalogs: many(productCatalogs),
+  blogPosts: many(blogPosts),
 }));
 
 export const sessionRelations = relations(session, ({ one }) => ({
@@ -614,6 +616,105 @@ export const termsConditions = pgTable("terms_conditions", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+// PDF product catalogs uploaded by admins
+export const productCatalogs = pgTable(
+  "product_catalogs",
+  {
+    id: varchar("id")
+      .primaryKey()
+      .default(sql`gen_random_uuid()`),
+    displayName: text("display_name").notNull(),
+    pdfUrl: text("pdf_url").notNull(),
+    isActive: boolean("is_active").notNull().default(false),
+    notes: text("notes"),
+    uploadedBy: text("uploaded_by").references(() => user.id, {
+      onDelete: "set null",
+    }),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at")
+      .defaultNow()
+      .$onUpdate(() => /* @__PURE__ */ new Date())
+      .notNull(),
+  },
+  (table) => [
+    index("product_catalogs_uploadedBy_idx").on(table.uploadedBy),
+    index("product_catalogs_isActive_idx").on(table.isActive),
+  ],
+);
+
+// Blog categories
+export const blogCategories = pgTable(
+  "blog_categories",
+  {
+    id: varchar("id")
+      .primaryKey()
+      .default(sql`gen_random_uuid()`),
+    name: text("name").notNull(),
+    slug: text("slug").notNull().unique(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (table) => [index("blog_categories_slug_idx").on(table.slug)],
+);
+
+// Blog posts
+export const blogPosts = pgTable(
+  "blog_posts",
+  {
+    id: varchar("id")
+      .primaryKey()
+      .default(sql`gen_random_uuid()`),
+    title: text("title").notNull(),
+    slug: text("slug").notNull().unique(),
+    body: text("body").notNull(),
+    excerpt: text("excerpt").notNull(),
+    coverImageUrl: text("cover_image_url"),
+    categoryId: varchar("category_id").references(() => blogCategories.id, {
+      onDelete: "set null",
+    }),
+    authorId: text("author_id").references(() => user.id, {
+      onDelete: "set null",
+    }),
+    status: text("status")
+      .notNull()
+      .default("draft")
+      .$type<"draft" | "published">(),
+    publishedAt: timestamp("published_at"),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at")
+      .defaultNow()
+      .$onUpdate(() => /* @__PURE__ */ new Date())
+      .notNull(),
+  },
+  (table) => [
+    index("blog_posts_slug_idx").on(table.slug),
+    index("blog_posts_categoryId_idx").on(table.categoryId),
+    index("blog_posts_authorId_idx").on(table.authorId),
+    index("blog_posts_status_idx").on(table.status),
+  ],
+);
+
+export const productCatalogsRelations = relations(productCatalogs, ({ one }) => ({
+  uploadedByUser: one(user, {
+    fields: [productCatalogs.uploadedBy],
+    references: [user.id],
+  }),
+}));
+
+export const blogCategoriesRelations = relations(blogCategories, ({ many }) => ({
+  posts: many(blogPosts),
+}));
+
+export const blogPostsRelations = relations(blogPosts, ({ one }) => ({
+  category: one(blogCategories, {
+    fields: [blogPosts.categoryId],
+    references: [blogCategories.id],
+  }),
+  author: one(user, {
+    fields: [blogPosts.authorId],
+    references: [user.id],
+  }),
+}));
+
 // Insert schemas
 export const insertCategorySchema = createInsertSchema(categories).omit({
   id: true,
@@ -684,6 +785,20 @@ export const insertTradeshowLeadSchema = createInsertSchema(
 export const insertTermsConditionsSchema = createInsertSchema(
   termsConditions,
 ).omit({ id: true, createdAt: true });
+export const insertProductCatalogSchema = createInsertSchema(productCatalogs).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+export const insertBlogCategorySchema = createInsertSchema(blogCategories).omit({
+  id: true,
+  createdAt: true,
+});
+export const insertBlogPostSchema = createInsertSchema(blogPosts).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
 
 // Select types
 export type Category = typeof categories.$inferSelect;
@@ -713,6 +828,9 @@ export type TradeshowRepProduct = typeof tradeshowRepProducts.$inferSelect;
 export type TradeshowRepService = typeof tradeshowRepServices.$inferSelect;
 export type TradeshowLead = typeof tradeshowLeads.$inferSelect;
 export type TermsConditions = typeof termsConditions.$inferSelect;
+export type ProductCatalog = typeof productCatalogs.$inferSelect;
+export type BlogCategory = typeof blogCategories.$inferSelect;
+export type BlogPost = typeof blogPosts.$inferSelect;
 
 // Insert types
 export type InsertCategory = z.infer<typeof insertCategorySchema>;
@@ -749,3 +867,6 @@ export type InsertTradeshowRepService = z.infer<
 >;
 export type InsertTradeshowLead = z.infer<typeof insertTradeshowLeadSchema>;
 export type InsertTermsConditions = z.infer<typeof insertTermsConditionsSchema>;
+export type InsertProductCatalog = z.infer<typeof insertProductCatalogSchema>;
+export type InsertBlogCategory = z.infer<typeof insertBlogCategorySchema>;
+export type InsertBlogPost = z.infer<typeof insertBlogPostSchema>;
