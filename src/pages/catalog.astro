@@ -1,0 +1,138 @@
+---
+import { db } from "@/lib/db";
+import { productCatalogs } from "@/lib/db/schema";
+import Layout from "@/layouts/default.astro";
+import { eq } from "drizzle-orm";
+
+const [activeCatalog] = await db
+  .select()
+  .from(productCatalogs)
+  .where(eq(productCatalogs.isActive, true))
+  .limit(1);
+---
+
+<Layout title="Product Catalog" description="View and download our current product catalog">
+  {activeCatalog ? (
+    <div class="catalog-wrapper">
+      <div class="catalog-header">
+        <h1 class="catalog-title">Product Catalog</h1>
+        <a
+          href={activeCatalog.pdfUrl}
+          download
+          class="catalog-download"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" x2="12" y1="15" y2="3"/>
+          </svg>
+          Download PDF
+        </a>
+      </div>
+      <iframe
+        src={activeCatalog.pdfUrl}
+        class="catalog-frame"
+        title={`${activeCatalog.displayName} — Product Catalog`}
+      ></iframe>
+    </div>
+  ) : (
+    <div class="catalog-empty">
+      <div class="catalog-empty-inner">
+        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="catalog-empty-icon">
+          <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
+          <polyline points="14 2 14 8 20 8"/>
+        </svg>
+        <h1 class="catalog-empty-title">Catalog Coming Soon</h1>
+        <p class="catalog-empty-desc">
+          Our product catalog is being prepared. Check back soon or
+          <a href="/contact" class="catalog-empty-link">contact us</a> for product information.
+        </p>
+      </div>
+    </div>
+  )}
+</Layout>
+
+<style>
+  .catalog-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 4rem);
+  }
+
+  .catalog-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1.5rem;
+    border-bottom: 1px solid var(--border, oklch(0.922 0 0));
+    flex-shrink: 0;
+    background-color: var(--background, #fff);
+  }
+
+  .catalog-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin: 0;
+  }
+
+  .catalog-download {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    background-color: var(--primary, oklch(0.205 0 0));
+    color: var(--primary-foreground, oklch(0.985 0 0));
+    text-decoration: none;
+    transition: opacity 0.15s;
+  }
+
+  .catalog-download:hover {
+    opacity: 0.9;
+  }
+
+  .catalog-frame {
+    flex: 1;
+    width: 100%;
+    border: none;
+    display: block;
+  }
+
+  .catalog-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(100vh - 8rem);
+    padding: 2rem;
+  }
+
+  .catalog-empty-inner {
+    text-align: center;
+    max-width: 32rem;
+  }
+
+  .catalog-empty-icon {
+    color: var(--muted-foreground, oklch(0.556 0 0));
+    margin: 0 auto 1.5rem;
+    display: block;
+  }
+
+  .catalog-empty-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0 0 0.75rem;
+  }
+
+  .catalog-empty-desc {
+    color: var(--muted-foreground, oklch(0.556 0 0));
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .catalog-empty-link {
+    color: var(--primary, oklch(0.205 0 0));
+    text-decoration: underline;
+  }
+</style>
