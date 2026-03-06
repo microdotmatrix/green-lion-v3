@@ -29,16 +29,14 @@ export const PUT: APIRoute = async ({ params, locals }) => {
         headers: { "Content-Type": "application/json" },
       });
     }
-    // Atomic: deactivate all, then activate target
-    await db.transaction(async (tx) => {
-      await tx
-        .update(productCatalogs)
-        .set({ isActive: false, updatedAt: new Date() });
-      await tx
-        .update(productCatalogs)
-        .set({ isActive: true, updatedAt: new Date() })
-        .where(eq(productCatalogs.id, id));
-    });
+    // Deactivate all, then activate target (neon-http doesn't support transactions)
+    await db
+      .update(productCatalogs)
+      .set({ isActive: false, updatedAt: new Date() });
+    await db
+      .update(productCatalogs)
+      .set({ isActive: true, updatedAt: new Date() })
+      .where(eq(productCatalogs.id, id));
     return new Response(JSON.stringify({ success: true }), {
       status: 200,
       headers: { "Content-Type": "application/json" },
