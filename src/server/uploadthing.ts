@@ -12,15 +12,12 @@ export const uploadRouter = {
     },
   })
     .middleware(async ({ req }) => {
-      // Verify the user session using better-auth
       const session = await auth.api.getSession({
         headers: req.headers,
       });
-
-      if (!session?.user) {
+      if (!session?.user || !session.user.approved) {
         throw new Error("Unauthorized");
       }
-
       return {
         userId: session.user.id,
         uploadedAt: new Date().toISOString(),
@@ -28,6 +25,30 @@ export const uploadRouter = {
     })
     .onUploadComplete(async ({ metadata, file }) => {
       console.log("Upload complete for user:", metadata.userId);
+      return { url: file.ufsUrl };
+    }),
+
+  // PDF uploader for product catalogs
+  pdfUploader: f({
+    pdf: {
+      maxFileSize: "32MB",
+      maxFileCount: 1,
+    },
+  })
+    .middleware(async ({ req }) => {
+      const session = await auth.api.getSession({
+        headers: req.headers,
+      });
+      if (!session?.user || !session.user.approved) {
+        throw new Error("Unauthorized");
+      }
+      return {
+        userId: session.user.id,
+        uploadedAt: new Date().toISOString(),
+      };
+    })
+    .onUploadComplete(async ({ metadata, file }) => {
+      console.log("PDF upload complete for user:", metadata.userId);
       return { url: file.ufsUrl };
     }),
 } satisfies FileRouter;
