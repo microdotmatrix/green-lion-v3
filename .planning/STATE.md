@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: "Completed 01-foundation/01-01-PLAN.md"
-last_updated: "2026-03-06T17:09:19Z"
+stopped_at: Completed 01-foundation/01-02-PLAN.md
+last_updated: "2026-03-06T18:04:42.271Z"
 last_activity: 2026-03-06 — Completed plan 01-01; added productCatalogs, blogCategories, blogPosts tables and netlify.toml build pipeline
 progress:
   total_phases: 4
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 2
-  completed_plans: 1
+  completed_plans: 2
   percent: 12
 ---
 
@@ -50,6 +50,7 @@ Progress: [█░░░░░░░░░] 12%
 - Trend: —
 
 *Updated after each plan completion*
+| Phase 01-foundation P02 | 5 | 2 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -66,6 +67,7 @@ Recent decisions affecting current work:
 - [01-01]: categoryId in blogPosts uses varchar() to match blogCategories.id which is varchar
 - [01-01]: netlify.toml omits [functions] section — @astrojs/netlify adapter handles Functions directory automatically
 - [01-01]: Migration file committed to git before deploy — drizzle-kit migrate reads committed files from ./drizzle/
+- [Phase 01-02]: pdfUploader uses 'pdf' short key (UploadThing v7 MIME alias); both routes use file.ufsUrl; approved check added to imageUploader for consistency
 
 ### Pending Todos
 
@@ -79,6 +81,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-06T17:09:19Z
-Stopped at: Completed 01-foundation/01-01-PLAN.md
-Resume file: .planning/phases/01-foundation/01-02-PLAN.md
+Last session: 2026-03-06T18:04:42.268Z
+Stopped at: Completed 01-foundation/01-02-PLAN.md
+Resume file: None
