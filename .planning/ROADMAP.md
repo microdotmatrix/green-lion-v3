@@ -13,7 +13,7 @@ Two content features are added to a working Astro 5 + React 19 company website: 
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundation** - DB schema migrations and UploadThing PDF upload extension (completed 2026-03-06)
-- [ ] **Phase 2: PDF Catalog** - Admin catalog management and public `/catalog` viewer
+- [x] **Phase 2: PDF Catalog** - Admin catalog management and public `/catalog` viewer (completed 2026-03-06)
 - [ ] **Phase 3: Blog Admin** - Admin CRUD for blog posts and categories with markdown editor
 - [ ] **Phase 4: Blog Frontend** - Public `/blog` listing, post detail, and category filter routes
 
@@ -90,6 +90,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation | 2/2 | Complete   | 2026-03-06 |
-| 2. PDF Catalog | 2/3 | In Progress|  |
+| 2. PDF Catalog | 3/3 | Complete   | 2026-03-06 |
 | 3. Blog Admin | 0/3 | Not started | - |
 | 4. Blog Frontend | 0/1 | Not started | - |

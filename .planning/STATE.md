@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 02-03-PLAN.md
-last_updated: "2026-03-06T22:43:05Z"
+stopped_at: Completed 02-02-PLAN.md
+last_updated: "2026-03-06T22:49:05.428Z"
 last_activity: 2026-03-06 — Completed plan 02-03; public /catalog page with iframe embed and download button
 progress:
   total_phases: 4
-  completed_phases: 1
-  total_plans: 3
+  completed_phases: 2
+  total_plans: 5
   completed_plans: 5
   percent: 31
 ---
@@ -53,6 +53,7 @@ Progress: [███░░░░░░░] 31%
 *Updated after each plan completion*
 | Phase 02-pdf-catalog P01 | 2 min | 2 tasks | 3 files |
 | Phase 02-pdf-catalog P03 | ~10 min | 2 tasks | 1 file |
+| Phase 02-pdf-catalog P02 | 2 | 2 tasks | 8 files |
 
 ## Accumulated Context
 
@@ -75,6 +76,8 @@ Recent decisions affecting current work:
 - [02-01]: DELETE returns 409 (Conflict) rather than 403 to signal business-logic constraint on active catalog
 - [02-03]: Inline SVG icons used in catalog.astro to keep page a pure Astro server component (no React island needed)
 - [02-03]: Download button always rendered when active catalog exists — never conditional — as iframe fallback for X-Frame-Options / mobile PDF limitations
+- [Phase 02-02]: CatalogsPage owns QueryClientProvider — mounts directly via client:load without AdminSidebar wrapper that provides QueryProvider
+- [Phase 02-02]: Two-phase upload enforced: createCatalogMut.mutate only fires inside onClientUploadComplete with confirmed ufsUrl — never POST with empty pdfUrl
 
 ### Pending Todos
 
@@ -88,6 +91,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-06T22:43:05Z
-Stopped at: Completed 02-03-PLAN.md
-Resume file: .planning/phases/03-blog/ (Phase 3 next)
+Last session: 2026-03-06T22:49:05.426Z
+Stopped at: Completed 02-02-PLAN.md
+Resume file: None
