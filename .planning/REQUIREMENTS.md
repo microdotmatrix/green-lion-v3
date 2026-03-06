@@ -7,9 +7,9 @@
 
 ### PDF Catalog
 
-- [ ] **CAT-01**: Admin can upload a PDF file via the admin dashboard and save it to the catalog list with a display name
-- [ ] **CAT-02**: Admin can mark one catalog version as the active catalog (only one active at a time; enforced transactionally)
-- [ ] **CAT-03**: Admin can delete a catalog version from the list
+- [x] **CAT-01**: Admin can upload a PDF file via the admin dashboard and save it to the catalog list with a display name
+- [x] **CAT-02**: Admin can mark one catalog version as the active catalog (only one active at a time; enforced transactionally)
+- [x] **CAT-03**: Admin can delete a catalog version from the list
 - [ ] **CAT-04**: Public `/catalog` route embeds the active PDF in an iframe using the browser's native PDF viewer
 - [ ] **CAT-05**: Public `/catalog` route displays a download button as a fallback when the browser cannot render the embedded PDF (mobile browsers)
 
@@ -58,9 +58,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| CAT-01 | Phase 2 | Pending |
-| CAT-02 | Phase 2 | Pending |
-| CAT-03 | Phase 2 | Pending |
+| CAT-01 | Phase 2 | Complete |
+| CAT-02 | Phase 2 | Complete |
+| CAT-03 | Phase 2 | Complete |
 | CAT-04 | Phase 2 | Pending |
 | CAT-05 | Phase 2 | Pending |
 | BLOG-01 | Phase 3 | Pending |
