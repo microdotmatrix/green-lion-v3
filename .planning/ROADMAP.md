@@ -43,12 +43,12 @@ Plans:
   3. Admin can delete a catalog version from the list
   4. Visiting `/catalog` displays the active PDF embedded in the page using the browser's native viewer
   5. Visiting `/catalog` on a mobile browser (where inline PDF rendering fails) shows a visible download button as fallback
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 02-01: REST API for catalog versions (`GET/POST /api/admin/catalogs/index.ts`, `GET/PUT/DELETE /api/admin/catalogs/[id].ts`) with active-flag transaction and approved-user guard
-- [ ] 02-02: Admin React island — catalogs table, upload dialog, delete dialog, active toggle
-- [ ] 02-03: Public `/catalog` Astro page — active-catalog query, iframe embed, mobile download fallback
+- [ ] 02-01-PLAN.md — Catalog REST API (GET/POST index, PUT/DELETE [id]), useUploadThing export
+- [ ] 02-02-PLAN.md — Admin React island (table, upload dialog, delete dialog, active toggle, Astro shell)
+- [ ] 02-03-PLAN.md — Public /catalog page (iframe embed, always-visible download button, empty state)
 
 ### Phase 3: Blog Admin
 **Goal**: Admin can author, edit, publish, and delete blog posts with categories using a markdown editor
@@ -90,6 +90,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation | 2/2 | Complete   | 2026-03-06 |
-| 2. PDF Catalog | 0/3 | Not started | - |
+| 2. PDF Catalog | 0/3 | Planning complete | - |
 | 3. Blog Admin | 0/3 | Not started | - |
 | 4. Blog Frontend | 0/1 | Not started | - |
