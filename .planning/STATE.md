@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 02-01-PLAN.md
-last_updated: "2026-03-06T21:46:35Z"
-last_activity: 2026-03-06 — Completed plan 02-01; catalog REST API routes and useUploadThing hook export
+stopped_at: Completed 02-03-PLAN.md
+last_updated: "2026-03-06T22:43:05Z"
+last_activity: 2026-03-06 — Completed plan 02-03; public /catalog page with iframe embed and download button
 progress:
   total_phases: 4
   completed_phases: 1
   total_plans: 3
-  completed_plans: 3
-  percent: 18
+  completed_plans: 5
+  percent: 31
 ---
 
 # Project State
@@ -26,11 +26,11 @@ See: .planning/PROJECT.md (updated 2026-03-05)
 ## Current Position
 
 Phase: 2 of 4 (PDF Catalog)
-Plan: 1 of 3 in current phase (02-01 complete)
+Plan: 3 of 3 in current phase (02-03 complete — phase 02 complete)
 Status: Executing
-Last activity: 2026-03-06 — Completed plan 02-01; catalog REST API routes and useUploadThing hook export
+Last activity: 2026-03-06 — Completed plan 02-03; public /catalog page with iframe embed and download button
 
-Progress: [██░░░░░░░░] 18%
+Progress: [███░░░░░░░] 31%
 
 ## Performance Metrics
 
@@ -44,7 +44,7 @@ Progress: [██░░░░░░░░] 18%
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01-foundation | 2 | 4 min | 2 min |
-| 02-pdf-catalog | 1 | 2 min | 2 min |
+| 02-pdf-catalog | 3 | ~14 min | ~5 min |
 
 **Recent Trend:**
 - Last 5 plans: 01-01 (2 min), 01-02 (2 min), 02-01 (2 min)
@@ -52,6 +52,7 @@ Progress: [██░░░░░░░░] 18%
 
 *Updated after each plan completion*
 | Phase 02-pdf-catalog P01 | 2 min | 2 tasks | 3 files |
+| Phase 02-pdf-catalog P03 | ~10 min | 2 tasks | 1 file |
 
 ## Accumulated Context
 
@@ -72,6 +73,8 @@ Recent decisions affecting current work:
 - [02-01]: generateReactHelpers used (not individual hook imports) to match @uploadthing/react v7 API surface
 - [02-01]: PUT handler verifies target exists before entering transaction to return clear 404 rather than no-op
 - [02-01]: DELETE returns 409 (Conflict) rather than 403 to signal business-logic constraint on active catalog
+- [02-03]: Inline SVG icons used in catalog.astro to keep page a pure Astro server component (no React island needed)
+- [02-03]: Download button always rendered when active catalog exists — never conditional — as iframe fallback for X-Frame-Options / mobile PDF limitations
 
 ### Pending Todos
 
@@ -85,6 +88,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-06T21:46:35Z
-Stopped at: Completed 02-01-PLAN.md
-Resume file: .planning/phases/02-pdf-catalog/02-02-PLAN.md
+Last session: 2026-03-06T22:43:05Z
+Stopped at: Completed 02-03-PLAN.md
+Resume file: .planning/phases/03-blog/ (Phase 3 next)
