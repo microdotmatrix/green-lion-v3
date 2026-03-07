@@ -1,5 +1,5 @@
 [build]
-  command = "drizzle-kit migrate && astro build"
+  command = "astro build"
   publish = "dist/"
 
 [build.environment]
