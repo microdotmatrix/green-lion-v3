@@ -31,6 +31,7 @@ export const NAV_LINKS: NavLinks[] = [
   { link: "products", title: "Products" },
   { link: "services", title: "Services" },
   { link: "case-studies", title: "Case Studies" },
+  { link: "blog", title: "Blog" },
   { link: "about", title: "About" },
   { link: "contact", title: "Contact" },
 ];
