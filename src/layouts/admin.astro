@@ -2,6 +2,7 @@
 import "@/styles/global.css";
 
 import { TailwindIndicator } from "@/components/elements/tailwind-indicator.tsx";
+import { Toaster } from "@/components/ui/sonner";
 import Meta from "@/components/layout/meta.astro";
 import UploadSSR from "@/components/providers/upload-ssr.astro";
 import { SITE } from "@/lib/config";
@@ -36,6 +37,7 @@ if (!user.approved) {
   <UploadSSR />
   <body class="bg-zinc-950 text-zinc-50 antialiased">
     <slot />
+    <Toaster client:load />
     {import.meta.env.DEV && <TailwindIndicator client:load />}
   </body>
 </html>

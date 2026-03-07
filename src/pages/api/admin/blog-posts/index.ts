@@ -25,7 +25,7 @@ const sanitizeConfig: sanitizeHtml.IOptions = {
 const createPostSchema = z.object({
   title: z.string().min(1).max(500),
   body: z.string().min(1),
-  excerpt: z.string().min(1),
+  excerpt: z.string().optional().default(""),
   coverImageUrl: z.string().optional(),
   categoryId: z.string().optional(),
   status: z.enum(["draft", "published"]).optional().default("draft"),

@@ -1,0 +1,18 @@
+---
+import AboutSection from "@/components/sections/about.astro";
+import Mission from "@/components/sections/mission.astro";
+import Team from "@/components/sections/team.astro";
+import Layout from "@/layouts/default.astro";
+---
+
+<Layout title="About">
+  <section id="about">
+    <AboutSection />
+  </section>
+  <section id="mission" class="fl-px-4/8 md:fl-px-8/24 border-b">
+    <Mission />
+  </section>
+  <section id="team" class="fl-px-4/8 md:fl-px-8/24">
+    <Team />
+  </section>
+</Layout>
