@@ -14,7 +14,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundation** - DB schema migrations and UploadThing PDF upload extension (completed 2026-03-06)
 - [x] **Phase 2: PDF Catalog** - Admin catalog management and public `/catalog` viewer (completed 2026-03-06)
-- [ ] **Phase 3: Blog Admin** - Admin CRUD for blog posts and categories with markdown editor
+- [ ] **Phase 3: Blog Admin** - Admin CRUD for blog posts and categories with Tiptap WYSIWYG editor
 - [ ] **Phase 4: Blog Frontend** - Public `/blog` listing, post detail, and category filter routes
 
 ## Phase Details
@@ -51,21 +51,21 @@ Plans:
 - [ ] 02-03-PLAN.md — Public /catalog page (iframe embed, always-visible download button, empty state)
 
 ### Phase 3: Blog Admin
-**Goal**: Admin can author, edit, publish, and delete blog posts with categories using a markdown editor
+**Goal**: Admin can author, edit, publish, and delete blog posts with categories using a Tiptap WYSIWYG editor
 **Depends on**: Phase 1
 **Requirements**: BLOG-01, BLOG-02, BLOG-03, BLOG-04, BLOG-05
 **Success Criteria** (what must be TRUE):
-  1. Admin can create a new blog post with title, markdown body, excerpt, cover image, and an assigned category — including creating a category inline during authoring
+  1. Admin can create a new blog post with title, rich-text HTML body, excerpt, cover image, and an assigned category — including creating a category inline during authoring
   2. Admin can edit any field of an existing post, including replacing the cover image
   3. Admin can toggle a post between draft and published status without deleting it
   4. Admin can permanently delete a blog post
   5. Draft posts are not accessible on any public route (slug pages return 404 for drafts)
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 03-01: REST API for blog categories (`GET/POST index.ts`, `GET/PUT/DELETE [id].ts`) and blog posts (`GET/POST index.ts`, `GET/PUT/DELETE [id].ts`) with slug uniqueness, approved-user guards, and pagination support
-- [ ] 03-02: Install blog dependencies (`@uiw/react-md-editor`, `react-markdown`, `remark-gfm`, `rehype-highlight`, `rehype-slug`, `rehype-sanitize`, `slugify`, `reading-time`) and scaffold markdown render utility
-- [ ] 03-03: Admin React island — blog posts table, post form dialog with markdown editor and inline category creation, delete dialog
+- [ ] 03-01-PLAN.md — REST API for blog categories (GET/POST/DELETE) and blog posts (GET/POST/PUT/DELETE) with slug auto-generation, sanitize-html XSS sanitization, pagination (25/page), and auth guards
+- [ ] 03-02-PLAN.md — Install Tiptap packages; full-page editor island with toolbar, BubbleMenu, FileHandler image upload, inline category combobox, hooks, and Astro shells for /admin/blog/new and /admin/blog/[id]/edit
+- [ ] 03-03-PLAN.md — Blog posts list page island: paginated table with inline status toggle, delete dialog, /admin/blog/index.astro shell, and Blog nav item in admin sidebar
 
 ### Phase 4: Blog Frontend
 **Goal**: Visitors can browse published blog posts, read individual posts, and filter by category — with correct social sharing metadata
@@ -73,7 +73,7 @@ Plans:
 **Requirements**: BFNT-01, BFNT-02, BFNT-03, BFNT-04
 **Success Criteria** (what must be TRUE):
   1. Visiting `/blog` shows a list of all published posts with title, excerpt, cover image, date, and category
-  2. Visiting `/blog/[slug]` for a published post renders the full post with markdown body converted to HTML
+  2. Visiting `/blog/[slug]` for a published post renders the full post with HTML body (sanitized at write time)
   3. Visiting `/blog/[slug]` for a draft post returns a 404 (not a rendered page)
   4. Visiting `/blog/category/[slug]` shows only published posts belonging to that category
   5. Sharing a post URL on social platforms shows the post's title, excerpt, and cover image in the link preview
