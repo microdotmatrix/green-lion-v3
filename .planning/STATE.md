@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Phase 4 context gathered
-last_updated: "2026-03-07T05:06:00.964Z"
+stopped_at: Completed 04-01-PLAN.md
+last_updated: "2026-03-07T05:28:29.335Z"
 last_activity: 2026-03-06 — Completed plan 03-03; blog list page island, table, delete dialog, sidebar nav item
 progress:
   total_phases: 4
   completed_phases: 3
-  total_plans: 8
-  completed_plans: 8
+  total_plans: 10
+  completed_plans: 9
   percent: 88
 ---
 
@@ -57,6 +57,7 @@ Progress: [█████████░] 88%
 | Phase 03-blog-admin P01 | 2 min | 3 tasks | 8 files |
 | Phase 03-blog-admin P03 | 2 | 2 tasks | 5 files |
 | Phase 03-blog-admin P02 | 10 | 2 tasks | 9 files |
+| Phase 04-blog-frontend P01 | 2 | 3 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -90,6 +91,9 @@ Recent decisions affecting current work:
 - [Phase 03-02]: immediatelyRender: false on useEditor prevents SSR hydration mismatch in Astro React islands
 - [Phase 03-02]: BlogEditorInner pattern: inner component holds all hooks, outer BlogEditor only provides QueryProvider to avoid hook ordering violations
 - [Phase 03-02]: BubbleMenu imported from @tiptap/react/menus subpath — not main @tiptap/react export
+- [Phase 04-01]: BlogPostCard uses article element + separate anchors for title and category badge to avoid nested anchor HTML
+- [Phase 04-01]: ogImage forwarding is backward-compatible optional prop in default.astro — pages omitting it use Meta own SITE.ogImage default
+- [Phase 04-01]: Blog components live in src/components/blog/ — wave 2 pages reference stable component contracts from this foundation
 
 ### Pending Todos
 
@@ -103,6 +107,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-07T05:06:00.961Z
-Stopped at: Phase 4 context gathered
-Resume file: .planning/phases/04-blog-frontend/04-CONTEXT.md
+Last session: 2026-03-07T05:28:29.333Z
+Stopped at: Completed 04-01-PLAN.md
+Resume file: None

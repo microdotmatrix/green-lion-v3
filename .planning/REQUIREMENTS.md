@@ -23,10 +23,10 @@
 
 ### Blog Frontend
 
-- [ ] **BFNT-01**: Public `/blog` route lists all published posts (title, excerpt, cover image, date, category)
+- [x] **BFNT-01**: Public `/blog` route lists all published posts (title, excerpt, cover image, date, category)
 - [ ] **BFNT-02**: Public `/blog/[slug]` route renders a full individual post with rendered markdown body (published posts only — drafts return 404)
-- [ ] **BFNT-03**: Public `/blog/category/[slug]` route lists published posts filtered by category
-- [ ] **BFNT-04**: Individual post pages include Open Graph meta tags (title, description from excerpt, cover image)
+- [x] **BFNT-03**: Public `/blog/category/[slug]` route lists published posts filtered by category
+- [x] **BFNT-04**: Individual post pages include Open Graph meta tags (title, description from excerpt, cover image)
 
 ## v2 Requirements
 
@@ -68,10 +68,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | BLOG-03 | Phase 3 | Complete |
 | BLOG-04 | Phase 3 | Complete |
 | BLOG-05 | Phase 3 | Complete |
-| BFNT-01 | Phase 4 | Pending |
+| BFNT-01 | Phase 4 | Complete |
 | BFNT-02 | Phase 4 | Pending |
-| BFNT-03 | Phase 4 | Pending |
-| BFNT-04 | Phase 4 | Pending |
+| BFNT-03 | Phase 4 | Complete |
+| BFNT-04 | Phase 4 | Complete |
 
 **Coverage:**
 - v1 requirements: 14 total
