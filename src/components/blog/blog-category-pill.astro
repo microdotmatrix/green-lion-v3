@@ -1,0 +1,40 @@
+---
+interface Props {
+  href: string;
+  label: string;
+  active?: boolean;
+}
+
+const { href, label, active = false } = Astro.props;
+---
+
+<a href={href} class:list={["category-pill", { active }]}>
+  {label}
+</a>
+
+<style>
+  .category-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.375rem 1rem;
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--muted-foreground);
+    text-decoration: none;
+    transition:
+      background 0.15s ease,
+      border-color 0.15s ease,
+      color 0.15s ease;
+    white-space: nowrap;
+  }
+
+  .category-pill:hover,
+  .category-pill.active {
+    background: color-mix(in srgb, var(--primary) 10%, var(--card));
+    border-color: color-mix(in srgb, var(--primary) 40%, transparent);
+    color: var(--primary);
+  }
+</style>
