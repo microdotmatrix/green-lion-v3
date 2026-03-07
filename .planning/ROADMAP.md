@@ -77,10 +77,11 @@ Plans:
   3. Visiting `/blog/[slug]` for a draft post returns a 404 (not a rendered page)
   4. Visiting `/blog/category/[slug]` shows only published posts belonging to that category
   5. Sharing a post URL on social platforms shows the post's title, excerpt, and cover image in the link preview
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 04-01: Public Astro pages — `/blog/index.astro` (published post list), `/blog/[slug].astro` (post detail with draft guard and OG meta), `/blog/category/[slug].astro` (category filter)
+- [ ] 04-01-PLAN.md — Shared foundation: reading-time utility, blog-post-card and blog-category-pill components, ogImage threading through default.astro, Blog nav link in config
+- [ ] 04-02-PLAN.md — Three public pages: /blog (hero + grid + filter bar), /blog/category/[slug] (filtered listing), /blog/[slug] (post detail with draft guard and OG meta)
 
 ## Progress
 
@@ -92,4 +93,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 | 1. Foundation | 2/2 | Complete   | 2026-03-06 |
 | 2. PDF Catalog | 3/3 | Complete   | 2026-03-06 |
 | 3. Blog Admin | 3/3 | Complete   | 2026-03-07 |
-| 4. Blog Frontend | 0/1 | Not started | - |
+| 4. Blog Frontend | 0/2 | Not started | - |
