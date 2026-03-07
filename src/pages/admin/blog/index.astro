@@ -1,0 +1,8 @@
+---
+import { BlogPage } from "@/components/admin/blog/blog-page";
+import AdminLayout from "@/layouts/admin.astro";
+---
+
+<AdminLayout title="Blog Posts" description="Manage blog posts">
+  <BlogPage client:load />
+</AdminLayout>

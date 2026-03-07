@@ -9,6 +9,7 @@ import {
   LogOut,
   MessageSquare,
   MessageSquareQuote,
+  Newspaper,
   Package,
   Sliders,
   Star,
@@ -99,6 +100,11 @@ const businessNavItems = [
 ];
 
 const contentNavItems = [
+  {
+    title: "Blog",
+    url: "/admin/blog",
+    icon: Newspaper,
+  },
   {
     title: "Case Studies",
     url: "/admin/case-studies",
