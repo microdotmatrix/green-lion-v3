@@ -15,11 +15,11 @@
 
 ### Blog Posts
 
-- [ ] **BLOG-01**: Admin can create a blog post with title, markdown body, excerpt, cover image, and category
-- [ ] **BLOG-02**: Admin can edit an existing blog post (any field, including replacing the cover image)
-- [ ] **BLOG-03**: Admin can delete a blog post permanently
-- [ ] **BLOG-04**: Admin can toggle a post between draft and published status without deleting it
-- [ ] **BLOG-05**: Admin can create a new blog category inline while authoring or editing a post (no separate admin page required)
+- [x] **BLOG-01**: Admin can create a blog post with title, markdown body, excerpt, cover image, and category
+- [x] **BLOG-02**: Admin can edit an existing blog post (any field, including replacing the cover image)
+- [x] **BLOG-03**: Admin can delete a blog post permanently
+- [x] **BLOG-04**: Admin can toggle a post between draft and published status without deleting it
+- [x] **BLOG-05**: Admin can create a new blog category inline while authoring or editing a post (no separate admin page required)
 
 ### Blog Frontend
 
@@ -63,11 +63,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CAT-03 | Phase 2 | Complete |
 | CAT-04 | Phase 2 | Complete |
 | CAT-05 | Phase 2 | Complete |
-| BLOG-01 | Phase 3 | Pending |
-| BLOG-02 | Phase 3 | Pending |
-| BLOG-03 | Phase 3 | Pending |
-| BLOG-04 | Phase 3 | Pending |
-| BLOG-05 | Phase 3 | Pending |
+| BLOG-01 | Phase 3 | Complete |
+| BLOG-02 | Phase 3 | Complete |
+| BLOG-03 | Phase 3 | Complete |
+| BLOG-04 | Phase 3 | Complete |
+| BLOG-05 | Phase 3 | Complete |
 | BFNT-01 | Phase 4 | Pending |
 | BFNT-02 | Phase 4 | Pending |
 | BFNT-03 | Phase 4 | Pending |

@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Phase 3 context gathered
-last_updated: "2026-03-07T00:21:20.396Z"
-last_activity: 2026-03-06 — Completed plan 02-03; public /catalog page with iframe embed and download button
+stopped_at: "Completed 03-01-PLAN.md"
+last_updated: "2026-03-07T01:30:39Z"
+last_activity: 2026-03-07 — Completed plan 03-01; blog API layer (6 files, 4 routes, types + fetch wrappers)
 progress:
   total_phases: 4
   completed_phases: 2
-  total_plans: 5
-  completed_plans: 5
-  percent: 31
+  total_plans: 8
+  completed_plans: 6
+  percent: 44
 ---
 
 # Project State
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-05)
 
 **Core value:** Visitors can discover Green Lion's products and services, request quotes, and access company content — all without leaving the site.
-**Current focus:** Phase 2 — PDF Catalog
+**Current focus:** Phase 3 — Blog Admin
 
 ## Current Position
 
-Phase: 2 of 4 (PDF Catalog)
-Plan: 3 of 3 in current phase (02-03 complete — phase 02 complete)
+Phase: 3 of 4 (Blog Admin)
+Plan: 1 of 3 in current phase (03-01 complete)
 Status: Executing
-Last activity: 2026-03-06 — Completed plan 02-03; public /catalog page with iframe embed and download button
+Last activity: 2026-03-07 — Completed plan 03-01; blog REST API layer with sanitize-html + slugify
 
-Progress: [███░░░░░░░] 31%
+Progress: [████░░░░░░] 44%
 
 ## Performance Metrics
 
@@ -54,6 +54,7 @@ Progress: [███░░░░░░░] 31%
 | Phase 02-pdf-catalog P01 | 2 min | 2 tasks | 3 files |
 | Phase 02-pdf-catalog P03 | ~10 min | 2 tasks | 1 file |
 | Phase 02-pdf-catalog P02 | 2 | 2 tasks | 8 files |
+| Phase 03-blog-admin P01 | 2 min | 3 tasks | 8 files |
 
 ## Accumulated Context
 
@@ -78,6 +79,10 @@ Recent decisions affecting current work:
 - [02-03]: Download button always rendered when active catalog exists — never conditional — as iframe fallback for X-Frame-Options / mobile PDF limitations
 - [Phase 02-02]: CatalogsPage owns QueryClientProvider — mounts directly via client:load without AdminSidebar wrapper that provides QueryProvider
 - [Phase 02-02]: Two-phase upload enforced: createCatalogMut.mutate only fires inside onClientUploadComplete with confirmed ufsUrl — never POST with empty pdfUrl
+- [03-01]: sanitize-html config defined inline per API route file (not shared module) to keep routes self-contained
+- [03-01]: Slug not regenerated on PUT — editing a post title preserves existing URLs
+- [03-01]: publishedAt set once on first draft→published transition; never cleared on unpublish
+- [03-01]: Postgres error code 23505 caught explicitly; returns 409 rather than 500 for slug/name conflicts
 
 ### Pending Todos
 
@@ -91,6 +96,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-07T00:21:20.394Z
-Stopped at: Phase 3 context gathered
-Resume file: .planning/phases/03-blog-admin/03-CONTEXT.md
+Last session: 2026-03-07T01:30:39Z
+Stopped at: Completed 03-01-PLAN.md
+Resume file: .planning/phases/03-blog-admin/03-02-PLAN.md
