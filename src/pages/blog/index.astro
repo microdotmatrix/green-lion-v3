@@ -1,0 +1,163 @@
+---
+import Layout from "@/layouts/default.astro";
+import BlogPostCard from "@/components/blog/blog-post-card.astro";
+import BlogCategoryPill from "@/components/blog/blog-category-pill.astro";
+import { db } from "@/lib/db";
+import { blogPosts, blogCategories } from "@/lib/db/schema";
+import { eq, desc, and } from "drizzle-orm";
+import { readingTime } from "@/lib/reading-time";
+
+const posts = await db
+  .select({
+    id: blogPosts.id,
+    title: blogPosts.title,
+    slug: blogPosts.slug,
+    excerpt: blogPosts.excerpt,
+    coverImageUrl: blogPosts.coverImageUrl,
+    publishedAt: blogPosts.publishedAt,
+    body: blogPosts.body,
+    categoryName: blogCategories.name,
+    categorySlug: blogCategories.slug,
+  })
+  .from(blogPosts)
+  .leftJoin(blogCategories, eq(blogPosts.categoryId, blogCategories.id))
+  .where(eq(blogPosts.status, "published"))
+  .orderBy(desc(blogPosts.publishedAt));
+
+const categoriesWithPosts = await db
+  .selectDistinct({
+    id: blogCategories.id,
+    name: blogCategories.name,
+    slug: blogCategories.slug,
+  })
+  .from(blogCategories)
+  .innerJoin(
+    blogPosts,
+    and(
+      eq(blogPosts.categoryId, blogCategories.id),
+      eq(blogPosts.status, "published")
+    )
+  );
+
+const [heroPost, ...gridPosts] = posts;
+const currentPath = Astro.url.pathname;
+---
+
+<Layout
+  title="Blog"
+  description="Insights, news, and stories from Green Lion Innovations"
+>
+  <div class="blog-page">
+    {
+      posts.length === 0 ? (
+        <div class="empty-state">
+          <h2>No posts yet</h2>
+          <p>Check back soon for insights and updates.</p>
+          <a href="/">Return home</a>
+        </div>
+      ) : (
+        <>
+          <section class="hero-section">
+            <BlogPostCard
+              title={heroPost.title}
+              slug={heroPost.slug}
+              excerpt={heroPost.excerpt}
+              coverImageUrl={heroPost.coverImageUrl}
+              publishedAt={heroPost.publishedAt}
+              categoryName={heroPost.categoryName}
+              categorySlug={heroPost.categorySlug}
+              readTime={readingTime(heroPost.body)}
+              variant="hero"
+            />
+          </section>
+
+          <nav class="category-filter" aria-label="Filter by category">
+            <BlogCategoryPill
+              href="/blog"
+              label="All"
+              active={currentPath === "/blog"}
+            />
+            {categoriesWithPosts.map((cat) => (
+              <BlogCategoryPill
+                href={`/blog/category/${cat.slug}`}
+                label={cat.name}
+                active={currentPath === `/blog/category/${cat.slug}`}
+              />
+            ))}
+          </nav>
+
+          {gridPosts.length > 0 && (
+            <div class="posts-grid">
+              {gridPosts.map((post) => (
+                <BlogPostCard
+                  title={post.title}
+                  slug={post.slug}
+                  excerpt={post.excerpt}
+                  coverImageUrl={post.coverImageUrl}
+                  publishedAt={post.publishedAt}
+                  categoryName={post.categoryName}
+                  categorySlug={post.categorySlug}
+                  readTime={readingTime(post.body)}
+                  variant="grid"
+                />
+              ))}
+            </div>
+          )}
+        </>
+      )
+    }
+  </div>
+</Layout>
+
+<style>
+  .blog-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+  }
+
+  .hero-section {
+    margin-bottom: 3rem;
+  }
+
+  .category-filter {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 2rem 0;
+  }
+
+  .posts-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  @media (min-width: 768px) {
+    .posts-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 4rem 1rem;
+    color: var(--muted-foreground);
+  }
+
+  .empty-state h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    color: var(--foreground);
+  }
+
+  .empty-state p {
+    margin-bottom: 1.5rem;
+  }
+
+  .empty-state a {
+    color: var(--primary);
+    text-decoration: underline;
+  }
+</style>

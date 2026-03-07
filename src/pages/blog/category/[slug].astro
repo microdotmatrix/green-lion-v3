@@ -1,0 +1,175 @@
+---
+import Layout from "@/layouts/default.astro";
+import BlogPostCard from "@/components/blog/blog-post-card.astro";
+import BlogCategoryPill from "@/components/blog/blog-category-pill.astro";
+import { db } from "@/lib/db";
+import { blogPosts, blogCategories } from "@/lib/db/schema";
+import { eq, desc, and } from "drizzle-orm";
+import { readingTime } from "@/lib/reading-time";
+
+const { slug } = Astro.params;
+
+const [category] = await db
+  .select()
+  .from(blogCategories)
+  .where(eq(blogCategories.slug, slug!))
+  .limit(1);
+
+if (!category) return new Response(null, { status: 404 });
+
+const posts = await db
+  .select({
+    id: blogPosts.id,
+    title: blogPosts.title,
+    slug: blogPosts.slug,
+    excerpt: blogPosts.excerpt,
+    coverImageUrl: blogPosts.coverImageUrl,
+    publishedAt: blogPosts.publishedAt,
+    body: blogPosts.body,
+    categoryName: blogCategories.name,
+    categorySlug: blogCategories.slug,
+  })
+  .from(blogPosts)
+  .leftJoin(blogCategories, eq(blogPosts.categoryId, blogCategories.id))
+  .where(
+    and(
+      eq(blogPosts.status, "published"),
+      eq(blogPosts.categoryId, category.id)
+    )
+  )
+  .orderBy(desc(blogPosts.publishedAt));
+
+if (posts.length === 0) return new Response(null, { status: 404 });
+
+const categoriesWithPosts = await db
+  .selectDistinct({
+    id: blogCategories.id,
+    name: blogCategories.name,
+    slug: blogCategories.slug,
+  })
+  .from(blogCategories)
+  .innerJoin(
+    blogPosts,
+    and(
+      eq(blogPosts.categoryId, blogCategories.id),
+      eq(blogPosts.status, "published")
+    )
+  );
+
+const [heroPost, ...gridPosts] = posts;
+const currentPath = Astro.url.pathname;
+---
+
+<Layout
+  title={`${category.name} | Blog`}
+  description={`Blog posts in the ${category.name} category`}
+>
+  <div class="blog-page">
+    <div class="page-header">
+      <a href="/blog" class="back-link">← Back to all posts</a>
+      <h1>{category.name}</h1>
+    </div>
+
+    <section class="hero-section">
+      <BlogPostCard
+        title={heroPost.title}
+        slug={heroPost.slug}
+        excerpt={heroPost.excerpt}
+        coverImageUrl={heroPost.coverImageUrl}
+        publishedAt={heroPost.publishedAt}
+        categoryName={heroPost.categoryName}
+        categorySlug={heroPost.categorySlug}
+        readTime={readingTime(heroPost.body)}
+        variant="hero"
+      />
+    </section>
+
+    <nav class="category-filter" aria-label="Filter by category">
+      <BlogCategoryPill
+        href="/blog"
+        label="All"
+        active={currentPath === "/blog"}
+      />
+      {
+        categoriesWithPosts.map((cat) => (
+          <BlogCategoryPill
+            href={`/blog/category/${cat.slug}`}
+            label={cat.name}
+            active={currentPath === `/blog/category/${cat.slug}`}
+          />
+        ))
+      }
+    </nav>
+
+    {
+      gridPosts.length > 0 && (
+        <div class="posts-grid">
+          {gridPosts.map((post) => (
+            <BlogPostCard
+              title={post.title}
+              slug={post.slug}
+              excerpt={post.excerpt}
+              coverImageUrl={post.coverImageUrl}
+              publishedAt={post.publishedAt}
+              categoryName={post.categoryName}
+              categorySlug={post.categorySlug}
+              readTime={readingTime(post.body)}
+              variant="grid"
+            />
+          ))}
+        </div>
+      )
+    }
+  </div>
+</Layout>
+
+<style>
+  .blog-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+  }
+
+  .page-header {
+    margin-bottom: 2rem;
+  }
+
+  .back-link {
+    color: var(--muted-foreground);
+    text-decoration: none;
+    font-size: 0.875rem;
+  }
+
+  .back-link:hover {
+    color: var(--primary);
+  }
+
+  h1 {
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+    font-weight: 700;
+    margin: 0.5rem 0 0;
+  }
+
+  .hero-section {
+    margin-bottom: 3rem;
+  }
+
+  .category-filter {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 2rem 0;
+  }
+
+  .posts-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  @media (min-width: 768px) {
+    .posts-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+</style>
