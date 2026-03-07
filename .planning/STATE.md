@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 04-01-PLAN.md
-last_updated: "2026-03-07T05:28:29.335Z"
+stopped_at: Completed 04-02-PLAN.md
+last_updated: "2026-03-07T05:32:25.269Z"
 last_activity: 2026-03-06 — Completed plan 03-03; blog list page island, table, delete dialog, sidebar nav item
 progress:
   total_phases: 4
-  completed_phases: 3
+  completed_phases: 4
   total_plans: 10
-  completed_plans: 9
+  completed_plans: 10
   percent: 88
 ---
 
@@ -58,6 +58,7 @@ Progress: [█████████░] 88%
 | Phase 03-blog-admin P03 | 2 | 2 tasks | 5 files |
 | Phase 03-blog-admin P02 | 10 | 2 tasks | 9 files |
 | Phase 04-blog-frontend P01 | 2 | 3 tasks | 5 files |
+| Phase 04-blog-frontend P02 | 2 | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -94,6 +95,9 @@ Recent decisions affecting current work:
 - [Phase 04-01]: BlogPostCard uses article element + separate anchors for title and category badge to avoid nested anchor HTML
 - [Phase 04-01]: ogImage forwarding is backward-compatible optional prop in default.astro — pages omitting it use Meta own SITE.ogImage default
 - [Phase 04-01]: Blog components live in src/components/blog/ — wave 2 pages reference stable component contracts from this foundation
+- [Phase 04-02]: categoriesWithPosts uses selectDistinct + innerJoin — filter bar shows only categories with at least one published post
+- [Phase 04-02]: category/[slug] returns 404 when valid category has no published posts — prevents empty listing pages
+- [Phase 04-02]: :global() selectors required for post-prose styles since set:html content is outside Astro scoped style boundary
 
 ### Pending Todos
 
@@ -107,6 +111,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-07T05:28:29.333Z
-Stopped at: Completed 04-01-PLAN.md
+Last session: 2026-03-07T05:32:25.266Z
+Stopped at: Completed 04-02-PLAN.md
 Resume file: None

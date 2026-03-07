@@ -15,7 +15,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 1: Foundation** - DB schema migrations and UploadThing PDF upload extension (completed 2026-03-06)
 - [x] **Phase 2: PDF Catalog** - Admin catalog management and public `/catalog` viewer (completed 2026-03-06)
 - [x] **Phase 3: Blog Admin** - Admin CRUD for blog posts and categories with Tiptap WYSIWYG editor (completed 2026-03-07)
-- [ ] **Phase 4: Blog Frontend** - Public `/blog` listing, post detail, and category filter routes
+- [x] **Phase 4: Blog Frontend** - Public `/blog` listing, post detail, and category filter routes (completed 2026-03-07)
 
 ## Phase Details
 
@@ -93,4 +93,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 | 1. Foundation | 2/2 | Complete   | 2026-03-06 |
 | 2. PDF Catalog | 3/3 | Complete   | 2026-03-06 |
 | 3. Blog Admin | 3/3 | Complete   | 2026-03-07 |
-| 4. Blog Frontend | 1/2 | In Progress|  |
+| 4. Blog Frontend | 2/2 | Complete   | 2026-03-07 |
