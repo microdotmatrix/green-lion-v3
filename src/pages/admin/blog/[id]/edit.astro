@@ -1,0 +1,8 @@
+---
+import { BlogEditor } from "@/components/admin/blog/blog-editor";
+import AdminLayout from "@/layouts/admin.astro";
+const { id } = Astro.params;
+---
+<AdminLayout title="Edit Post" description="Edit blog post">
+  <BlogEditor mode="edit" postId={id} client:load />
+</AdminLayout>

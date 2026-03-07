@@ -1,0 +1,7 @@
+---
+import { BlogEditor } from "@/components/admin/blog/blog-editor";
+import AdminLayout from "@/layouts/admin.astro";
+---
+<AdminLayout title="New Post" description="Create a new blog post">
+  <BlogEditor mode="create" client:load />
+</AdminLayout>

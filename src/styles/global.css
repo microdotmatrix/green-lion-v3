@@ -293,6 +293,15 @@
   }
 }
 
+/* Tiptap placeholder */
+.tiptap p.is-editor-empty:first-child::before {
+  color: var(--muted-foreground);
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
+
 @layer utilities {
   :where(h1, h2, h3, h4, h5, h6):is(.accent-underline) {
     position: relative;
