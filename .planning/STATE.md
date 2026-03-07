@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 03-03-PLAN.md
-last_updated: "2026-03-07T01:37:27.344Z"
+stopped_at: Completed 03-02-PLAN.md
+last_updated: "2026-03-07T01:38:28.952Z"
 last_activity: 2026-03-06 — Completed plan 03-03; blog list page island, table, delete dialog, sidebar nav item
 progress:
   total_phases: 4
-  completed_phases: 2
+  completed_phases: 3
   total_plans: 8
-  completed_plans: 7
+  completed_plans: 8
   percent: 88
 ---
 
@@ -56,6 +56,7 @@ Progress: [█████████░] 88%
 | Phase 02-pdf-catalog P02 | 2 | 2 tasks | 8 files |
 | Phase 03-blog-admin P01 | 2 min | 3 tasks | 8 files |
 | Phase 03-blog-admin P03 | 2 | 2 tasks | 5 files |
+| Phase 03-blog-admin P02 | 10 | 2 tasks | 9 files |
 
 ## Accumulated Context
 
@@ -86,6 +87,9 @@ Recent decisions affecting current work:
 - [03-01]: Postgres error code 23505 caught explicitly; returns 409 rather than 500 for slug/name conflicts
 - [Phase 03-03]: hooks.ts already created by Plan 02 (parallel wave) — imported useBlogMutations from ./hooks instead of inlining mutations
 - [Phase 03-03]: Blog nav item placed first in contentNavItems as primary content type in admin sidebar
+- [Phase 03-02]: immediatelyRender: false on useEditor prevents SSR hydration mismatch in Astro React islands
+- [Phase 03-02]: BlogEditorInner pattern: inner component holds all hooks, outer BlogEditor only provides QueryProvider to avoid hook ordering violations
+- [Phase 03-02]: BubbleMenu imported from @tiptap/react/menus subpath — not main @tiptap/react export
 
 ### Pending Todos
 
@@ -99,6 +103,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-07T01:37:27.341Z
-Stopped at: Completed 03-03-PLAN.md
+Last session: 2026-03-07T01:38:28.950Z
+Stopped at: Completed 03-02-PLAN.md
 Resume file: None
