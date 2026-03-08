@@ -1,6 +1,7 @@
 ---
 import Layout from "@/layouts/default.astro";
 import BlogPostCard from "@/components/blog/blog-post-card.astro";
+import BlogFeaturedPost from "@/components/blog/blog-featured-post.astro";
 import BlogCategoryPill from "@/components/blog/blog-category-pill.astro";
 import { db } from "@/lib/db";
 import { blogPosts, blogCategories } from "@/lib/db/schema";
@@ -35,8 +36,8 @@ const categoriesWithPosts = await db
     blogPosts,
     and(
       eq(blogPosts.categoryId, blogCategories.id),
-      eq(blogPosts.status, "published")
-    )
+      eq(blogPosts.status, "published"),
+    ),
   );
 
 const [heroPost, ...gridPosts] = posts;
@@ -47,7 +48,7 @@ const currentPath = Astro.url.pathname;
   title="Blog"
   description="Insights, news, and stories from Green Lion Innovations"
 >
-  <div class="blog-page">
+  <div class="content">
     {
       posts.length === 0 ? (
         <div class="empty-state">
@@ -58,7 +59,7 @@ const currentPath = Astro.url.pathname;
       ) : (
         <>
           <section class="hero-section">
-            <BlogPostCard
+            <BlogFeaturedPost
               title={heroPost.title}
               slug={heroPost.slug}
               excerpt={heroPost.excerpt}
@@ -67,7 +68,6 @@ const currentPath = Astro.url.pathname;
               categoryName={heroPost.categoryName}
               categorySlug={heroPost.categorySlug}
               readTime={formatReadingTime(heroPost.readTimeMinutes)}
-              variant="hero"
             />
           </section>
 
@@ -110,13 +110,8 @@ const currentPath = Astro.url.pathname;
 </Layout>
 
 <style>
-  .blog-page {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 2rem 1rem;
-  }
-
   .hero-section {
+    margin-inline: calc(-1 * var(--content-padding, 1.5rem));
     margin-bottom: 3rem;
   }
 

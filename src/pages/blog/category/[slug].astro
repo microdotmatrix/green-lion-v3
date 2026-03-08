@@ -1,6 +1,7 @@
 ---
 import Layout from "@/layouts/default.astro";
 import BlogPostCard from "@/components/blog/blog-post-card.astro";
+import BlogFeaturedPost from "@/components/blog/blog-featured-post.astro";
 import BlogCategoryPill from "@/components/blog/blog-category-pill.astro";
 import { db } from "@/lib/db";
 import { blogPosts, blogCategories } from "@/lib/db/schema";
@@ -34,8 +35,8 @@ const posts = await db
   .where(
     and(
       eq(blogPosts.status, "published"),
-      eq(blogPosts.categoryId, category.id)
-    )
+      eq(blogPosts.categoryId, category.id),
+    ),
   )
   .orderBy(desc(blogPosts.publishedAt));
 
@@ -50,8 +51,8 @@ const categoriesWithPosts = await db
     blogPosts,
     and(
       eq(blogPosts.categoryId, blogCategories.id),
-      eq(blogPosts.status, "published")
-    )
+      eq(blogPosts.status, "published"),
+    ),
   );
 
 const [heroPost, ...gridPosts] = posts;
@@ -62,7 +63,7 @@ const currentPath = Astro.url.pathname;
   title={`${category.name} | Blog`}
   description={`Blog posts in the ${category.name} category`}
 >
-  <div class="blog-page">
+  <div class="content">
     <div class="page-header">
       <a href="/blog" class="back-link">← Back to all posts</a>
       <h1>{category.name}</h1>
@@ -85,57 +86,52 @@ const currentPath = Astro.url.pathname;
       }
     </nav>
 
-    {posts.length === 0 ? (
-      <div class="empty-state">
-        <h2>No published posts in this category yet</h2>
-        <p>Check back soon for updates in {category.name}.</p>
-        <a href="/blog">Browse all posts</a>
-      </div>
-    ) : (
-      <>
-        <section class="hero-section">
-          <BlogPostCard
-            title={heroPost.title}
-            slug={heroPost.slug}
-            excerpt={heroPost.excerpt}
-            coverImageUrl={heroPost.coverImageUrl}
-            publishedAt={heroPost.publishedAt}
-            categoryName={heroPost.categoryName}
-            categorySlug={heroPost.categorySlug}
-            readTime={formatReadingTime(heroPost.readTimeMinutes)}
-            variant="hero"
-          />
-        </section>
+    {
+      posts.length === 0 ? (
+        <div class="empty-state">
+          <h2>No published posts in this category yet</h2>
+          <p>Check back soon for updates in {category.name}.</p>
+          <a href="/blog">Browse all posts</a>
+        </div>
+      ) : (
+        <>
+          <section class="hero-section">
+            <BlogFeaturedPost
+              title={heroPost.title}
+              slug={heroPost.slug}
+              excerpt={heroPost.excerpt}
+              coverImageUrl={heroPost.coverImageUrl}
+              publishedAt={heroPost.publishedAt}
+              categoryName={heroPost.categoryName}
+              categorySlug={heroPost.categorySlug}
+              readTime={formatReadingTime(heroPost.readTimeMinutes)}
+            />
+          </section>
 
-        {gridPosts.length > 0 && (
-          <div class="posts-grid">
-            {gridPosts.map((post) => (
-              <BlogPostCard
-                title={post.title}
-                slug={post.slug}
-                excerpt={post.excerpt}
-                coverImageUrl={post.coverImageUrl}
-                publishedAt={post.publishedAt}
-                categoryName={post.categoryName}
-                categorySlug={post.categorySlug}
-                readTime={formatReadingTime(post.readTimeMinutes)}
-                variant="grid"
-              />
-            ))}
-          </div>
-        )}
-      </>
-    )}
+          {gridPosts.length > 0 && (
+            <div class="posts-grid">
+              {gridPosts.map((post) => (
+                <BlogPostCard
+                  title={post.title}
+                  slug={post.slug}
+                  excerpt={post.excerpt}
+                  coverImageUrl={post.coverImageUrl}
+                  publishedAt={post.publishedAt}
+                  categoryName={post.categoryName}
+                  categorySlug={post.categorySlug}
+                  readTime={formatReadingTime(post.readTimeMinutes)}
+                  variant="grid"
+                />
+              ))}
+            </div>
+          )}
+        </>
+      )
+    }
   </div>
 </Layout>
 
 <style>
-  .blog-page {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 2rem 1rem;
-  }
-
   .page-header {
     margin-bottom: 2rem;
   }
@@ -157,6 +153,7 @@ const currentPath = Astro.url.pathname;
   }
 
   .hero-section {
+    margin-inline: calc(-1 * var(--content-padding, 1.5rem));
     margin-bottom: 3rem;
   }
 
