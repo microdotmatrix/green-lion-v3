@@ -1,19 +1,10 @@
-import AdminSidebar from "@/components/admin/admin-sidebar";
 import TradeshowsPage from "@/components/admin/tradeshows/tradeshows-page";
+import { AdminPageShell } from "@/components/admin/pages/admin-page-shell";
 
-interface Props {
-  user: {
-    id: string;
-    name: string;
-    email: string;
-    image?: string | null;
-  };
-}
-
-export function AdminTradeshowsPage({ user }: Props) {
+export function AdminTradeshowsPage() {
   return (
-    <AdminSidebar user={user}>
+    <AdminPageShell>
       <TradeshowsPage />
-    </AdminSidebar>
+    </AdminPageShell>
   );
 }

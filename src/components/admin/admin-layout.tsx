@@ -1,4 +1,5 @@
 import {
+  BookOpen,
   Briefcase,
   Building2,
   ChevronDown,
@@ -9,6 +10,7 @@ import {
   LogOut,
   MessageSquare,
   MessageSquareQuote,
+  Newspaper,
   Package,
   Sliders,
   Star,
@@ -64,6 +66,11 @@ const mainNavItems = [
 
 const catalogNavItems = [
   {
+    title: "Catalogs",
+    url: "/admin/catalogs",
+    icon: BookOpen,
+  },
+  {
     title: "Categories",
     url: "/admin/categories",
     icon: FolderOpen,
@@ -99,6 +106,11 @@ const businessNavItems = [
 ];
 
 const contentNavItems = [
+  {
+    title: "Blog",
+    url: "/admin/blog",
+    icon: Newspaper,
+  },
   {
     title: "Case Studies",
     url: "/admin/case-studies",

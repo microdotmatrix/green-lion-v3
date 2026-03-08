@@ -1,5 +1,5 @@
-import AdminSidebar from "@/components/admin/admin-sidebar";
 import UsersPage from "@/components/admin/users/users-page";
+import { AdminPageShell } from "@/components/admin/pages/admin-page-shell";
 
 interface Props {
   user: {
@@ -12,8 +12,8 @@ interface Props {
 
 export function AdminUsersPage({ user }: Props) {
   return (
-    <AdminSidebar user={user}>
+    <AdminPageShell>
       <UsersPage currentUserId={user.id} />
-    </AdminSidebar>
+    </AdminPageShell>
   );
 }

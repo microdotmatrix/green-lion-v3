@@ -1,19 +1,10 @@
-import AdminSidebar from "@/components/admin/admin-sidebar";
 import AttributesPage from "@/components/admin/attributes/attributes-page";
+import { AdminPageShell } from "@/components/admin/pages/admin-page-shell";
 
-interface Props {
-  user: {
-    id: string;
-    name: string;
-    email: string;
-    image?: string | null;
-  };
-}
-
-export function AdminAttributesPage({ user }: Props) {
+export function AdminAttributesPage() {
   return (
-    <AdminSidebar user={user}>
+    <AdminPageShell>
       <AttributesPage />
-    </AdminSidebar>
+    </AdminPageShell>
   );
 }

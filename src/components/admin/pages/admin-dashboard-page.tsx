@@ -1,19 +1,10 @@
-import AdminSidebar from "@/components/admin/admin-sidebar";
 import AdminDashboard from "@/components/admin/dashboard";
+import { AdminPageShell } from "@/components/admin/pages/admin-page-shell";
 
-interface Props {
-  user: {
-    id: string;
-    name: string;
-    email: string;
-    image?: string | null;
-  };
-}
-
-export function AdminDashboardPage({ user }: Props) {
+export function AdminDashboardPage() {
   return (
-    <AdminSidebar user={user}>
+    <AdminPageShell>
       <AdminDashboard />
-    </AdminSidebar>
+    </AdminPageShell>
   );
 }

@@ -1,10 +1,8 @@
 ---
 import { AdminClientsPage } from "@/components/admin/pages/admin-clients-page";
 import AdminLayout from "@/layouts/admin.astro";
-
-const user = Astro.locals.user;
 ---
 
 <AdminLayout title="Clients" description="Manage Client Logos">
-  <AdminClientsPage client:load user={user!} />
+  <AdminClientsPage client:load />
 </AdminLayout>

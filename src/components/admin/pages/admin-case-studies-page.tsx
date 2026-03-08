@@ -1,19 +1,10 @@
-import AdminSidebar from "@/components/admin/admin-sidebar";
 import CaseStudiesPage from "@/components/admin/content/case-studies-page";
+import { AdminPageShell } from "@/components/admin/pages/admin-page-shell";
 
-interface Props {
-  user: {
-    id: string;
-    name: string;
-    email: string;
-    image?: string | null;
-  };
-}
-
-export function AdminCaseStudiesPage({ user }: Props) {
+export function AdminCaseStudiesPage() {
   return (
-    <AdminSidebar user={user}>
+    <AdminPageShell>
       <CaseStudiesPage />
-    </AdminSidebar>
+    </AdminPageShell>
   );
 }

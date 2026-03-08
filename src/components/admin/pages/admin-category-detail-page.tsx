@@ -1,20 +1,14 @@
-import AdminSidebar from "@/components/admin/admin-sidebar";
 import CategoryDetailPage from "@/components/admin/categories/category-detail-page";
+import { AdminPageShell } from "@/components/admin/pages/admin-page-shell";
 
 interface Props {
-  user: {
-    id: string;
-    name: string;
-    email: string;
-    image?: string | null;
-  };
   categoryId: string;
 }
 
-export function AdminCategoryDetailPage({ user, categoryId }: Props) {
+export function AdminCategoryDetailPage({ categoryId }: Props) {
   return (
-    <AdminSidebar user={user}>
+    <AdminPageShell>
       <CategoryDetailPage categoryId={categoryId} />
-    </AdminSidebar>
+    </AdminPageShell>
   );
 }

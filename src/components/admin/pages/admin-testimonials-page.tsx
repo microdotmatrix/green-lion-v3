@@ -1,19 +1,10 @@
-import AdminSidebar from "@/components/admin/admin-sidebar";
 import TestimonialsPage from "@/components/admin/content/testimonials-page";
+import { AdminPageShell } from "@/components/admin/pages/admin-page-shell";
 
-interface Props {
-  user: {
-    id: string;
-    name: string;
-    email: string;
-    image?: string | null;
-  };
-}
-
-export function AdminTestimonialsPage({ user }: Props) {
+export function AdminTestimonialsPage() {
   return (
-    <AdminSidebar user={user}>
+    <AdminPageShell>
       <TestimonialsPage />
-    </AdminSidebar>
+    </AdminPageShell>
   );
 }

@@ -1,19 +1,10 @@
-import AdminSidebar from "@/components/admin/admin-sidebar";
 import CategoriesPage from "@/components/admin/categories/categories-page";
+import { AdminPageShell } from "@/components/admin/pages/admin-page-shell";
 
-interface Props {
-  user: {
-    id: string;
-    name: string;
-    email: string;
-    image?: string | null;
-  };
-}
-
-export function AdminCategoriesPage({ user }: Props) {
+export function AdminCategoriesPage() {
   return (
-    <AdminSidebar user={user}>
+    <AdminPageShell>
       <CategoriesPage />
-    </AdminSidebar>
+    </AdminPageShell>
   );
 }

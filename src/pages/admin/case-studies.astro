@@ -1,10 +1,8 @@
 ---
 import { AdminCaseStudiesPage } from "@/components/admin/pages/admin-case-studies-page";
 import AdminLayout from "@/layouts/admin.astro";
-
-const user = Astro.locals.user;
 ---
 
 <AdminLayout title="Case Studies" description="Manage Case Studies">
-  <AdminCaseStudiesPage client:load user={user!} />
+  <AdminCaseStudiesPage client:load />
 </AdminLayout>

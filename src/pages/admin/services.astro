@@ -1,10 +1,8 @@
 ---
 import { AdminServicesPage } from "@/components/admin/pages/admin-services-page";
 import AdminLayout from "@/layouts/admin.astro";
-
-const user = Astro.locals.user;
 ---
 
 <AdminLayout title="Services" description="Manage Services">
-  <AdminServicesPage client:load user={user!} />
+  <AdminServicesPage client:load />
 </AdminLayout>

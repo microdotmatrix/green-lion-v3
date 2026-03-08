@@ -1,19 +1,10 @@
-import AdminSidebar from "@/components/admin/admin-sidebar";
 import FeedbackPage from "@/components/admin/feedback/feedback-page";
+import { AdminPageShell } from "@/components/admin/pages/admin-page-shell";
 
-interface Props {
-  user: {
-    id: string;
-    name: string;
-    email: string;
-    image?: string | null;
-  };
-}
-
-export function AdminFeedbackPage({ user }: Props) {
+export function AdminFeedbackPage() {
   return (
-    <AdminSidebar user={user}>
+    <AdminPageShell>
       <FeedbackPage />
-    </AdminSidebar>
+    </AdminPageShell>
   );
 }

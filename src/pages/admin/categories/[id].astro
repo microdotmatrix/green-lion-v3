@@ -2,10 +2,9 @@
 import { AdminCategoryDetailPage } from "@/components/admin/pages/admin-category-detail-page";
 import AdminLayout from "@/layouts/admin.astro";
 
-const user = Astro.locals.user;
 const { id } = Astro.params;
 ---
 
 <AdminLayout title="Category Details" description="Manage Category">
-  <AdminCategoryDetailPage client:load user={user!} categoryId={id!} />
+  <AdminCategoryDetailPage client:load categoryId={id!} />
 </AdminLayout>

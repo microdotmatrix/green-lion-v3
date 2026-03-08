@@ -1,10 +1,8 @@
 ---
 import { AdminDashboardPage } from "@/components/admin/pages/admin-dashboard-page";
 import AdminLayout from "@/layouts/admin.astro";
-
-const user = Astro.locals.user;
 ---
 
 <AdminLayout title="Dashboard" description="Admin Dashboard">
-  <AdminDashboardPage client:load user={user!} />
+  <AdminDashboardPage client:load />
 </AdminLayout>

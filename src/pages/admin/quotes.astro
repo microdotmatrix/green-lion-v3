@@ -1,10 +1,8 @@
 ---
 import { AdminQuotesPage } from "@/components/admin/pages/admin-quotes-page";
 import AdminLayout from "@/layouts/admin.astro";
-
-const user = Astro.locals.user;
 ---
 
 <AdminLayout title="Quotes" description="Manage Quotes">
-  <AdminQuotesPage client:load user={user!} />
+  <AdminQuotesPage client:load />
 </AdminLayout>

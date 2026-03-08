@@ -1,19 +1,10 @@
-import AdminSidebar from "@/components/admin/admin-sidebar";
 import QuotesPage from "@/components/admin/quotes/quotes-page";
+import { AdminPageShell } from "@/components/admin/pages/admin-page-shell";
 
-interface Props {
-  user: {
-    id: string;
-    name: string;
-    email: string;
-    image?: string | null;
-  };
-}
-
-export function AdminQuotesPage({ user }: Props) {
+export function AdminQuotesPage() {
   return (
-    <AdminSidebar user={user}>
+    <AdminPageShell>
       <QuotesPage />
-    </AdminSidebar>
+    </AdminPageShell>
   );
 }
