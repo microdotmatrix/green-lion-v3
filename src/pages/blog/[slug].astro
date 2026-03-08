@@ -68,10 +68,7 @@ function formatDate(date: Date | string | null): string {
 
     {
       post.categoryName && post.categorySlug && (
-        <a
-          href={`/blog/category/${post.categorySlug}`}
-          class="category-badge"
-        >
+        <a href={`/blog/category/${post.categorySlug}`} class="category-badge">
           {post.categoryName}
         </a>
       )
@@ -112,7 +109,7 @@ function formatDate(date: Date | string | null): string {
   }
 
   .post-container {
-    max-width: 80ch;
+    max-width: 110ch;
     margin: 0 auto;
     padding: 2rem 1rem;
   }
@@ -151,7 +148,7 @@ function formatDate(date: Date | string | null): string {
   }
 
   .post-prose {
-    line-height: 1.75;
+    line-height: 1.618;
   }
 
   .post-prose :global(h1),
@@ -159,7 +156,8 @@ function formatDate(date: Date | string | null): string {
   .post-prose :global(h3),
   .post-prose :global(h4) {
     font-weight: 600;
-    margin: 1.5em 0 0.5em;
+    margin: 1em 0 0.5em;
+    line-height: 1.25;
   }
 
   .post-prose :global(p) {
