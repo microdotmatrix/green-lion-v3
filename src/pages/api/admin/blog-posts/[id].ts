@@ -25,7 +25,7 @@ const sanitizeConfig: sanitizeHtml.IOptions = {
 const updatePostSchema = z.object({
   title: z.string().min(1).max(500).optional(),
   body: z.string().min(1).optional(),
-  excerpt: z.string().min(1).optional(),
+  excerpt: z.string().optional(),
   coverImageUrl: z.string().nullable().optional(),
   categoryId: z.string().nullable().optional(),
   status: z.enum(["draft", "published"]).optional(),
@@ -65,10 +65,13 @@ export const GET: APIRoute = async ({ params, locals }) => {
     });
   } catch (error) {
     console.error("Error fetching blog post:", error);
-    return new Response(JSON.stringify({ error: "Failed to fetch blog post" }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
+    return new Response(
+      JSON.stringify({ error: "Failed to fetch blog post" }),
+      {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      },
+    );
   }
 };
 
@@ -104,7 +107,10 @@ export const PUT: APIRoute = async ({ params, request, locals }) => {
     const parsed = updatePostSchema.safeParse(body);
     if (!parsed.success) {
       return new Response(
-        JSON.stringify({ error: "Invalid data", details: parsed.error.flatten() }),
+        JSON.stringify({
+          error: "Invalid data",
+          details: parsed.error.flatten(),
+        }),
         { status: 400, headers: { "Content-Type": "application/json" } },
       );
     }

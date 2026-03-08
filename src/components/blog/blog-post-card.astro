@@ -23,6 +23,8 @@ const {
   variant = "grid",
 } = Astro.props;
 
+const hasExcerpt = excerpt.trim().length > 0;
+
 function formatDate(date: Date | string | null): string {
   if (!date) return "";
   return new Intl.DateTimeFormat("en-US", {
@@ -62,13 +64,28 @@ function formatDate(date: Date | string | null): string {
       {title}
     </a>
 
-    <p class:list={["post-excerpt", { "post-excerpt--clamp": variant === "grid" }]}>
-      {excerpt}
-    </p>
+    {
+      hasExcerpt && (
+        <p
+          class:list={[
+            "post-excerpt",
+            { "post-excerpt--clamp": variant === "grid" },
+          ]}
+        >
+          {excerpt}
+        </p>
+      )
+    }
 
     <div class="post-meta">
       {publishedAt && <span class="post-date">{formatDate(publishedAt)}</span>}
-      {publishedAt && <span class="meta-sep" aria-hidden="true">·</span>}
+      {
+        publishedAt && (
+          <span class="meta-sep" aria-hidden="true">
+            ·
+          </span>
+        )
+      }
       <span class="post-read-time">{readTime}</span>
     </div>
   </div>

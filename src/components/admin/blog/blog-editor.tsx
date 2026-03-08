@@ -1,9 +1,3 @@
-import { EditorContent, useEditor } from "@tiptap/react";
-import StarterKit from "@tiptap/starter-kit";
-import Image from "@tiptap/extension-image";
-import Link from "@tiptap/extension-link";
-import Placeholder from "@tiptap/extension-placeholder";
-import FileHandler from "@tiptap/extension-file-handler";
 import * as React from "react";
 
 import { QueryProvider } from "@/components/providers/query-provider";
@@ -19,10 +13,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { useUploadThing } from "@/lib/uploadthing";
-import { cn } from "@/lib/utils";
-
-import { BlogEditorToolbar } from "./blog-editor-toolbar";
 import { CategoryCombobox } from "./category-combobox";
 import {
   useBlogCategories,
@@ -35,6 +25,61 @@ import type { BlogPostFormData } from "./types";
 interface BlogEditorProps {
   mode: "create" | "edit";
   postId?: string;
+}
+
+const BlogRichTextEditor = React.lazy(async () => {
+  const module = await import("./blog-rich-text-editor");
+  return { default: module.BlogRichTextEditor };
+});
+
+interface PlainTextFallbackProps {
+  value: string;
+  onChange: (value: string) => void;
+  message?: string;
+}
+
+function PlainTextEditorFallback({
+  value,
+  onChange,
+  message,
+}: PlainTextFallbackProps) {
+  return (
+    <div className="space-y-3 rounded-md border p-4">
+      {message ? (
+        <p className="text-sm text-muted-foreground">{message}</p>
+      ) : null}
+      <Textarea
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        rows={16}
+        className="min-h-[400px]"
+        placeholder="Write your post content here..."
+      />
+    </div>
+  );
+}
+
+class BlogEditorErrorBoundary extends React.Component<
+  React.PropsWithChildren<{ fallback: React.ReactNode }>,
+  { hasError: boolean }
+> {
+  override state = { hasError: false };
+
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  override componentDidCatch(error: unknown) {
+    console.error("Failed to load blog rich text editor", error);
+  }
+
+  override render() {
+    if (this.state.hasError) {
+      return this.props.fallback;
+    }
+
+    return this.props.children;
+  }
 }
 
 function BlogEditorInner({ mode, postId }: BlogEditorProps) {
@@ -50,7 +95,9 @@ function BlogEditorInner({ mode, postId }: BlogEditorProps) {
   const [body, setBody] = React.useState("");
   const [excerpt, setExcerpt] = React.useState("");
   const [coverImageUrl, setCoverImageUrl] = React.useState("");
-  const [categoryId, setCategoryId] = React.useState<string | undefined>(undefined);
+  const [categoryId, setCategoryId] = React.useState<string | undefined>(
+    undefined,
+  );
   const [status, setStatus] = React.useState<"draft" | "published">("draft");
 
   // Prefill form when editing and data loads
@@ -66,58 +113,6 @@ function BlogEditorInner({ mode, postId }: BlogEditorProps) {
       setStatus(existingPost.status);
     }
   }, [mode, existingPost]);
-
-  const { startUpload } = useUploadThing("imageUploader");
-
-  const editor = useEditor({
-    extensions: [
-      StarterKit,
-      Image,
-      Link.configure({
-        openOnClick: false,
-        defaultProtocol: "https",
-        autolink: true,
-        linkOnPaste: true,
-      }),
-      Placeholder.configure({ placeholder: "Start writing your post..." }),
-      FileHandler.configure({
-        allowedMimeTypes: ["image/png", "image/jpeg", "image/webp", "image/gif"],
-        onDrop: async (currentEditor, files, _pos) => {
-          const uploaded = await startUpload(files);
-          if (uploaded?.[0]?.ufsUrl) {
-            currentEditor
-              .chain()
-              .focus()
-              .setImage({ src: uploaded[0].ufsUrl })
-              .run();
-          }
-        },
-        onPaste: async (currentEditor, files) => {
-          const uploaded = await startUpload(files);
-          if (uploaded?.[0]?.ufsUrl) {
-            currentEditor
-              .chain()
-              .focus()
-              .setImage({ src: uploaded[0].ufsUrl })
-              .run();
-          }
-        },
-      }),
-    ],
-    content: body,
-    immediatelyRender: false,
-    onUpdate: ({ editor: e }) => setBody(e.getHTML()),
-  });
-
-  // Sync editor content when editing post loads
-  React.useEffect(() => {
-    if (editor && existingPost && mode === "edit") {
-      const current = editor.getHTML();
-      if (current !== existingPost.body) {
-        editor.commands.setContent(existingPost.body, { emitUpdate: false });
-      }
-    }
-  }, [editor, existingPost, mode]);
 
   const handleSave = () => {
     const formData: BlogPostFormData = {
@@ -185,8 +180,8 @@ function BlogEditorInner({ mode, postId }: BlogEditorProps) {
             value={status}
             onValueChange={(v) => setStatus(v as "draft" | "published")}
           >
-            <SelectTrigger>
-              <SelectValue />
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Select status" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="draft">Draft</SelectItem>
@@ -223,18 +218,27 @@ function BlogEditorInner({ mode, postId }: BlogEditorProps) {
       {/* Editor */}
       <div className="space-y-1.5">
         <Label>Content</Label>
-        <div
-          className={cn(
-            "rounded-md border",
-            "focus-within:ring-1 focus-within:ring-ring",
-          )}
+        <BlogEditorErrorBoundary
+          fallback={
+            <PlainTextEditorFallback
+              value={body}
+              onChange={setBody}
+              message="The rich text editor could not load, so the content field has fallen back to a plain textarea."
+            />
+          }
         >
-          <BlogEditorToolbar editor={editor} />
-          <EditorContent
-            editor={editor}
-            className="min-h-[400px] px-4 py-3 prose prose-sm max-w-none focus:outline-none [&_.tiptap]:min-h-[400px] [&_.tiptap]:outline-none"
-          />
-        </div>
+          <React.Suspense
+            fallback={
+              <PlainTextEditorFallback
+                value={body}
+                onChange={setBody}
+                message="Loading the rich text editor..."
+              />
+            }
+          >
+            <BlogRichTextEditor value={body} onChange={setBody} />
+          </React.Suspense>
+        </BlogEditorErrorBoundary>
       </div>
 
       {/* Cover image */}

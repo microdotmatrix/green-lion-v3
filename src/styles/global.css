@@ -302,6 +302,95 @@
   pointer-events: none;
 }
 
+@layer components {
+  :where(.blog-prose, .blog-editor-content .tiptap) {
+    line-height: 1.618;
+  }
+
+  :where(.blog-prose, .blog-editor-content .tiptap) > :first-child {
+    margin-top: 0;
+  }
+
+  :where(.blog-prose, .blog-editor-content .tiptap) > :last-child {
+    margin-bottom: 0;
+  }
+
+  :where(.blog-prose, .blog-editor-content .tiptap)
+    :where(h1, h2, h3, h4, h5) {
+    font-weight: 600;
+    margin: 1em 0 0.5em;
+    line-height: 1.25;
+  }
+
+  :where(.blog-prose, .blog-editor-content .tiptap) :where(h1) {
+    font-size: clamp(2.25rem, 2.1rem + 0.75vw, 3rem);
+  }
+
+  :where(.blog-prose, .blog-editor-content .tiptap) :where(h2) {
+    font-size: clamp(1.875rem, 1.8rem + 0.375vw, 2.25rem);
+  }
+
+  :where(.blog-prose, .blog-editor-content .tiptap) :where(h3) {
+    font-size: clamp(1.5rem, 1.425rem + 0.375vw, 1.875rem);
+  }
+
+  :where(.blog-prose, .blog-editor-content .tiptap) :where(h4) {
+    font-size: clamp(1.25rem, 1.2rem + 0.25vw, 1.5rem);
+  }
+
+  :where(.blog-prose, .blog-editor-content .tiptap) :where(h5) {
+    font-size: clamp(1.125rem, 1.1rem + 0.125vw, 1.25rem);
+  }
+
+  :where(.blog-prose, .blog-editor-content .tiptap) :where(p) {
+    margin: 1em 0;
+  }
+
+  :where(.blog-prose, .blog-editor-content .tiptap) :where(ul, ol) {
+    padding-left: 1.5rem;
+    margin: 1em 0;
+  }
+
+  :where(.blog-prose, .blog-editor-content .tiptap) :where(ul) {
+    list-style: disc;
+  }
+
+  :where(.blog-prose, .blog-editor-content .tiptap) :where(ol) {
+    list-style: decimal;
+  }
+
+  :where(.blog-prose, .blog-editor-content .tiptap) :where(a) {
+    color: var(--primary);
+    text-decoration: underline;
+  }
+
+  :where(.blog-prose, .blog-editor-content .tiptap) :where(blockquote) {
+    border-left: 3px solid var(--primary);
+    padding-left: 1rem;
+    color: var(--muted-foreground);
+    margin: 1.5em 0;
+  }
+
+  :where(.blog-prose, .blog-editor-content .tiptap) :where(pre) {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 1rem;
+    overflow-x: auto;
+  }
+
+  :where(.blog-prose, .blog-editor-content .tiptap) :where(code) {
+    font-family: monospace;
+    font-size: 0.875em;
+  }
+
+  :where(.blog-prose, .blog-editor-content .tiptap) :where(img) {
+    max-width: 100%;
+    border-radius: var(--radius-md);
+    margin: 1.5em 0;
+  }
+}
+
 @layer utilities {
   :where(h1, h2, h3, h4, h5, h6):is(.accent-underline) {
     position: relative;

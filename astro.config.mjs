@@ -21,6 +21,17 @@ export default defineConfig({
 
   vite: {
     plugins: [tailwindcss()],
+    optimizeDeps: {
+      include: [
+        "@tiptap/react",
+        "@tiptap/react/menus",
+        "@tiptap/starter-kit",
+        "@tiptap/extension-file-handler",
+        "@tiptap/extension-image",
+        "@tiptap/extension-link",
+        "@tiptap/extension-placeholder",
+      ],
+    },
   },
 
   adapter: netlify(),
