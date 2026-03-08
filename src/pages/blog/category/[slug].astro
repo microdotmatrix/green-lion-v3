@@ -5,7 +5,7 @@ import BlogCategoryPill from "@/components/blog/blog-category-pill.astro";
 import { db } from "@/lib/db";
 import { blogPosts, blogCategories } from "@/lib/db/schema";
 import { eq, desc, and } from "drizzle-orm";
-import { readingTime } from "@/lib/reading-time";
+import { formatReadingTime } from "@/lib/reading-time";
 
 const { slug } = Astro.params;
 
@@ -25,7 +25,7 @@ const posts = await db
     excerpt: blogPosts.excerpt,
     coverImageUrl: blogPosts.coverImageUrl,
     publishedAt: blogPosts.publishedAt,
-    body: blogPosts.body,
+    readTimeMinutes: blogPosts.readTimeMinutes,
     categoryName: blogCategories.name,
     categorySlug: blogCategories.slug,
   })
@@ -38,8 +38,6 @@ const posts = await db
     )
   )
   .orderBy(desc(blogPosts.publishedAt));
-
-if (posts.length === 0) return new Response(null, { status: 404 });
 
 const categoriesWithPosts = await db
   .selectDistinct({
@@ -70,20 +68,6 @@ const currentPath = Astro.url.pathname;
       <h1>{category.name}</h1>
     </div>
 
-    <section class="hero-section">
-      <BlogPostCard
-        title={heroPost.title}
-        slug={heroPost.slug}
-        excerpt={heroPost.excerpt}
-        coverImageUrl={heroPost.coverImageUrl}
-        publishedAt={heroPost.publishedAt}
-        categoryName={heroPost.categoryName}
-        categorySlug={heroPost.categorySlug}
-        readTime={readingTime(heroPost.body)}
-        variant="hero"
-      />
-    </section>
-
     <nav class="category-filter" aria-label="Filter by category">
       <BlogCategoryPill
         href="/blog"
@@ -101,25 +85,47 @@ const currentPath = Astro.url.pathname;
       }
     </nav>
 
-    {
-      gridPosts.length > 0 && (
-        <div class="posts-grid">
-          {gridPosts.map((post) => (
-            <BlogPostCard
-              title={post.title}
-              slug={post.slug}
-              excerpt={post.excerpt}
-              coverImageUrl={post.coverImageUrl}
-              publishedAt={post.publishedAt}
-              categoryName={post.categoryName}
-              categorySlug={post.categorySlug}
-              readTime={readingTime(post.body)}
-              variant="grid"
-            />
-          ))}
-        </div>
-      )
-    }
+    {posts.length === 0 ? (
+      <div class="empty-state">
+        <h2>No published posts in this category yet</h2>
+        <p>Check back soon for updates in {category.name}.</p>
+        <a href="/blog">Browse all posts</a>
+      </div>
+    ) : (
+      <>
+        <section class="hero-section">
+          <BlogPostCard
+            title={heroPost.title}
+            slug={heroPost.slug}
+            excerpt={heroPost.excerpt}
+            coverImageUrl={heroPost.coverImageUrl}
+            publishedAt={heroPost.publishedAt}
+            categoryName={heroPost.categoryName}
+            categorySlug={heroPost.categorySlug}
+            readTime={formatReadingTime(heroPost.readTimeMinutes)}
+            variant="hero"
+          />
+        </section>
+
+        {gridPosts.length > 0 && (
+          <div class="posts-grid">
+            {gridPosts.map((post) => (
+              <BlogPostCard
+                title={post.title}
+                slug={post.slug}
+                excerpt={post.excerpt}
+                coverImageUrl={post.coverImageUrl}
+                publishedAt={post.publishedAt}
+                categoryName={post.categoryName}
+                categorySlug={post.categorySlug}
+                readTime={formatReadingTime(post.readTimeMinutes)}
+                variant="grid"
+              />
+            ))}
+          </div>
+        )}
+      </>
+    )}
   </div>
 </Layout>
 
@@ -171,5 +177,27 @@ const currentPath = Astro.url.pathname;
     .posts-grid {
       grid-template-columns: repeat(3, 1fr);
     }
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 4rem 1rem;
+    color: var(--muted-foreground);
+  }
+
+  .empty-state h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    color: var(--foreground);
+  }
+
+  .empty-state p {
+    margin-bottom: 1.5rem;
+  }
+
+  .empty-state a {
+    color: var(--primary);
+    text-decoration: underline;
   }
 </style>

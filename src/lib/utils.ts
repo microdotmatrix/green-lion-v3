@@ -7,11 +7,11 @@ export function cn(...inputs: ClassValue[]) {
 
 // Utility function to format canonical URL
 export function formatCanonicalURL(url: string | URL) {
-  const path = url.toString();
+  let path = url.toString();
   const hasQueryParams = path.includes("?");
   // If there are query params, make sure the URL has no trailing slash
   if (hasQueryParams) {
-    path.replace(/\/?$/, "");
+    path = path.replace(/\/(?=\?)/, "");
   }
   // otherwise, canonical URL always has a trailing slash
   return path.replace(/\/?$/, hasQueryParams ? "" : "/");

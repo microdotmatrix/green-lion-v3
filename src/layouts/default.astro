@@ -20,7 +20,11 @@ const { title, description = SITE.desc, ogImage } = Astro.props;
 
 <!doctype html>
 <html lang="en">
-  <Meta title={`${title} | ${SITE.title}`} description={description} ogImage={ogImage} />
+  <Meta
+    title={`${title} | ${SITE.title}`}
+    description={description}
+    ogImage={ogImage}
+  />
   <body>
     <Header />
     <main>

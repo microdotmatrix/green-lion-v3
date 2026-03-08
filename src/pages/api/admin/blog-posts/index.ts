@@ -1,5 +1,6 @@
 import { db } from "@/lib/db";
 import { blogCategories, blogPosts } from "@/lib/db/schema";
+import { readingTimeMinutes } from "@/lib/reading-time";
 import type { APIRoute } from "astro";
 import { desc, eq, sql } from "drizzle-orm";
 import sanitizeHtml from "sanitize-html";
@@ -55,6 +56,7 @@ export const GET: APIRoute = async ({ request, locals }) => {
         categoryId: blogPosts.categoryId,
         authorId: blogPosts.authorId,
         status: blogPosts.status,
+        readTimeMinutes: blogPosts.readTimeMinutes,
         publishedAt: blogPosts.publishedAt,
         createdAt: blogPosts.createdAt,
         updatedAt: blogPosts.updatedAt,
@@ -107,6 +109,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
     const slug = slugify(title, { lower: true, strict: true, trim: true });
     const cleanBody = sanitizeHtml(rawBody, sanitizeConfig);
+    const readTime = readingTimeMinutes(cleanBody);
 
     const [newPost] = await db
       .insert(blogPosts)
@@ -119,6 +122,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
         categoryId: categoryId ?? null,
         authorId: locals.user.id,
         status,
+        readTimeMinutes: readTime,
       })
       .returning();
 

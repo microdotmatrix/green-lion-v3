@@ -3,7 +3,7 @@ import Layout from "@/layouts/default.astro";
 import { db } from "@/lib/db";
 import { blogPosts, blogCategories, user } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
-import { readingTime } from "@/lib/reading-time";
+import { formatReadingTime } from "@/lib/reading-time";
 
 const { slug } = Astro.params;
 
@@ -17,6 +17,7 @@ const [post] = await db
     coverImageUrl: blogPosts.coverImageUrl,
     publishedAt: blogPosts.publishedAt,
     status: blogPosts.status,
+    readTimeMinutes: blogPosts.readTimeMinutes,
     categoryName: blogCategories.name,
     categorySlug: blogCategories.slug,
     authorName: user.name,
@@ -31,7 +32,7 @@ if (!post || post.status !== "published") {
   return new Response(null, { status: 404 });
 }
 
-const readTime = readingTime(post.body);
+const readTime = formatReadingTime(post.readTimeMinutes);
 
 function formatDate(date: Date | string | null): string {
   if (!date) return "";

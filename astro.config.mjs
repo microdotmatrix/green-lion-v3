@@ -6,8 +6,11 @@ import tailwindcss from "@tailwindcss/vite";
 
 import netlify from "@astrojs/netlify";
 
+const site = process.env.SITE_URL ?? "https://greenlioninnovations.com";
+
 // https://astro.build/config
 export default defineConfig({
+  site,
   integrations: [
     react({
       babel: {

@@ -114,7 +114,7 @@ function BlogEditorInner({ mode, postId }: BlogEditorProps) {
     if (editor && existingPost && mode === "edit") {
       const current = editor.getHTML();
       if (current !== existingPost.body) {
-        editor.commands.setContent(existingPost.body, false);
+        editor.commands.setContent(existingPost.body, { emitUpdate: false });
       }
     }
   }, [editor, existingPost, mode]);

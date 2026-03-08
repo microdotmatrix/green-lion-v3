@@ -1,5 +1,6 @@
 import { db } from "@/lib/db";
 import { blogPosts } from "@/lib/db/schema";
+import { readingTimeMinutes } from "@/lib/reading-time";
 import type { APIRoute } from "astro";
 import { eq } from "drizzle-orm";
 import sanitizeHtml from "sanitize-html";
@@ -115,7 +116,9 @@ export const PUT: APIRoute = async ({ params, request, locals }) => {
       // Do NOT regenerate slug on PUT
     }
     if (parsed.data.body !== undefined) {
-      updates.body = sanitizeHtml(parsed.data.body, sanitizeConfig);
+      const cleanBody = sanitizeHtml(parsed.data.body, sanitizeConfig);
+      updates.body = cleanBody;
+      updates.readTimeMinutes = readingTimeMinutes(cleanBody);
     }
     if (parsed.data.excerpt !== undefined) {
       updates.excerpt = parsed.data.excerpt;

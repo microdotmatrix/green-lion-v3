@@ -5,7 +5,7 @@ import BlogCategoryPill from "@/components/blog/blog-category-pill.astro";
 import { db } from "@/lib/db";
 import { blogPosts, blogCategories } from "@/lib/db/schema";
 import { eq, desc, and } from "drizzle-orm";
-import { readingTime } from "@/lib/reading-time";
+import { formatReadingTime } from "@/lib/reading-time";
 
 const posts = await db
   .select({
@@ -15,7 +15,7 @@ const posts = await db
     excerpt: blogPosts.excerpt,
     coverImageUrl: blogPosts.coverImageUrl,
     publishedAt: blogPosts.publishedAt,
-    body: blogPosts.body,
+    readTimeMinutes: blogPosts.readTimeMinutes,
     categoryName: blogCategories.name,
     categorySlug: blogCategories.slug,
   })
@@ -66,7 +66,7 @@ const currentPath = Astro.url.pathname;
               publishedAt={heroPost.publishedAt}
               categoryName={heroPost.categoryName}
               categorySlug={heroPost.categorySlug}
-              readTime={readingTime(heroPost.body)}
+              readTime={formatReadingTime(heroPost.readTimeMinutes)}
               variant="hero"
             />
           </section>
@@ -97,7 +97,7 @@ const currentPath = Astro.url.pathname;
                   publishedAt={post.publishedAt}
                   categoryName={post.categoryName}
                   categorySlug={post.categorySlug}
-                  readTime={readingTime(post.body)}
+                  readTime={formatReadingTime(post.readTimeMinutes)}
                   variant="grid"
                 />
               ))}

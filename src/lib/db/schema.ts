@@ -678,6 +678,7 @@ export const blogPosts = pgTable(
       .notNull()
       .default("draft")
       .$type<"draft" | "published">(),
+    readTimeMinutes: integer("read_time_minutes").notNull().default(1),
     publishedAt: timestamp("published_at"),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at")

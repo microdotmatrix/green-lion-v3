@@ -17,6 +17,7 @@ export interface BlogPost {
   categoryId: string | null;
   authorId: string | null;
   status: "draft" | "published";
+  readTimeMinutes: number;
   publishedAt: string | null;
   createdAt: string;
   updatedAt: string;

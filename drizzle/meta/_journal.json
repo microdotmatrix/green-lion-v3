@@ -36,6 +36,13 @@
       "when": 1772816917055,
       "tag": "0004_brave_rockslide",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1772941826582,
+      "tag": "0005_easy_jack_flag",
+      "breakpoints": true
     }
   ]
 }
