@@ -1,8 +1,12 @@
 ---
+import { resolveResponsiveBlogExcerpts } from "@/lib/blog-excerpt";
+import PostMeta from "@/components/blog/post-meta.astro";
+
 interface Props {
   title: string;
   slug: string;
-  excerpt: string;
+  excerpt: string | null;
+  body?: string | null;
   coverImageUrl: string | null;
   publishedAt: Date | string | null;
   categoryName: string | null;
@@ -14,6 +18,7 @@ const {
   title,
   slug,
   excerpt,
+  body,
   coverImageUrl,
   publishedAt,
   categoryName,
@@ -21,20 +26,16 @@ const {
   readTime,
 } = Astro.props;
 
-const hasExcerpt = excerpt.trim().length > 0;
-
-function formatDate(date: Date | string | null): string {
-  if (!date) return "";
-  return new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  }).format(new Date(date));
-}
+const responsiveExcerpt = resolveResponsiveBlogExcerpts(excerpt, body);
+const hasExcerpt = responsiveExcerpt.base.trim().length > 0;
 ---
 
 <article class="featured-post">
-  <div class="featured-image-wrap">
+  <a
+    href={`/blog/${slug}`}
+    class="featured-image-wrap featured-image-link"
+    aria-label={`Read post: ${title}`}
+  >
     {
       coverImageUrl ? (
         <img
@@ -47,7 +48,7 @@ function formatDate(date: Date | string | null): string {
         <div class="featured-image-placeholder" aria-hidden="true" />
       )
     }
-  </div>
+  </a>
 
   <div class="featured-content-card shadow-xl shadow-gray-700/10">
     {
@@ -62,19 +63,23 @@ function formatDate(date: Date | string | null): string {
       {title}
     </a>
 
-    {hasExcerpt && <p class="post-excerpt">{excerpt}</p>}
-
-    <div class="post-meta">
-      {publishedAt && <span class="post-date">{formatDate(publishedAt)}</span>}
-      {
-        publishedAt && (
-          <span class="meta-sep" aria-hidden="true">
-            ·
+    {
+      hasExcerpt && (
+        <p class="post-excerpt">
+          <span class="post-excerpt__text post-excerpt__text--base">
+            {responsiveExcerpt.base}
           </span>
-        )
-      }
-      <span class="post-read-time">{readTime}</span>
-    </div>
+          <span class="post-excerpt__text post-excerpt__text--lg">
+            {responsiveExcerpt.lg}
+          </span>
+          <span class="post-excerpt__text post-excerpt__text--xxxl">
+            {responsiveExcerpt.xxxl}
+          </span>
+        </p>
+      )
+    }
+
+    <PostMeta publishedAt={publishedAt} readTime={readTime} class="post-meta" />
   </div>
 </article>
 
@@ -86,6 +91,12 @@ function formatDate(date: Date | string | null): string {
     align-items: center;
     min-height: 420px;
     overflow: hidden;
+  }
+
+  .featured-image-link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
   }
 
   .featured-image-wrap {
@@ -170,18 +181,45 @@ function formatDate(date: Date | string | null): string {
     overflow: hidden;
   }
 
+  .post-excerpt__text {
+    display: none;
+  }
+
+  .post-excerpt__text--base {
+    display: inline;
+  }
+
+  @media (min-width: 1024px) {
+    .post-excerpt__text--base {
+      display: none;
+    }
+
+    .post-excerpt__text--lg {
+      display: inline;
+    }
+
+    .post-excerpt {
+      -webkit-line-clamp: 5;
+    }
+  }
+
+  @media (min-width: 1920px) {
+    .post-excerpt__text--lg {
+      display: none;
+    }
+
+    .post-excerpt__text--xxxl {
+      display: inline;
+    }
+
+    .post-excerpt {
+      -webkit-line-clamp: 7;
+    }
+  }
+
   .post-meta {
     margin-top: auto;
     padding-top: calc(var(--spacing) * 6);
-    display: flex;
-    align-items: center;
-    gap: 0.375rem;
-    font-size: 0.8125rem;
-    color: var(--muted-foreground);
-  }
-
-  .meta-sep {
-    opacity: 0.5;
   }
 
   @media (max-width: 768px) {

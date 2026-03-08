@@ -13,6 +13,7 @@ const posts = await db
     id: blogPosts.id,
     title: blogPosts.title,
     slug: blogPosts.slug,
+    body: blogPosts.body,
     excerpt: blogPosts.excerpt,
     coverImageUrl: blogPosts.coverImageUrl,
     publishedAt: blogPosts.publishedAt,
@@ -63,6 +64,7 @@ const currentPath = Astro.url.pathname;
               title={heroPost.title}
               slug={heroPost.slug}
               excerpt={heroPost.excerpt}
+              body={heroPost.body}
               coverImageUrl={heroPost.coverImageUrl}
               publishedAt={heroPost.publishedAt}
               categoryName={heroPost.categoryName}
@@ -93,6 +95,7 @@ const currentPath = Astro.url.pathname;
                   title={post.title}
                   slug={post.slug}
                   excerpt={post.excerpt}
+                  body={post.body}
                   coverImageUrl={post.coverImageUrl}
                   publishedAt={post.publishedAt}
                   categoryName={post.categoryName}

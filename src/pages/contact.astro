@@ -16,223 +16,235 @@ const inputErrors =
 ---
 
 <Layout title="Contact Us">
-  <section class="contact-header">
-    <div class="content">
-      <h1>Contact <span class="text-primary">Us</span></h1>
-      <p class="contact-subtitle">
-        Have a question or want to learn more about our manufacturing solutions?
-        We&#39;d love to hear from you.
-      </p>
-    </div>
-  </section>
-
   <section class="contact-section">
-    <div class="content max-w-7xl">
-      {
-        isSuccess ? (
-          <div class="card success-card">
-            <div class="success-icon">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="32"
-                height="32"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z" />
-                <path d="m21.854 2.147-10.94 10.939" />
-              </svg>
-            </div>
-            <h2 class="text-2xl font-bold">Thank You!</h2>
-            <p class="text-muted-foreground max-w-md mx-auto">
-              Your message has been received. Our team will review it and get
-              back to you as soon as possible.
-            </p>
-            <a href="/contact" class="btn-outline">
-              Send Another Message
-            </a>
-          </div>
-        ) : (
-          <div class="card">
-            <div class="card-header">
-              <h2 class="card-title">Get in Touch</h2>
-              <p class="card-description">
-                Fill out the form below and we&#39;ll get back to you as soon as
-                possible.
-              </p>
-            </div>
+    <div class="content">
+      <div class="contact-layout">
+        <div class="contact-info">
+          <h1>Contact <span class="text-primary">Us</span></h1>
+          <p class="contact-subtitle">
+            Have a question or want to learn more about our manufacturing
+            solutions? We&#39;d love to hear from you.
+          </p>
+        </div>
 
-            {result?.error && !isInputError(result.error) && (
-              <div class="form-error-banner">
-                {result.error.message ||
-                  "Something went wrong. Please try again."}
+        <div class="contact-form-col">
+          {
+            isSuccess ? (
+              <div class="card success-card">
+                <div class="success-icon">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="32"
+                    height="32"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z" />
+                    <path d="m21.854 2.147-10.94 10.939" />
+                  </svg>
+                </div>
+                <h2 class="text-2xl font-bold">Thank You!</h2>
+                <p class="text-muted-foreground max-w-md mx-auto">
+                  Your message has been received. Our team will review it and
+                  get back to you as soon as possible.
+                </p>
+                <a href="/contact" class="btn-outline">
+                  Send Another Message
+                </a>
               </div>
-            )}
+            ) : (
+              <div class="card">
+                <div class="card-header">
+                  <h2 class="card-title">Get in Touch</h2>
+                  <p class="card-description">
+                    Fill out the form below and we&#39;ll get back to you as
+                    soon as possible.
+                  </p>
+                </div>
 
-            <form method="POST" action={actions.contact} class="form-grid">
-              <div class="grid gap-4 sm:grid-cols-2">
-                <div class="field">
-                  <label for="firstName">
-                    First Name <span class="text-destructive">*</span>
-                  </label>
-                  <input
-                    id="firstName"
-                    name="firstName"
-                    type="text"
-                    placeholder="John"
-                    required
-                  />
-                  {inputErrors?.firstName && (
-                    <p class="field-error">{inputErrors.firstName}</p>
-                  )}
-                </div>
-                <div class="field">
-                  <label for="lastName">
-                    Last Name <span class="text-destructive">*</span>
-                  </label>
-                  <input
-                    id="lastName"
-                    name="lastName"
-                    type="text"
-                    placeholder="Doe"
-                    required
-                  />
-                  {inputErrors?.lastName && (
-                    <p class="field-error">{inputErrors.lastName}</p>
-                  )}
-                </div>
-              </div>
-
-              <div class="grid gap-4 sm:grid-cols-2">
-                <div class="field">
-                  <label for="email">
-                    Email <span class="text-destructive">*</span>
-                  </label>
-                  <input
-                    id="email"
-                    name="email"
-                    type="email"
-                    placeholder="john@company.com"
-                    required
-                  />
-                  {inputErrors?.email && (
-                    <p class="field-error">{inputErrors.email}</p>
-                  )}
-                </div>
-                <div class="field">
-                  <label for="phone">Phone</label>
-                  <input
-                    id="phone"
-                    name="phone"
-                    type="tel"
-                    placeholder="+1 (555) 000-0000"
-                  />
-                </div>
-              </div>
-
-              <div class="grid gap-4 sm:grid-cols-2">
-                <div class="field">
-                  <label for="companyName">
-                    Company <span class="text-destructive">*</span>
-                  </label>
-                  <input
-                    id="companyName"
-                    name="companyName"
-                    type="text"
-                    placeholder="Acme Inc."
-                    required
-                  />
-                  {inputErrors?.companyName && (
-                    <p class="field-error">{inputErrors.companyName}</p>
-                  )}
-                </div>
-                <div class="field">
-                  <label for="type">Request Type</label>
-                  <select id="type" name="type">
-                    {CONTACT_TYPES.map((t) => (
-                      <option value={t.value}>{t.label}</option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-
-              <div class="field">
-                <label for="title">
-                  Subject <span class="text-destructive">*</span>
-                </label>
-                <input
-                  id="title"
-                  name="title"
-                  type="text"
-                  placeholder="How can we help?"
-                  required
-                />
-                {inputErrors?.title && (
-                  <p class="field-error">{inputErrors.title}</p>
+                {result?.error && !isInputError(result.error) && (
+                  <div class="form-error-banner">
+                    {result.error.message ||
+                      "Something went wrong. Please try again."}
+                  </div>
                 )}
-              </div>
 
-              <div class="field">
-                <label for="message">Message</label>
-                <textarea
-                  id="message"
-                  name="message"
-                  placeholder="Tell us more about your inquiry..."
-                  rows="5"
-                />
-              </div>
+                <form method="POST" action={actions.contact} class="form-grid">
+                  <div class="grid gap-4 sm:grid-cols-2">
+                    <div class="field">
+                      <label for="firstName">
+                        First Name <span class="text-destructive">*</span>
+                      </label>
+                      <input
+                        id="firstName"
+                        name="firstName"
+                        type="text"
+                        placeholder="John"
+                        required
+                      />
+                      {inputErrors?.firstName && (
+                        <p class="field-error">{inputErrors.firstName}</p>
+                      )}
+                    </div>
+                    <div class="field">
+                      <label for="lastName">
+                        Last Name <span class="text-destructive">*</span>
+                      </label>
+                      <input
+                        id="lastName"
+                        name="lastName"
+                        type="text"
+                        placeholder="Doe"
+                        required
+                      />
+                      {inputErrors?.lastName && (
+                        <p class="field-error">{inputErrors.lastName}</p>
+                      )}
+                    </div>
+                  </div>
 
-              <button type="submit" class="submit-btn">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  class="mr-2"
-                >
-                  <path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z" />
-                  <path d="m21.854 2.147-10.94 10.939" />
-                </svg>
-                Send Message
-              </button>
-            </form>
-          </div>
-        )
-      }
+                  <div class="grid gap-4 sm:grid-cols-2">
+                    <div class="field">
+                      <label for="email">
+                        Email <span class="text-destructive">*</span>
+                      </label>
+                      <input
+                        id="email"
+                        name="email"
+                        type="email"
+                        placeholder="john@company.com"
+                        required
+                      />
+                      {inputErrors?.email && (
+                        <p class="field-error">{inputErrors.email}</p>
+                      )}
+                    </div>
+                    <div class="field">
+                      <label for="phone">Phone</label>
+                      <input
+                        id="phone"
+                        name="phone"
+                        type="tel"
+                        placeholder="+1 (555) 000-0000"
+                      />
+                    </div>
+                  </div>
+
+                  <div class="grid gap-4 sm:grid-cols-2">
+                    <div class="field">
+                      <label for="companyName">
+                        Company <span class="text-destructive">*</span>
+                      </label>
+                      <input
+                        id="companyName"
+                        name="companyName"
+                        type="text"
+                        placeholder="Acme Inc."
+                        required
+                      />
+                      {inputErrors?.companyName && (
+                        <p class="field-error">{inputErrors.companyName}</p>
+                      )}
+                    </div>
+                    <div class="field">
+                      <label for="type">Request Type</label>
+                      <select id="type" name="type">
+                        {CONTACT_TYPES.map((t) => (
+                          <option value={t.value}>{t.label}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="field">
+                    <label for="title">
+                      Subject <span class="text-destructive">*</span>
+                    </label>
+                    <input
+                      id="title"
+                      name="title"
+                      type="text"
+                      placeholder="How can we help?"
+                      required
+                    />
+                    {inputErrors?.title && (
+                      <p class="field-error">{inputErrors.title}</p>
+                    )}
+                  </div>
+
+                  <div class="field">
+                    <label for="message">Message</label>
+                    <textarea
+                      id="message"
+                      name="message"
+                      placeholder="Tell us more about your inquiry..."
+                      rows="5"
+                    />
+                  </div>
+
+                  <button type="submit" class="submit-btn">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z" />
+                      <path d="m21.854 2.147-10.94 10.939" />
+                    </svg>
+                    Send Message
+                  </button>
+                </form>
+              </div>
+            )
+          }
+        </div>
+      </div>
     </div>
   </section>
 </Layout>
 
 <style>
-  .contact-header {
-    background: linear-gradient(to bottom, var(--secondary), var(--background));
+  .contact-section {
+    padding-block: 4rem;
   }
 
-  .contact-header h1 {
-    margin-bottom: 0.5rem;
+  .contact-layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    align-items: start;
+  }
+
+  @media (min-width: 768px) {
+    .contact-layout {
+      grid-template-columns: 2fr 3fr;
+      gap: 3rem;
+    }
+  }
+
+  .contact-info {
+    padding-top: 0.5rem;
+  }
+
+  .contact-info h1 {
+    margin-bottom: 1rem;
   }
 
   .contact-subtitle {
     color: var(--muted-foreground);
-    max-width: 48rem;
-  }
-
-  .contact-section {
-    padding-bottom: 4rem;
   }
 
   .card {
-    max-width: 42rem;
-    margin-inline: auto;
     border-radius: var(--radius);
     border: 1px solid var(--border);
     background: var(--card);

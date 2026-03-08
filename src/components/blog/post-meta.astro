@@ -1,0 +1,72 @@
+---
+import { Calendar, Clock } from "@/components/icons";
+
+interface Props {
+  publishedAt: Date | string | null;
+  readTime: string;
+  authorName?: string | null;
+  class?: string;
+}
+
+const { publishedAt, readTime, authorName, class: className } = Astro.props;
+
+function formatDate(date: Date | string | null): string {
+  if (!date) return "";
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  }).format(new Date(date));
+}
+---
+
+<div class:list={["post-meta", className]}>
+  {authorName && <span class="post-author">By {authorName}</span>}
+  {
+    authorName && publishedAt && (
+      <span class="meta-sep" aria-hidden="true">
+        ·
+      </span>
+    )
+  }
+  {
+    publishedAt && (
+      <span class="post-date">
+        <Calendar width="12" height="12" />
+        {formatDate(publishedAt)}
+      </span>
+    )
+  }
+  {
+    publishedAt && (
+      <span class="meta-sep" aria-hidden="true">
+        ·
+      </span>
+    )
+  }
+  <span class="post-read-time">
+    <Clock width="12" height="12" />
+    {readTime}
+  </span>
+</div>
+
+<style>
+  .post-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-size: 0.8125rem;
+    color: var(--muted-foreground);
+  }
+
+  .post-date,
+  .post-read-time {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6em;
+  }
+
+  .meta-sep {
+    opacity: 0.5;
+  }
+</style>

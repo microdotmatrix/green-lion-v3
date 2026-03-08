@@ -1,4 +1,6 @@
 export { default as Battery } from "./battery.astro";
+export { default as Calendar } from "./calendar.astro";
+export { default as Clock } from "./clock.astro";
 export { default as Copyright } from "./copyright.astro";
 export { default as Design } from "./design.astro";
 export { default as Factory } from "./factory.astro";
