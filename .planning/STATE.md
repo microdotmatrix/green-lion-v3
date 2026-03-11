@@ -3,14 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 04-02-PLAN.md
-last_updated: "2026-03-07T05:35:36.645Z"
+last_updated: "2026-03-11T01:32:55.292Z"
 last_activity: 2026-03-06 — Completed plan 03-03; blog list page island, table, delete dialog, sidebar nav item
 progress:
-  total_phases: 4
+  total_phases: 5
   completed_phases: 4
-  total_plans: 10
-  completed_plans: 10
+  total_plans: 12
+  completed_plans: 11
   percent: 88
 ---
 
@@ -59,6 +58,7 @@ Progress: [█████████░] 88%
 | Phase 03-blog-admin P02 | 10 | 2 tasks | 9 files |
 | Phase 04-blog-frontend P01 | 2 | 3 tasks | 5 files |
 | Phase 04-blog-frontend P02 | 2 | 2 tasks | 3 files |
+| Phase 05-product-csv-import-export P01 | 3 | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -98,6 +98,9 @@ Recent decisions affecting current work:
 - [Phase 04-02]: categoriesWithPosts uses selectDistinct + innerJoin — filter bar shows only categories with at least one published post
 - [Phase 04-02]: category/[slug] returns 404 when valid category has no published posts — prevents empty listing pages
 - [Phase 04-02]: :global() selectors required for post-prose styles since set:html content is outside Astro scoped style boundary
+- [Phase 05-01]: Used Zod v4 issues property (not errors) for ZodError access — caught by TypeScript at compile time
+- [Phase 05-01]: Shared CSV_COLUMNS constant used by both import and export endpoints to guarantee round-trip column name consistency
+- [Phase 05-01]: Category pre-fetch Map with inline auto-create: tracks new categories in same map to prevent duplicate DB inserts for repeated category names in same import
 
 ### Pending Todos
 
