@@ -7,6 +7,7 @@ import {
   fetchCategories,
   fetchProduct,
   fetchProducts,
+  importProducts,
   updateProduct,
 } from "./api";
 import type { ProductFormData, ProductSortBy, ProductSortDir } from "./types";
@@ -91,4 +92,17 @@ export function useProductMutations() {
     deleteProductMut,
     duplicateProductMut,
   };
+}
+
+export function useImportProducts() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: importProducts,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-products"] });
+    },
+    onError: () => {
+      // toast.error shown in dialog component — don't double-toast here
+    },
+  });
 }

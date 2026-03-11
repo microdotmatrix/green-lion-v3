@@ -88,3 +88,38 @@ export async function duplicateProduct(id: string) {
   if (!res.ok) throw new Error("Failed to duplicate");
   return res.json();
 }
+
+export interface ImportResult {
+  inserted: number;
+  updated: number;
+  skipped: Array<{ row: number; sku?: string; reason: string }>;
+}
+
+export async function importProducts(file: File): Promise<ImportResult> {
+  const formData = new FormData();
+  formData.append("file", file);
+  // Do NOT set Content-Type header — browser sets multipart boundary automatically
+  const res = await fetch("/api/admin/products/import", {
+    method: "POST",
+    body: formData,
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.error ?? "Import failed");
+  }
+  return res.json();
+}
+
+export async function exportProducts(): Promise<void> {
+  const res = await fetch("/api/admin/products/export");
+  if (!res.ok) throw new Error("Export failed");
+  const blob = await res.blob();
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `products-${new Date().toISOString().split("T")[0]}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
