@@ -109,6 +109,10 @@ None yet.
 |---|-------------|------|--------|-----------|
 | 1 | featured post card component for blog hero section | 2026-03-08 | 3684845 | [1-featured-post-card-component-for-blog-he](./quick/1-featured-post-card-component-for-blog-he/) |
 
+### Roadmap Evolution
+
+- Phase 5 added: Product CSV Import/Export
+
 ### Blockers/Concerns
 
 - [Phase 1 - RESOLVED 2026-03-06]: netlify.toml now confirmed with `drizzle-kit migrate` in build pipeline
