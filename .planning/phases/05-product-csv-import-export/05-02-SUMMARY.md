@@ -96,10 +96,22 @@ None - plan executed exactly as written.
 
 Pre-existing TypeScript errors in unrelated files (`src/components/ui/resizable.tsx`, `src/components/icons/index.ts`, `src/components/admin/catalogs/catalog-upload-dialog.tsx`) were present before this plan. None introduced by this plan's changes.
 
-## Next Phase Readiness
-- Task 3 (human-verify checkpoint) is next — user must start dev server and verify export/import end-to-end in browser
-- All code is committed and TypeScript-clean in the modified files
-- Plan 01 endpoints must be running for full end-to-end verification
+## Human Verification
+
+**Task 3 (checkpoint:human-verify):** Approved by user on 2026-03-11
+- Export CSV: browser download fires immediately with correct filename pattern
+- Import CSV: dialog opens, file selection triggers immediate import, results dialog shows correct counts and skipped rows
+- Products table refreshes after successful import
+
+## Self-Check: PASSED
+
+- `4fd7b03` feat(05-02): add importProducts, exportProducts helpers and useImportProducts hook — FOUND
+- `4ac830d` feat(05-02): create CsvImportDialog component with idle/loading/results states — FOUND
+- `c4376cd` feat(05-02): wire Export CSV and Import CSV buttons into products page toolbar — FOUND
+- `src/components/admin/products/csv-import-dialog.tsx` — FOUND
+- `src/components/admin/products/api.ts` — FOUND (exportProducts, importProducts, ImportResult)
+- `src/components/admin/products/hooks.ts` — FOUND (useImportProducts)
+- `src/components/admin/products/products-page.tsx` — FOUND (toolbar buttons, CsvImportDialog mount)
 
 ---
 *Phase: 05-product-csv-import-export*

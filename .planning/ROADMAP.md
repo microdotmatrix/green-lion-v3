@@ -94,6 +94,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 | 2. PDF Catalog | 3/3 | Complete   | 2026-03-06 |
 | 3. Blog Admin | 3/3 | Complete   | 2026-03-07 |
 | 4. Blog Frontend | 2/2 | Complete   | 2026-03-07 |
+| 5. Product CSV Import/Export | 2/2 | Complete   | 2026-03-11 |
 
 ### Phase 5: Product CSV Import/Export
 
@@ -103,5 +104,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 **Plans:** 2/2 plans complete
 
 Plans:
-- [ ] 05-01-PLAN.md — CSV utility module + import POST endpoint + export GET endpoint (papaparse, upsert by SKU, tier replace, category auto-create)
-- [ ] 05-02-PLAN.md — CsvImportDialog component, api.ts helpers, hooks.ts mutation, products-page toolbar buttons, human verification checkpoint
+- [x] 05-01-PLAN.md — CSV utility module + import POST endpoint + export GET endpoint (papaparse, upsert by SKU, tier replace, category auto-create)
+- [x] 05-02-PLAN.md — CsvImportDialog component, api.ts helpers, hooks.ts mutation, products-page toolbar buttons, human verification checkpoint
