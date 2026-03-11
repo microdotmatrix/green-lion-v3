@@ -90,6 +90,7 @@ Admin can bulk-import products from a CSV file and export the current product ca
 - Background/async import for large catalogs — deferred to v2 if needed
 - Attribute import/export — too complex for flat CSV; separate feature if ever needed
 - Download blank CSV template (headers only) — simple add-on, could be a follow-up quick task
+- **Vitest unit test infrastructure** — deferred; no test infrastructure exists in the project and this is an additive, low-risk feature. When a dedicated testing phase is added, create `vitest.config.ts`, `pnpm add -D vitest`, and unit tests for `src/lib/csv/` utility functions (BOM strip, row validation, category map, tier flatten, normalizePrice). Full behavioral verification for this phase is covered by the Plan 02 Task 3 human checkpoint.
 
 </deferred>
 
