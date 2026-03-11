@@ -1,12 +1,11 @@
+import { useAttributes } from "@/components/admin/attributes/hooks";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { useUrlFilters } from "@/hooks/use-url-filters";
 import { Download, Loader2, Plus, Upload } from "lucide-react";
 import * as React from "react";
 import { toast } from "sonner";
-
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-
-import { useAttributes } from "@/components/admin/attributes/hooks";
-import { useUrlFilters } from "@/hooks/use-url-filters";
+import { exportProducts } from "./api";
 import { CsvImportDialog } from "./csv-import-dialog";
 import { DeleteProductDialog } from "./delete-product-dialog";
 import { useCategories, useProductMutations, useProducts } from "./hooks";
@@ -14,7 +13,6 @@ import { ProductFormDialog } from "./product-form-dialog";
 import { ProductsFilters } from "./products-filters";
 import { ProductsTable } from "./products-table";
 import type { Product, ProductSortBy, ProductSortDir } from "./types";
-import { exportProducts } from "./api";
 
 const DEFAULT_PAGE = 1;
 const DEFAULT_SORT_BY: ProductSortBy = "createdAt";
@@ -65,8 +63,9 @@ const PRODUCT_FILTER_SCHEMA = {
 } as const;
 
 export default function ProductsPage() {
-  const { filters, setFilters, resetFilters } =
-    useUrlFilters<ProductFilters>(PRODUCT_FILTER_SCHEMA);
+  const { filters, setFilters, resetFilters } = useUrlFilters<ProductFilters>(
+    PRODUCT_FILTER_SCHEMA,
+  );
   const { page, search, categoryId, attributeId, sortBy, sortDir } = filters;
   const [debouncedSearch, setDebouncedSearch] = React.useState(search);
   const [isFormOpen, setIsFormOpen] = React.useState(false);
@@ -133,14 +132,15 @@ export default function ProductsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Products</h1>
           <p className="text-muted-foreground">Manage your product catalog</p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2 sm:flex-nowrap sm:justify-end">
           <Button
             variant="outline"
+            size="sm"
             onClick={handleExport}
             disabled={isExporting}
           >
@@ -153,12 +153,14 @@ export default function ProductsPage() {
           </Button>
           <Button
             variant="outline"
+            size="sm"
             onClick={() => setIsImportOpen(true)}
           >
             <Upload className="h-4 w-4 mr-2" />
             Import CSV
           </Button>
           <Button
+            size="sm"
             onClick={() => {
               setEditingProductId(null);
               setIsFormOpen(true);
@@ -259,10 +261,7 @@ export default function ProductsPage() {
         onDelete={handleDelete}
       />
 
-      <CsvImportDialog
-        open={isImportOpen}
-        onOpenChange={setIsImportOpen}
-      />
+      <CsvImportDialog open={isImportOpen} onOpenChange={setIsImportOpen} />
     </div>
   );
 }

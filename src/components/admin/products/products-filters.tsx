@@ -1,5 +1,4 @@
-import { Search } from "lucide-react";
-
+import type { Attribute } from "@/components/admin/attributes/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -9,8 +8,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
-import type { Attribute } from "@/components/admin/attributes/types";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { ArrowDownAZ, ArrowUpAZ, Search } from "lucide-react";
 import type { Category, ProductSortBy, ProductSortDir } from "./types";
 
 const SORT_BY_OPTIONS: { value: ProductSortBy; label: string }[] = [
@@ -19,11 +22,6 @@ const SORT_BY_OPTIONS: { value: ProductSortBy; label: string }[] = [
   { value: "sku", label: "SKU" },
   { value: "category", label: "Category" },
   { value: "price", label: "Price" },
-];
-
-const SORT_DIR_OPTIONS: { value: ProductSortDir; label: string }[] = [
-  { value: "asc", label: "Ascending" },
-  { value: "desc", label: "Descending" },
 ];
 
 type ProductsFiltersProps = {
@@ -58,8 +56,8 @@ export function ProductsFilters({
   attributes,
 }: ProductsFiltersProps) {
   return (
-    <div className="flex flex-wrap items-center gap-4">
-      <div className="relative flex-1 min-w-[240px] max-w-sm">
+    <div className="flex flex-col gap-3">
+      <div className="relative w-full">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <Input
           placeholder="Search by name or SKU..."
@@ -68,71 +66,81 @@ export function ProductsFilters({
           className="pl-9"
         />
       </div>
-      <Select
-        value={categoryFilter}
-        onValueChange={(value) => onCategoryChange(value)}
-      >
-        <SelectTrigger className="w-[200px]">
-          <SelectValue placeholder="All Categories" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="all">All Categories</SelectItem>
-          {categories.map((cat) => (
-            <SelectItem key={cat.id} value={cat.id}>
-              {cat.name}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-      <Select
-        value={attributeFilter}
-        onValueChange={(value) => onAttributeChange(value)}
-      >
-        <SelectTrigger className="w-[200px]">
-          <SelectValue placeholder="All Attributes" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="all">All Attributes</SelectItem>
-          {attributes.map((attr) => (
-            <SelectItem key={attr.id} value={attr.id}>
-              {attr.name}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-      <Select
-        value={sortBy}
-        onValueChange={(value) => onSortByChange(value as ProductSortBy)}
-      >
-        <SelectTrigger className="w-[180px]">
-          <SelectValue placeholder="Sort By" />
-        </SelectTrigger>
-        <SelectContent>
-          {SORT_BY_OPTIONS.map((option) => (
-            <SelectItem key={option.value} value={option.value}>
-              {option.label}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-      <Select
-        value={sortDir}
-        onValueChange={(value) => onSortDirChange(value as ProductSortDir)}
-      >
-        <SelectTrigger className="w-[160px]">
-          <SelectValue placeholder="Direction" />
-        </SelectTrigger>
-        <SelectContent>
-          {SORT_DIR_OPTIONS.map((option) => (
-            <SelectItem key={option.value} value={option.value}>
-              {option.label}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-      <Button variant="outline" onClick={onReset}>
-        Reset
-      </Button>
+      <div className="flex flex-wrap items-center gap-2">
+        <Select
+          value={categoryFilter}
+          onValueChange={(value) => onCategoryChange(value)}
+        >
+          <SelectTrigger className="flex-1 min-w-[140px]">
+            <SelectValue placeholder="All Categories" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Categories</SelectItem>
+            {categories.map((cat) => (
+              <SelectItem key={cat.id} value={cat.id}>
+                {cat.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Select
+          value={attributeFilter}
+          onValueChange={(value) => onAttributeChange(value)}
+        >
+          <SelectTrigger className="flex-1 min-w-[140px]">
+            <SelectValue placeholder="All Attributes" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Attributes</SelectItem>
+            {attributes.map((attr) => (
+              <SelectItem key={attr.id} value={attr.id}>
+                {attr.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Select
+          value={sortBy}
+          onValueChange={(value) => onSortByChange(value as ProductSortBy)}
+        >
+          <SelectTrigger className="flex-1 min-w-[120px]">
+            <SelectValue placeholder="Sort By" />
+          </SelectTrigger>
+          <SelectContent>
+            {SORT_BY_OPTIONS.map((option) => (
+              <SelectItem key={option.value} value={option.value}>
+                {option.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() =>
+                onSortDirChange(sortDir === "asc" ? "desc" : "asc")
+              }
+              aria-label={
+                sortDir === "asc" ? "Sort descending" : "Sort ascending"
+              }
+            >
+              {sortDir === "asc" ? (
+                <ArrowUpAZ className="h-4 w-4" />
+              ) : (
+                <ArrowDownAZ className="h-4 w-4" />
+              )}
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            {sortDir === "asc" ? "Ascending" : "Descending"}
+          </TooltipContent>
+        </Tooltip>
+        <Button variant="outline" size="sm" onClick={onReset}>
+          Reset
+        </Button>
+      </div>
     </div>
   );
 }
