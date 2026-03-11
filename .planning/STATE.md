@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-last_updated: "2026-03-11T01:32:55.292Z"
+last_updated: "2026-03-11T01:37:28.730Z"
 last_activity: 2026-03-06 — Completed plan 03-03; blog list page island, table, delete dialog, sidebar nav item
 progress:
   total_phases: 5
-  completed_phases: 4
+  completed_phases: 5
   total_plans: 12
-  completed_plans: 11
+  completed_plans: 12
   percent: 88
 ---
 
@@ -59,6 +59,7 @@ Progress: [█████████░] 88%
 | Phase 04-blog-frontend P01 | 2 | 3 tasks | 5 files |
 | Phase 04-blog-frontend P02 | 2 | 2 tasks | 3 files |
 | Phase 05-product-csv-import-export P01 | 3 | 2 tasks | 5 files |
+| Phase 05-product-csv-import-export P02 | 2 | 3 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -101,6 +102,9 @@ Recent decisions affecting current work:
 - [Phase 05-01]: Used Zod v4 issues property (not errors) for ZodError access — caught by TypeScript at compile time
 - [Phase 05-01]: Shared CSV_COLUMNS constant used by both import and export endpoints to guarantee round-trip column name consistency
 - [Phase 05-01]: Category pre-fetch Map with inline auto-create: tracks new categories in same map to prevent duplicate DB inserts for repeated category names in same import
+- [Phase 05-02]: File input onChange triggers mutation immediately — no explicit submit button, matching immediate-import spec
+- [Phase 05-02]: Toast error called in dialog component onError callback (not in hook) to prevent double-toast feedback
+- [Phase 05-02]: Export handler is plain async function in products-page.tsx (not a TanStack mutation) — fire-and-forget with no cache invalidation needed
 
 ### Pending Todos
 
