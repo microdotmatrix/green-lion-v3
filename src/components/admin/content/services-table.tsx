@@ -84,7 +84,15 @@ export function ServicesTable({
             <TableBody>
               {items?.map((item) => (
                 <TableRow key={item.id}>
-                  <TableCell className="font-medium">{item.title}</TableCell>
+                  <TableCell className="font-medium">
+                    <button
+                      type="button"
+                      className="text-left cursor-pointer hover:underline focus-visible:outline-none focus-visible:underline"
+                      onClick={() => onEdit(item)}
+                    >
+                      {item.title}
+                    </button>
+                  </TableCell>
                   <TableCell className="max-w-[250px] truncate text-muted-foreground">
                     {item.description}
                   </TableCell>

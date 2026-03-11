@@ -1,10 +1,4 @@
-import {
-  MoreHorizontal,
-  Pencil,
-  Plus,
-  Settings2,
-  Trash2,
-} from "lucide-react";
+import { MoreHorizontal, Pencil, Plus, Settings2, Trash2 } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -89,7 +83,15 @@ export function AttributesTable({
             <TableBody>
               {attributes?.map((attr) => (
                 <TableRow key={attr.id}>
-                  <TableCell className="font-medium">{attr.name}</TableCell>
+                  <TableCell className="font-medium">
+                    <button
+                      type="button"
+                      className="text-left cursor-pointer hover:underline focus-visible:outline-none focus-visible:underline"
+                      onClick={() => onEdit(attr)}
+                    >
+                      {attr.name}
+                    </button>
+                  </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
                       {getTypeIcon(attr.attributeType)}
@@ -100,7 +102,11 @@ export function AttributesTable({
                     {attr.options && attr.options.length > 0 ? (
                       <div className="flex flex-wrap gap-1 max-w-xs">
                         {attr.options.slice(0, 3).map((opt) => (
-                          <Badge key={opt} variant="outline" className="text-xs">
+                          <Badge
+                            key={opt}
+                            variant="outline"
+                            className="text-xs"
+                          >
                             {opt}
                           </Badge>
                         ))}

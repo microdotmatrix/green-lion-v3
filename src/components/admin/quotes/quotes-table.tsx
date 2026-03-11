@@ -1,10 +1,4 @@
-import {
-  ChevronLeft,
-  ChevronRight,
-  Clock,
-  Eye,
-  FileText,
-} from "lucide-react";
+import { ChevronLeft, ChevronRight, Clock, Eye, FileText } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -79,9 +73,13 @@ export function QuotesTable({
                   <TableRow key={quote.id}>
                     <TableCell>
                       <div>
-                        <p className="font-medium">
+                        <button
+                          type="button"
+                          className="font-medium text-left cursor-pointer hover:underline focus-visible:outline-none focus-visible:underline"
+                          onClick={() => onView(quote.id)}
+                        >
                           {quote.quoteNumber || `#${quote.id.slice(0, 8)}`}
-                        </p>
+                        </button>
                         <p className="text-xs text-muted-foreground flex items-center gap-1">
                           <Clock className="h-3 w-3" />
                           {formatDate(quote.createdAt)}

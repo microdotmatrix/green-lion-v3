@@ -168,7 +168,7 @@ export function AdminLayout({ user, children }: AdminLayoutProps) {
 
   return (
     <QueryProvider>
-      <SidebarProvider>
+      <SidebarProvider className="h-svh overflow-hidden">
         <Sidebar variant="inset" collapsible="icon">
           <SidebarHeader>
             <SidebarMenu>
@@ -371,7 +371,9 @@ export function AdminLayout({ user, children }: AdminLayoutProps) {
             <Separator orientation="vertical" className="mr-2 h-4" />
             <div className="flex-1" />
           </header>
-          <main className="flex-1 overflow-auto p-4 md:p-6">{children}</main>
+          <main className="flex-1 min-h-0 overflow-auto p-4 md:p-6">
+            {children}
+          </main>
         </SidebarInset>
       </SidebarProvider>
     </QueryProvider>

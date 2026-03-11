@@ -55,9 +55,7 @@ export function FeedbackTable({
         ) : data?.submissions.length === 0 ? (
           <div className="text-center py-12">
             <MessageSquare className="h-12 w-12 mx-auto text-muted-foreground" />
-            <h3 className="mt-4 text-lg font-semibold">
-              No submissions found
-            </h3>
+            <h3 className="mt-4 text-lg font-semibold">No submissions found</h3>
             <p className="text-muted-foreground">
               {debouncedSearch || status !== "all"
                 ? "Try adjusting your filters"
@@ -83,7 +81,13 @@ export function FeedbackTable({
                   <TableRow key={ticket.id}>
                     <TableCell>
                       <div>
-                        <p className="font-medium">{ticket.title}</p>
+                        <button
+                          type="button"
+                          className="font-medium text-left cursor-pointer hover:underline focus-visible:outline-none focus-visible:underline"
+                          onClick={() => onView(ticket.id)}
+                        >
+                          {ticket.title}
+                        </button>
                         <p className="text-xs text-muted-foreground flex items-center gap-1">
                           <Clock className="h-3 w-3" />
                           {formatDate(ticket.createdAt)}

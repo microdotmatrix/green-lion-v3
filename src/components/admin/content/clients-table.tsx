@@ -92,7 +92,13 @@ export function ClientsTable({
                     />
                   </TableCell>
                   <TableCell className="font-medium">
-                    {item.companyName}
+                    <button
+                      type="button"
+                      className="text-left cursor-pointer hover:underline focus-visible:outline-none focus-visible:underline"
+                      onClick={() => onEdit(item)}
+                    >
+                      {item.companyName}
+                    </button>
                   </TableCell>
                   <TableCell>
                     {item.featuredOnHomepage && (

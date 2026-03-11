@@ -73,29 +73,37 @@ export function TestimonialsTable({
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Quote</TableHead>
-                <TableHead>Author</TableHead>
                 <TableHead>Company</TableHead>
+                <TableHead>Author</TableHead>
+                <TableHead>Quote</TableHead>
                 <TableHead className="w-[70px]"></TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {items?.map((item) => (
                 <TableRow key={item.id}>
-                  <TableCell className="max-w-[300px] truncate">
-                    {item.quote}
+                  <TableCell className="font-medium">
+                    <button
+                      type="button"
+                      className="text-base text-left cursor-pointer hover:underline focus-visible:outline-none focus-visible:underline"
+                      onClick={() => onEdit(item)}
+                    >
+                      {item.companyName}
+                    </button>
                   </TableCell>
                   <TableCell>
-                    <div>
-                      <p className="font-medium">{item.author}</p>
+                    <div className="flex flex-row items-baseline gap-2">
+                      <p className="text-base font-medium">{item.author}</p>
                       {item.authorTitle && (
-                        <p className="text-xs text-muted-foreground">
+                        <p className="text-xs text-muted-foreground before:content-['•'] before:mr-2">
                           {item.authorTitle}
                         </p>
                       )}
                     </div>
                   </TableCell>
-                  <TableCell>{item.companyName}</TableCell>
+                  <TableCell className="max-w-[300px] truncate">
+                    {item.quote}
+                  </TableCell>
                   <TableCell>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>

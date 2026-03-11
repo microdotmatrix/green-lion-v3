@@ -1,6 +1,6 @@
 import { ImageUpload } from "@/components/admin/image-upload";
 import { QueryProvider } from "@/components/providers/query-provider";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -13,6 +13,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import * as React from "react";
 import { CategoryCombobox } from "./category-combobox";
+import { DeleteBlogDialog } from "./delete-blog-dialog";
 import {
   useBlogCategories,
   useBlogMutations,
@@ -86,7 +87,7 @@ function BlogEditorInner({ mode, postId }: BlogEditorProps) {
     mode === "edit" ? postId : undefined,
   );
   const { data: categories = [] } = useBlogCategories();
-  const { createPostMut, updatePostMut } = useBlogMutations();
+  const { createPostMut, updatePostMut, deletePostMut } = useBlogMutations();
   const { createCategoryMut } = useCategoryMutations();
 
   // Form state
@@ -98,6 +99,7 @@ function BlogEditorInner({ mode, postId }: BlogEditorProps) {
     undefined,
   );
   const [status, setStatus] = React.useState<"draft" | "published">("draft");
+  const [showDeleteDialog, setShowDeleteDialog] = React.useState(false);
 
   // Prefill form when editing and data loads
   const prefilled = React.useRef(false);
@@ -135,119 +137,154 @@ function BlogEditorInner({ mode, postId }: BlogEditorProps) {
   };
 
   const isSaving = createPostMut.isPending || updatePostMut.isPending;
+  const isDeleting = deletePostMut.isPending;
   const pageTitle = mode === "create" ? "New Post" : "Edit Post";
 
   return (
-    <div className="flex flex-col gap-6 pb-12">
-      {/* Header bar */}
-      <div className="flex items-center justify-between gap-4">
+    <>
+      {/* Header bar - sticky */}
+      <div className="sticky -top-4 md:-top-6 z-20 -mx-4 md:-mx-6 flex items-center justify-between gap-4 border-b bg-background px-4 md:px-6 py-4 mb-6">
         <h1 className="text-2xl font-bold">{pageTitle}</h1>
         <div className="flex items-center gap-2">
+          {mode === "edit" ? (
+            <Button
+              type="button"
+              variant="destructive"
+              onClick={() => setShowDeleteDialog(true)}
+              disabled={isDeleting || isSaving}
+            >
+              {isDeleting ? "Deleting..." : "Delete"}
+            </Button>
+          ) : null}
           <a
             href="/admin/blog"
-            className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+            className={buttonVariants({ variant: "outline" })}
           >
             Cancel
           </a>
           <Button
             type="button"
             onClick={handleSave}
-            disabled={isSaving || !title.trim()}
+            disabled={isSaving || isDeleting || !title.trim()}
           >
             {isSaving ? "Saving..." : "Save"}
           </Button>
         </div>
       </div>
 
-      {/* Title */}
-      <div className="space-y-1.5">
-        <Label htmlFor="blog-title">Title</Label>
-        <Input
-          id="blog-title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          placeholder="Post title"
-          className="text-lg font-medium"
-        />
-      </div>
-
-      {/* Status + Category row */}
-      <div className="flex flex-wrap items-end gap-4">
-        <div className="space-y-1.5 min-w-[160px]">
-          <Label>Status</Label>
-          <Select
-            value={status}
-            onValueChange={(v) => setStatus(v as "draft" | "published")}
-          >
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="draft">Draft</SelectItem>
-              <SelectItem value="published">Published</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="space-y-1.5 flex-1 min-w-[200px]">
-          <Label>Category</Label>
-          <CategoryCombobox
-            value={categoryId}
-            onChange={(id) => setCategoryId(id || undefined)}
-            categories={categories}
-            onCreateCategory={async (name) => {
-              const cat = await createCategoryMut.mutateAsync({ name });
-              return cat;
-            }}
+      <div className="flex flex-col gap-6 pb-12">
+        {/* Title */}
+        <div className="space-y-1.5">
+          <Label htmlFor="blog-title">Title</Label>
+          <Input
+            id="blog-title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="Post title"
+            className="text-lg font-medium"
           />
         </div>
-      </div>
 
-      {/* Excerpt */}
-      <div className="space-y-1.5">
-        <Label htmlFor="blog-excerpt">Excerpt</Label>
-        <Textarea
-          id="blog-excerpt"
-          value={excerpt}
-          onChange={(e) => setExcerpt(e.target.value)}
-          placeholder="Brief summary of the post... (If left empty, a truncated clip of the first paragraph will be used)"
-          rows={3}
-        />
-      </div>
-
-      {/* Editor */}
-      <div className="space-y-1.5">
-        <Label>Content</Label>
-        <BlogEditorErrorBoundary
-          fallback={
-            <PlainTextEditorFallback
-              value={body}
-              onChange={setBody}
-              message="The rich text editor could not load, so the content field has fallen back to a plain textarea."
+        {/* Status + Category row */}
+        <div className="flex flex-wrap items-end gap-4">
+          <div className="space-y-1.5 min-w-[160px]">
+            <Label>Status</Label>
+            <Select
+              value={status}
+              onValueChange={(v) => setStatus(v as "draft" | "published")}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="draft">Draft</SelectItem>
+                <SelectItem value="published">Published</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-1.5 flex-1 min-w-[200px]">
+            <Label>Category</Label>
+            <CategoryCombobox
+              value={categoryId}
+              onChange={(id) => setCategoryId(id || undefined)}
+              categories={categories}
+              onCreateCategory={async (name) => {
+                const cat = await createCategoryMut.mutateAsync({ name });
+                return cat;
+              }}
             />
-          }
-        >
-          <React.Suspense
+          </div>
+        </div>
+
+        {/* Excerpt */}
+        <div className="space-y-1.5">
+          <Label htmlFor="blog-excerpt">Excerpt</Label>
+          <Textarea
+            id="blog-excerpt"
+            value={excerpt}
+            onChange={(e) => setExcerpt(e.target.value)}
+            placeholder="Brief summary of the post... (If left empty, a truncated clip of the first paragraph will be used)"
+            rows={3}
+          />
+        </div>
+
+        {/* Editor */}
+        <div className="space-y-1.5">
+          <Label>Content</Label>
+          <BlogEditorErrorBoundary
             fallback={
               <PlainTextEditorFallback
                 value={body}
                 onChange={setBody}
-                message="Loading the rich text editor..."
+                message="The rich text editor could not load, so the content field has fallen back to a plain textarea."
               />
             }
           >
-            <BlogRichTextEditor value={body} onChange={setBody} />
-          </React.Suspense>
-        </BlogEditorErrorBoundary>
-      </div>
+            <React.Suspense
+              fallback={
+                <PlainTextEditorFallback
+                  value={body}
+                  onChange={setBody}
+                  message="Loading the rich text editor..."
+                />
+              }
+            >
+              <BlogRichTextEditor value={body} onChange={setBody} />
+            </React.Suspense>
+          </BlogEditorErrorBoundary>
+        </div>
 
-      {/* Cover image */}
-      <ImageUpload
-        value={coverImageUrl}
-        onChange={setCoverImageUrl}
-        label="Cover Image"
-        description="Recommended: 1200x630px, JPG or PNG"
-      />
-    </div>
+        {/* Cover image */}
+        <ImageUpload
+          value={coverImageUrl}
+          onChange={setCoverImageUrl}
+          label="Cover Image"
+          description="Recommended: 1200x630px, JPG or PNG"
+        />
+
+        <DeleteBlogDialog
+          open={showDeleteDialog}
+          onOpenChange={setShowDeleteDialog}
+          post={
+            mode === "edit" && postId
+              ? {
+                  id: postId,
+                  title: title || existingPost?.title || "this post",
+                }
+              : null
+          }
+          onConfirm={(id) => {
+            deletePostMut.mutate(id, {
+              onSuccess: () => {
+                setShowDeleteDialog(false);
+                window.location.href = "/admin/blog";
+              },
+            });
+          }}
+          isPending={isDeleting}
+        />
+      </div>
+    </>
   );
 }
 

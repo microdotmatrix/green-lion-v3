@@ -1,4 +1,3 @@
-import { CheckCircle, Edit, Trash2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -9,6 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { CheckCircle, Edit, Trash2 } from "lucide-react";
 import type { BlogPostWithCategory } from "./types";
 
 interface BlogTableProps {
@@ -49,7 +49,7 @@ export function BlogTable({
             <TableCell className="font-medium">
               <a
                 href={`/admin/blog/${post.id}/edit`}
-                className="font-medium hover:underline"
+                className="font-medium cursor-pointer hover:underline"
               >
                 {post.title}
               </a>
@@ -98,7 +98,9 @@ export function BlogTable({
                   variant="ghost"
                   size="sm"
                   className="text-destructive hover:text-destructive"
-                  onClick={() => onDeleteClick({ id: post.id, title: post.title })}
+                  onClick={() =>
+                    onDeleteClick({ id: post.id, title: post.title })
+                  }
                 >
                   <Trash2 className="h-4 w-4" />
                 </Button>

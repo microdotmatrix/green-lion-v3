@@ -104,7 +104,13 @@ export function CategoriesTable({
                           <FolderOpen className="h-5 w-5 text-muted-foreground" />
                         </div>
                       )}
-                      {category.name}
+                      <button
+                        type="button"
+                        className="text-left hover:underline cursor-pointer focus-visible:outline-none focus-visible:underline"
+                        onClick={() => onEdit(category)}
+                      >
+                        {category.name}
+                      </button>
                     </div>
                   </TableCell>
                   <TableCell className="max-w-[300px] truncate text-muted-foreground">

@@ -90,7 +90,13 @@ export function CaseStudiesTable({
                         alt={item.productName}
                         className="h-10 w-10 rounded-md object-cover"
                       />
-                      <span className="font-medium">{item.productName}</span>
+                      <button
+                        type="button"
+                        className="font-medium text-left cursor-pointer hover:underline focus-visible:outline-none focus-visible:underline"
+                        onClick={() => onEdit(item)}
+                      >
+                        {item.productName}
+                      </button>
                     </div>
                   </TableCell>
                   <TableCell>{item.brandName}</TableCell>

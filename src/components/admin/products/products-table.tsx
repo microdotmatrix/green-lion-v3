@@ -117,7 +117,13 @@ export function ProductsTable({
                           </div>
                         )}
                         <div>
-                          <p className="font-medium">{product.name}</p>
+                          <button
+                            type="button"
+                            className="font-medium text-left cursor-pointer hover:underline focus-visible:outline-none focus-visible:underline"
+                            onClick={() => onEdit(product)}
+                          >
+                            {product.name}
+                          </button>
                           <p className="text-xs text-muted-foreground truncate max-w-[200px]">
                             {product.description}
                           </p>
@@ -129,7 +135,9 @@ export function ProductsTable({
                     </TableCell>
                     <TableCell>
                       {product.categoryName ? (
-                        <Badge variant="secondary">{product.categoryName}</Badge>
+                        <Badge variant="secondary">
+                          {product.categoryName}
+                        </Badge>
                       ) : (
                         <span className="text-muted-foreground">—</span>
                       )}
@@ -141,7 +149,9 @@ export function ProductsTable({
                           {formatCurrency(product.priceRange.max)}
                         </span>
                       ) : (
-                        <span className="text-muted-foreground">No pricing</span>
+                        <span className="text-muted-foreground">
+                          No pricing
+                        </span>
                       )}
                     </TableCell>
                     <TableCell>

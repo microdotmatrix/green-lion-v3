@@ -135,9 +135,10 @@
   * {
     @apply border-border;
   }
-  /* Thin styled scrollbars for dialogs & drawers */
+  /* Thin styled scrollbars for dialogs, drawers & admin main content */
   [data-slot="dialog-content"],
-  [data-slot="drawer-content"] > div {
+  [data-slot="drawer-content"] > div,
+  [data-slot="sidebar-inset"] > main {
     scrollbar-width: thin;
     scrollbar-color: var(--border) transparent;
     &::-webkit-scrollbar {
@@ -315,8 +316,7 @@
     margin-bottom: 0;
   }
 
-  :where(.blog-prose, .blog-editor-content .tiptap)
-    :where(h1, h2, h3, h4, h5) {
+  :where(.blog-prose, .blog-editor-content .tiptap) :where(h1, h2, h3, h4, h5) {
     font-weight: 600;
     margin: 1em 0 0.5em;
     line-height: 1.25;
