@@ -94,3 +94,14 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 | 2. PDF Catalog | 3/3 | Complete   | 2026-03-06 |
 | 3. Blog Admin | 3/3 | Complete   | 2026-03-07 |
 | 4. Blog Frontend | 2/2 | Complete   | 2026-03-07 |
+
+### Phase 5: Product CSV Import/Export
+
+**Goal:** Admin can bulk-import products from a CSV file and export the current product catalog to CSV from the existing products admin page
+**Requirements**: CSV-IMPORT, CSV-EXPORT, CSV-ROUNDTRIP, CSV-IMPORT-UX, CSV-EXPORT-UX
+**Depends on:** Phase 4
+**Plans:** 2 plans
+
+Plans:
+- [ ] 05-01-PLAN.md — CSV utility module + import POST endpoint + export GET endpoint (papaparse, upsert by SKU, tier replace, category auto-create)
+- [ ] 05-02-PLAN.md — CsvImportDialog component, api.ts helpers, hooks.ts mutation, products-page toolbar buttons, human verification checkpoint
