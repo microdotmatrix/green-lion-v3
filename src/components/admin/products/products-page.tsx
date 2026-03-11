@@ -1,17 +1,20 @@
-import { Plus } from "lucide-react";
+import { Download, Loader2, Plus, Upload } from "lucide-react";
 import * as React from "react";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 
 import { useAttributes } from "@/components/admin/attributes/hooks";
 import { useUrlFilters } from "@/hooks/use-url-filters";
+import { CsvImportDialog } from "./csv-import-dialog";
 import { DeleteProductDialog } from "./delete-product-dialog";
 import { useCategories, useProductMutations, useProducts } from "./hooks";
 import { ProductFormDialog } from "./product-form-dialog";
 import { ProductsFilters } from "./products-filters";
 import { ProductsTable } from "./products-table";
 import type { Product, ProductSortBy, ProductSortDir } from "./types";
+import { exportProducts } from "./api";
 
 const DEFAULT_PAGE = 1;
 const DEFAULT_SORT_BY: ProductSortBy = "createdAt";
@@ -73,6 +76,8 @@ export default function ProductsPage() {
   const [deletingProduct, setDeletingProduct] = React.useState<Product | null>(
     null,
   );
+  const [isImportOpen, setIsImportOpen] = React.useState(false);
+  const [isExporting, setIsExporting] = React.useState(false);
 
   React.useEffect(() => {
     const timer = setTimeout(() => {
@@ -108,6 +113,18 @@ export default function ProductsPage() {
     setEditingProductId(null);
   };
 
+  const handleExport = async () => {
+    setIsExporting(true);
+    try {
+      await exportProducts();
+      toast.success("Products exported successfully");
+    } catch {
+      toast.error("Export failed — please try again");
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
   const handleDelete = (productId: string) => {
     deleteProductMut.mutate(productId, {
       onSuccess: () => setDeletingProduct(null),
@@ -121,15 +138,36 @@ export default function ProductsPage() {
           <h1 className="text-3xl font-bold tracking-tight">Products</h1>
           <p className="text-muted-foreground">Manage your product catalog</p>
         </div>
-        <Button
-          onClick={() => {
-            setEditingProductId(null);
-            setIsFormOpen(true);
-          }}
-        >
-          <Plus className="h-4 w-4 mr-2" />
-          Add Product
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            onClick={handleExport}
+            disabled={isExporting}
+          >
+            {isExporting ? (
+              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+            ) : (
+              <Download className="h-4 w-4 mr-2" />
+            )}
+            Export CSV
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => setIsImportOpen(true)}
+          >
+            <Upload className="h-4 w-4 mr-2" />
+            Import CSV
+          </Button>
+          <Button
+            onClick={() => {
+              setEditingProductId(null);
+              setIsFormOpen(true);
+            }}
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            Add Product
+          </Button>
+        </div>
       </div>
 
       <ProductsFilters
@@ -219,6 +257,11 @@ export default function ProductsPage() {
         isDeleting={deleteProductMut.isPending}
         onOpenChange={(open) => !open && setDeletingProduct(null)}
         onDelete={handleDelete}
+      />
+
+      <CsvImportDialog
+        open={isImportOpen}
+        onOpenChange={setIsImportOpen}
       />
     </div>
   );
