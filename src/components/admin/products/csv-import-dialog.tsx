@@ -1,4 +1,4 @@
-import { AlertCircle, Loader2, Upload } from "lucide-react";
+import { AlertCircle, FileDown, Loader2, Upload } from "lucide-react";
 import * as React from "react";
 import { toast } from "sonner";
 
@@ -22,8 +22,9 @@ interface CsvImportDialogProps {
 }
 
 export function CsvImportDialog({ open, onOpenChange }: CsvImportDialogProps) {
-  const [importResults, setImportResults] =
-    React.useState<ImportResult | null>(null);
+  const [importResults, setImportResults] = React.useState<ImportResult | null>(
+    null,
+  );
   const [error, setError] = React.useState<string | null>(null);
   const [selectedFileName, setSelectedFileName] = React.useState<string | null>(
     null,
@@ -115,6 +116,14 @@ export function CsvImportDialog({ open, onOpenChange }: CsvImportDialogProps) {
                 onChange={handleFileChange}
               />
             </label>
+            <a
+              href="/utils/product-import-template.csv"
+              download="product-import-template.csv"
+              className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors w-fit"
+            >
+              <FileDown className="h-3.5 w-3.5" />
+              Download CSV template
+            </a>
           </div>
         )}
 
@@ -160,9 +169,9 @@ export function CsvImportDialog({ open, onOpenChange }: CsvImportDialogProps) {
                 </div>
                 <ScrollArea className="h-40 rounded-md border p-2">
                   <ul className="space-y-1">
-                    {importResults.skipped.map((row, index) => (
+                    {importResults.skipped.map((row) => (
                       <li
-                        key={index}
+                        key={row.sku}
                         className="text-xs text-muted-foreground"
                       >
                         Row {row.row}

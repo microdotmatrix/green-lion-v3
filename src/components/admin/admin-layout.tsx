@@ -1,31 +1,10 @@
-import {
-  BookOpen,
-  Briefcase,
-  Building2,
-  ChevronDown,
-  FileText,
-  FolderOpen,
-  Image,
-  LayoutDashboard,
-  LogOut,
-  MessageSquare,
-  MessageSquareQuote,
-  Newspaper,
-  Package,
-  Sliders,
-  Star,
-  User,
-  Users,
-} from "lucide-react";
-import * as React from "react";
-
+import gliLogo from "@/assets/images/GLI-logo.png";
 import { QueryProvider } from "@/components/providers/query-provider";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Separator } from "@/components/ui/separator";
@@ -45,6 +24,26 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { authClient } from "@/lib/auth/client";
+import {
+  BookOpen,
+  Briefcase,
+  Building2,
+  ChevronDown,
+  Eye,
+  FileText,
+  FolderOpen,
+  Image,
+  LayoutDashboard,
+  LogOut,
+  MessageSquare,
+  MessageSquareQuote,
+  Newspaper,
+  Package,
+  Sliders,
+  Star,
+  Users,
+} from "lucide-react";
+import * as React from "react";
 
 interface AdminLayoutProps {
   user: {
@@ -61,6 +60,11 @@ const mainNavItems = [
     title: "Dashboard",
     url: "/admin",
     icon: LayoutDashboard,
+  },
+  {
+    title: "View Site",
+    url: "/",
+    icon: Eye,
   },
 ];
 
@@ -169,11 +173,21 @@ export function AdminLayout({ user, children }: AdminLayoutProps) {
           <SidebarHeader>
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton size="lg" asChild>
+                <SidebarMenuButton
+                  size="lg"
+                  className="group-data-[state=collapsed]:gap-0 group-data-[state=expanded]:gap-2"
+                  asChild
+                >
                   <a href="/admin">
-                    <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                      <Package className="size-4" />
-                    </div>
+                    <figure className="size-10 overflow-clip">
+                      <img
+                        src={gliLogo.src}
+                        alt="Green Lion Logo"
+                        height="64"
+                        width="64"
+                        className="size-full object-contain object-center"
+                      />
+                    </figure>
                     <div className="grid flex-1 text-left text-sm leading-tight">
                       <span className="truncate font-semibold">Green Lion</span>
                       <span className="truncate text-xs text-muted-foreground">
@@ -337,13 +351,6 @@ export function AdminLayout({ user, children }: AdminLayoutProps) {
                     align="end"
                     sideOffset={4}
                   >
-                    <DropdownMenuItem asChild>
-                      <a href="/" className="flex items-center gap-2">
-                        <User className="size-4" />
-                        View Site
-                      </a>
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
                     <DropdownMenuItem
                       onClick={handleSignOut}
                       className="text-destructive focus:text-destructive"

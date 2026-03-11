@@ -1,7 +1,5 @@
-import * as React from "react";
-
-import { QueryProvider } from "@/components/providers/query-provider";
 import { ImageUpload } from "@/components/admin/image-upload";
+import { QueryProvider } from "@/components/providers/query-provider";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,6 +11,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import * as React from "react";
 import { CategoryCombobox } from "./category-combobox";
 import {
   useBlogCategories,
@@ -210,7 +209,7 @@ function BlogEditorInner({ mode, postId }: BlogEditorProps) {
           id="blog-excerpt"
           value={excerpt}
           onChange={(e) => setExcerpt(e.target.value)}
-          placeholder="Brief summary of the post..."
+          placeholder="Brief summary of the post... (If left empty, a truncated clip of the first paragraph will be used)"
           rows={3}
         />
       </div>

@@ -1,0 +1,3 @@
+sku,name,description,category,min_order_qty,order_qty_increment,logo_cost,packaging_cost,image_url,tier1_min_qty,tier1_price,tier2_min_qty,tier2_price,tier3_min_qty,tier3_price,tier4_min_qty,tier4_price,tier5_min_qty,tier5_price
+EXAMPLE-001,Example Product One,A sample product description,Apparel,12,12,1.50,0.50,https://example.com/image1.jpg,12,9.99,24,8.99,48,7.99,96,6.99,144,5.99
+EXAMPLE-002,Example Product Two,Another sample product,Accessories,6,6,2.00,0.00,,6,14.99,12,12.99,24,10.99,,,,
