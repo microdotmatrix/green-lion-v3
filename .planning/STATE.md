@@ -121,6 +121,7 @@ None yet.
 ### Roadmap Evolution
 
 - Phase 5 added: Product CSV Import/Export
+- Phase 6 added: Add product attribute management UI to admin products page
 
 ### Blockers/Concerns
 
