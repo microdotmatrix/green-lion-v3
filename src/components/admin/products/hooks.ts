@@ -7,10 +7,14 @@ import {
   fetchCategories,
   fetchProduct,
   fetchProducts,
+  fetchProductAttributes,
+  assignProductAttribute,
+  updateProductAttribute,
+  removeProductAttribute,
   importProducts,
   updateProduct,
 } from "./api";
-import type { ProductFormData, ProductSortBy, ProductSortDir } from "./types";
+import type { ProductFormData, ProductSortBy, ProductSortDir, ProductAttributeInput } from "./types";
 
 export function useProducts(params: {
   page: number;
@@ -105,4 +109,40 @@ export function useImportProducts() {
       // toast.error shown in dialog component — don't double-toast here
     },
   });
+}
+
+export function useProductAttributes(productId: string, enabled = true) {
+  return useQuery({
+    queryKey: ["admin-product-attributes", productId],
+    queryFn: () => fetchProductAttributes(productId),
+    enabled: enabled && !!productId,
+  });
+}
+
+export function useProductAttributeMutations(productId: string) {
+  const queryClient = useQueryClient();
+  const invalidate = () =>
+    queryClient.invalidateQueries({
+      queryKey: ["admin-product-attributes", productId],
+    });
+
+  const assignMut = useMutation({
+    mutationFn: (data: ProductAttributeInput) =>
+      assignProductAttribute(productId, data),
+    onSuccess: invalidate,
+  });
+
+  const updateMut = useMutation({
+    mutationFn: (data: ProductAttributeInput & { attributeId: string }) =>
+      updateProductAttribute(productId, data),
+    onSuccess: invalidate,
+  });
+
+  const removeMut = useMutation({
+    mutationFn: (attributeId: string) =>
+      removeProductAttribute(productId, attributeId),
+    onSuccess: invalidate,
+  });
+
+  return { assignMut, updateMut, removeMut };
 }
