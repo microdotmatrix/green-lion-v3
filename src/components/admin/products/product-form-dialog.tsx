@@ -21,10 +21,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 
 import { useProductDetail, useProductMutations } from "./hooks";
 import type { Category, PricingTier, ProductFormData } from "./types";
+import { ProductAttributesTab } from "./product-attributes-tab";
 
 type ProductFormDialogProps = {
   open: boolean;
@@ -166,6 +168,253 @@ export function ProductFormDialog({
             <Skeleton className="h-10 w-full" />
             <Skeleton className="h-20 w-full" />
           </div>
+        ) : isEditing ? (
+          <Tabs defaultValue="basic">
+            <TabsList className="w-full">
+              <TabsTrigger value="basic" className="flex-1">Basic Info</TabsTrigger>
+              <TabsTrigger value="attributes" className="flex-1">Attributes</TabsTrigger>
+            </TabsList>
+            <TabsContent value="basic">
+              <form onSubmit={handleSubmit} className="space-y-4">
+                {error && (
+                  <div className="text-sm text-destructive bg-destructive/10 p-3 rounded-md">
+                    {error instanceof Error ? error.message : "Something went wrong"}
+                  </div>
+                )}
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="sku">SKU *</Label>
+                    <Input
+                      id="sku"
+                      value={formData.sku}
+                      onChange={(event) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          sku: event.target.value,
+                        }))
+                      }
+                      placeholder="PROD-001"
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="category">Category</Label>
+                    <Select
+                      value={formData.categoryId}
+                      onValueChange={(value) =>
+                        setFormData((prev) => ({ ...prev, categoryId: value }))
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select category" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {categories.map((cat) => (
+                          <SelectItem key={cat.id} value={cat.id}>
+                            {cat.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="name">Name *</Label>
+                  <Input
+                    id="name"
+                    value={formData.name}
+                    onChange={(event) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        name: event.target.value,
+                      }))
+                    }
+                    placeholder="Product name"
+                    required
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="description">Description *</Label>
+                  <Textarea
+                    id="description"
+                    value={formData.description}
+                    onChange={(event) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        description: event.target.value,
+                      }))
+                    }
+                    placeholder="Product description"
+                    rows={3}
+                    required
+                  />
+                </div>
+
+                <ImageUpload
+                  label="Product Image"
+                  value={formData.images[0] || ""}
+                  onChange={(url) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      images: url ? [url] : [],
+                    }))
+                  }
+                  description="Upload an image or paste a URL"
+                />
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="moq">Minimum Order Qty</Label>
+                    <Input
+                      id="moq"
+                      type="number"
+                      value={formData.minimumOrderQuantity}
+                      onChange={(event) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          minimumOrderQuantity:
+                            parseInt(event.target.value, 10) || 1,
+                        }))
+                      }
+                      min={1}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="increment">Order Increment</Label>
+                    <Input
+                      id="increment"
+                      type="number"
+                      value={formData.orderQuantityIncrement}
+                      onChange={(event) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          orderQuantityIncrement:
+                            parseInt(event.target.value, 10) || 1,
+                        }))
+                      }
+                      min={1}
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="logoCost">Logo Cost ($)</Label>
+                    <Input
+                      id="logoCost"
+                      type="number"
+                      step="0.01"
+                      value={formData.logoCost}
+                      onChange={(event) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          logoCost: event.target.value,
+                        }))
+                      }
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="packagingCost">Packaging Cost ($)</Label>
+                    <Input
+                      id="packagingCost"
+                      type="number"
+                      step="0.01"
+                      value={formData.packagingCost}
+                      onChange={(event) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          packagingCost: event.target.value,
+                        }))
+                      }
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <Label>Pricing Tiers</Label>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={addPricingTier}
+                    >
+                      <Plus className="h-3 w-3 mr-1" />
+                      Add Tier
+                    </Button>
+                  </div>
+                  <div className="space-y-2">
+                    {formData.pricingTiers.map((tier, index) => (
+                      <div key={index} className="flex items-center gap-2">
+                        <div className="flex-1">
+                          <Input
+                            type="number"
+                            placeholder="Min Qty"
+                            value={tier.minQuantity}
+                            onChange={(event) =>
+                              updatePricingTier(
+                                index,
+                                "minQuantity",
+                                parseInt(event.target.value, 10) || 0,
+                              )
+                            }
+                            min={1}
+                          />
+                        </div>
+                        <div className="flex-1">
+                          <Input
+                            type="number"
+                            step="0.01"
+                            placeholder="Price"
+                            value={tier.pricePerUnit}
+                            onChange={(event) =>
+                              updatePricingTier(
+                                index,
+                                "pricePerUnit",
+                                event.target.value,
+                              )
+                            }
+                          />
+                        </div>
+                        {formData.pricingTiers.length > 1 && (
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => removePricingTier(index)}
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <ResponsiveModalFooter>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => onOpenChange(false)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button type="submit" disabled={isLoading}>
+                    {isLoading ? "Saving..." : "Update"}
+                  </Button>
+                </ResponsiveModalFooter>
+              </form>
+            </TabsContent>
+            <TabsContent value="attributes">
+              <ProductAttributesTab
+                productId={productId!}
+                categoryId={formData.categoryId}
+              />
+            </TabsContent>
+          </Tabs>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
             {error && (
@@ -395,7 +644,7 @@ export function ProductFormDialog({
                 Cancel
               </Button>
               <Button type="submit" disabled={isLoading}>
-                {isLoading ? "Saving..." : isEditing ? "Update" : "Create"}
+                {isLoading ? "Saving..." : "Create"}
               </Button>
             </ResponsiveModalFooter>
           </form>
