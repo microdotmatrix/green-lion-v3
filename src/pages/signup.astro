@@ -6,9 +6,7 @@ const inviteToken = Astro.url.searchParams.get("invite") || undefined;
 ---
 
 <Layout title="Sign Up">
-  <div class="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
-    <div class="w-full max-w-sm">
-      <SignUpForm client:load inviteToken={inviteToken} />
-    </div>
+  <div class="flex flex-1 w-full items-center justify-center p-6 md:p-10">
+    <SignUpForm client:load inviteToken={inviteToken} />
   </div>
 </Layout>

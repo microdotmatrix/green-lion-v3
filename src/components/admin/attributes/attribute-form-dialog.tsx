@@ -3,6 +3,7 @@ import * as React from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   ResponsiveModal,
   ResponsiveModalContent,
@@ -11,7 +12,6 @@ import {
   ResponsiveModalHeader,
   ResponsiveModalTitle,
 } from "@/components/ui/responsive-modal";
-import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -61,7 +61,7 @@ export function AttributeFormDialog({
       });
     }
     setOptionInput("");
-  }, [attribute, open]);
+  }, [attribute]);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -222,7 +222,9 @@ export function AttributeFormDialog({
             </Button>
             <Button
               type="submit"
-              disabled={isLoading || (showOptions && formData.options.length === 0)}
+              disabled={
+                isLoading || (showOptions && formData.options.length === 0)
+              }
             >
               {isLoading ? "Saving..." : isEditing ? "Update" : "Create"}
             </Button>

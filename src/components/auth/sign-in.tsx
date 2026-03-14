@@ -91,7 +91,7 @@ export default function SignIn() {
             <Input id="password" name="password" type="password" required />
           </div>
         </CardContent>
-        <CardFooter className="flex flex-col gap-2">
+        <CardFooter className="flex flex-col gap-2 pt-4">
           <Button className="w-full" type="submit" disabled={isPending}>
             {isPending ? "Signing in..." : "Sign In"}
           </Button>
