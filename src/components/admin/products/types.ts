@@ -60,3 +60,21 @@ export interface ProductFormData {
 export interface ProductDetail extends Product {
   pricingTiers: PricingTier[];
 }
+
+export interface ProductAttribute {
+  id: string;
+  attributeId: string;
+  required: boolean;
+  additionalCost: string; // decimal as string — matches Drizzle decimal column
+  supportedOptions: string[] | null;
+  attributeName: string; // joined from customizationAttributes
+  attributeType: string; // 'text' | 'number' | 'boolean' | 'select' | 'multi_select'
+  allOptions: string[] | null; // full option list from customizationAttributes.options
+}
+
+export interface ProductAttributeInput {
+  attributeId: string;
+  required: boolean;
+  additionalCost: string; // keep as string — do NOT parse to number
+  supportedOptions: string[] | null;
+}

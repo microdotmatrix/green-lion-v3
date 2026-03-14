@@ -1,6 +1,8 @@
 import type {
   Category,
   Product,
+  ProductAttribute,
+  ProductAttributeInput,
   ProductDetail,
   ProductFormData,
   ProductsResponse,
@@ -122,4 +124,57 @@ export async function exportProducts(): Promise<void> {
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
+}
+
+export async function fetchProductAttributes(
+  productId: string,
+): Promise<ProductAttribute[]> {
+  const response = await fetch(`/api/admin/products/${productId}/attributes`);
+  if (!response.ok) throw new Error("Failed to fetch product attributes");
+  return response.json();
+}
+
+export async function assignProductAttribute(
+  productId: string,
+  data: ProductAttributeInput,
+): Promise<void> {
+  const response = await fetch(`/api/admin/products/${productId}/attributes`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || "Failed to assign attribute");
+  }
+}
+
+export async function updateProductAttribute(
+  productId: string,
+  data: ProductAttributeInput & { attributeId: string },
+): Promise<void> {
+  const response = await fetch(`/api/admin/products/${productId}/attributes`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || "Failed to update attribute");
+  }
+}
+
+export async function removeProductAttribute(
+  productId: string,
+  attributeId: string,
+): Promise<void> {
+  const response = await fetch(`/api/admin/products/${productId}/attributes`, {
+    method: "DELETE",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ attributeId }),
+  });
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || "Failed to remove attribute");
+  }
 }
