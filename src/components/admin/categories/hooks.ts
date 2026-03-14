@@ -31,6 +31,7 @@ export function useCategoryAttributes(categoryId: string) {
   return useQuery({
     queryKey: ["admin-category-attributes", categoryId],
     queryFn: () => fetchCategoryAttributes(categoryId),
+    enabled: !!categoryId,
   });
 }
 
