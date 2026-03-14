@@ -106,3 +106,15 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 Plans:
 - [x] 05-01-PLAN.md — CSV utility module + import POST endpoint + export GET endpoint (papaparse, upsert by SKU, tier replace, category auto-create)
 - [x] 05-02-PLAN.md — CsvImportDialog component, api.ts helpers, hooks.ts mutation, products-page toolbar buttons, human verification checkpoint
+
+### Phase 6: Add product attribute management UI to admin products page
+
+**Goal:** Admin can assign, configure, and remove customization attributes on individual products via a new Attributes tab in the existing edit dialog
+**Requirements**: None (emergent UX feature, no formal requirement IDs)
+**Depends on:** Phase 5
+**Plans:** 3 plans
+
+Plans:
+- [ ] 06-01-PLAN.md — Product attributes REST API (GET/POST/PUT/DELETE) + types.ts and api.ts extensions
+- [ ] 06-02-PLAN.md — TanStack Query hooks + AssignAttributeDialog + ConfigureAttributeDialog + ProductAttributesTab component
+- [ ] 06-03-PLAN.md — Wire Attributes tab into ProductFormDialog via shadcn Tabs + human verification checkpoint
