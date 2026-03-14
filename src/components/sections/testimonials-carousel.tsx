@@ -27,7 +27,7 @@ export function TestimonialsCarousel({
       <CarouselContent>
         {testimonials.map((testimonial) => (
           <CarouselItem key={testimonial.id}>
-            <figure className="flex flex-col items-center text-center px-4 md:px-12">
+            <figure className="flex flex-col items-center text-center px-8 md:px-12">
               <blockquote className="text-foreground">
                 <p className="fl-text-base/xl text-balance leading-relaxed">
                   "{testimonial.quote}"
@@ -75,13 +75,13 @@ export function TestimonialsCarousel({
       </CarouselContent>
       <CarouselPrevious
         className={cn(
-          "left-0 md:-left-12",
+          "left-0 lg:-left-12",
           "bg-background/80 hover:bg-background",
         )}
       />
       <CarouselNext
         className={cn(
-          "right-0 md:-right-12",
+          "right-0 lg:-right-12",
           "bg-background/80 hover:bg-background",
         )}
       />

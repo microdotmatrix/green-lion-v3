@@ -7,7 +7,6 @@ import {
   Trash2,
 } from "lucide-react";
 
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -23,6 +22,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Switch } from "@/components/ui/switch";
 import {
   Table,
   TableBody,
@@ -37,16 +37,22 @@ import type { ClientLogo } from "./clients-types";
 type ClientsTableProps = {
   items: ClientLogo[] | undefined;
   isLoading: boolean;
+  getFeaturedChecked: (item: ClientLogo) => boolean;
+  isFeatureTogglePending: (id: string) => boolean;
   onAdd: () => void;
   onEdit: (item: ClientLogo) => void;
+  onToggleFeatured: (item: ClientLogo, checked: boolean) => void;
   onDelete: (item: ClientLogo) => void;
 };
 
 export function ClientsTable({
   items,
   isLoading,
+  getFeaturedChecked,
+  isFeatureTogglePending,
   onAdd,
   onEdit,
+  onToggleFeatured,
   onDelete,
 }: ClientsTableProps) {
   return (
@@ -82,66 +88,72 @@ export function ClientsTable({
               </TableRow>
             </TableHeader>
             <TableBody>
-              {items?.map((item) => (
-                <TableRow key={item.id}>
-                  <TableCell>
-                    <img
-                      src={item.logoUrl}
-                      alt={item.companyName}
-                      className="h-10 w-20 object-contain bg-white rounded p-1"
-                    />
-                  </TableCell>
-                  <TableCell className="font-medium">
-                    <button
-                      type="button"
-                      className="text-left cursor-pointer hover:underline focus-visible:outline-none focus-visible:underline"
-                      onClick={() => onEdit(item)}
-                    >
-                      {item.companyName}
-                    </button>
-                  </TableCell>
-                  <TableCell>
-                    {item.featuredOnHomepage && (
-                      <Badge>
-                        <Star className="h-3 w-3 mr-1" />
-                        Featured
-                      </Badge>
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon">
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem asChild>
-                          <a
-                            href={item.externalLink}
-                            target="_blank"
-                            rel="noopener"
+              {items?.map((item) => {
+                const isFeatured = getFeaturedChecked(item);
+
+                return (
+                  <TableRow key={item.id}>
+                    <TableCell>
+                      <img
+                        src={item.logoUrl}
+                        alt={item.companyName}
+                        className="h-10 w-20 object-contain bg-white rounded p-1"
+                      />
+                    </TableCell>
+                    <TableCell className="font-medium">
+                      <button
+                        type="button"
+                        className="text-left cursor-pointer hover:underline focus-visible:outline-none focus-visible:underline"
+                        onClick={() => onEdit(item)}
+                      >
+                        {item.companyName}
+                      </button>
+                    </TableCell>
+                    <TableCell>
+                      <Switch
+                        aria-label={`Toggle featured for ${item.companyName}`}
+                        checked={isFeatured}
+                        disabled={isFeatureTogglePending(item.id)}
+                        onCheckedChange={(checked) =>
+                          onToggleFeatured(item, checked)
+                        }
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="icon">
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem asChild>
+                            <a
+                              href={item.externalLink}
+                              target="_blank"
+                              rel="noopener"
+                            >
+                              <ExternalLink className="h-4 w-4 mr-2" />
+                              Visit
+                            </a>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => onEdit(item)}>
+                            <Pencil className="h-4 w-4 mr-2" />
+                            Edit
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            className="text-destructive"
+                            onClick={() => onDelete(item)}
                           >
-                            <ExternalLink className="h-4 w-4 mr-2" />
-                            Visit
-                          </a>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => onEdit(item)}>
-                          <Pencil className="h-4 w-4 mr-2" />
-                          Edit
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          className="text-destructive"
-                          onClick={() => onDelete(item)}
-                        >
-                          <Trash2 className="h-4 w-4 mr-2" />
-                          Delete
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
-                </TableRow>
-              ))}
+                            <Trash2 className="h-4 w-4 mr-2" />
+                            Delete
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
             </TableBody>
           </Table>
         )}

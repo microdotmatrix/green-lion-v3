@@ -196,10 +196,10 @@
     @apply fl-text-7xl/8xl;
   }
   h2 {
-    @apply fl-text-6xl/7xl;
+    @apply fl-text-5xl/7xl;
   }
   h3 {
-    @apply fl-text-5xl/6xl;
+    @apply fl-text-4xl/6xl;
   }
   h4 {
     @apply fl-text-4xl/5xl;

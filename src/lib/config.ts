@@ -28,10 +28,10 @@ export type NavLinks = {
 
 // Navigation menu links
 export const NAV_LINKS: NavLinks[] = [
+  { link: "about", title: "About" },
   { link: "products", title: "Products" },
   { link: "services", title: "Services" },
-  { link: "case-studies", title: "Case Studies" },
+  // { link: "case-studies", title: "Case Studies" },
   { link: "blog", title: "Blog" },
-  { link: "about", title: "About" },
   { link: "contact", title: "Contact" },
 ];

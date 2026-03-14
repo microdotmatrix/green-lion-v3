@@ -1,18 +1,43 @@
 ---
-import AboutSection from "@/components/sections/about.astro";
-import Mission from "@/components/sections/mission.astro";
+import { db } from "@/lib/db";
+import { clientLogos } from "@/lib/db/schema";
+import { eq, desc } from "drizzle-orm";
 import Team from "@/components/sections/team.astro";
+import Locations from "@/components/sections/locations.astro";
+import ClientLogos from "@/components/catalog/client-logos.astro";
 import Layout from "@/layouts/default.astro";
+
+const featuredClients = await db
+  .select()
+  .from(clientLogos)
+  .where(eq(clientLogos.featuredOnHomepage, true))
+  .orderBy(clientLogos.displayOrder, desc(clientLogos.createdAt));
 ---
 
 <Layout title="About">
-  <section id="about">
-    <AboutSection />
-  </section>
-  <section id="mission" class="fl-px-4/8 md:fl-px-8/24 border-b">
-    <Mission />
-  </section>
   <section id="team" class="fl-px-4/8 md:fl-px-8/24">
     <Team />
   </section>
+  <section id="locations" class="fl-px-4/8 md:fl-px-8/24 pb-16">
+    <Locations />
+  </section>
+  {
+    featuredClients.length > 0 && (
+      <section id="clients" class="fl-px-4/8 md:fl-px-8/24 pb-16 mx-auto">
+        <h4 class="accent-underline text-center mx-auto">
+          Our Clients & Partners
+        </h4>
+        <div class="content">
+          <ClientLogos clients={featuredClients} />
+        </div>
+      </section>
+    )
+  }
 </Layout>
+
+<style>
+  .clients-section {
+    background: var(--secondary);
+    padding: 3rem 0;
+  }
+</style>

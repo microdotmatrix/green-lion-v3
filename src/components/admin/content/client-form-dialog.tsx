@@ -1,7 +1,9 @@
-import * as React from "react";
+import { useEffect, useState } from "react";
 
+import { ImageUpload } from "@/components/admin/image-upload";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   ResponsiveModal,
   ResponsiveModalContent,
@@ -10,7 +12,6 @@ import {
   ResponsiveModalHeader,
   ResponsiveModalTitle,
 } from "@/components/ui/responsive-modal";
-import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 
 import { useClientMutations } from "./clients-hooks";
@@ -32,15 +33,16 @@ export function ClientFormDialog({
   const isEditing = !!item;
   const { createMut, updateMut } = useClientMutations();
 
-  const [formData, setFormData] = React.useState<ClientFormData>({
+  const [formData, setFormData] = useState<ClientFormData>({
     companyName: "",
     logoUrl: "",
     externalLink: "",
     displayOrder: 0,
-    featuredOnHomepage: false,
+    featuredOnHomepage: true,
   });
+  const [logoError, setLogoError] = useState("");
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (item) {
       setFormData({
         companyName: item.companyName,
@@ -55,13 +57,19 @@ export function ClientFormDialog({
         logoUrl: "",
         externalLink: "",
         displayOrder: 0,
-        featuredOnHomepage: false,
+        featuredOnHomepage: true,
       });
     }
-  }, [item, open]);
+    setLogoError("");
+  }, [item]);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (!formData.logoUrl.trim()) {
+      setLogoError("A client logo is required.");
+      return;
+    }
+
     try {
       if (isEditing && item) {
         await updateMut.mutateAsync({ id: item.id, data: formData });
@@ -83,8 +91,12 @@ export function ClientFormDialog({
         onInteractOutside={(event) => event.preventDefault()}
       >
         <ResponsiveModalHeader>
-          <ResponsiveModalTitle>{isEditing ? "Edit Client" : "Add Client"}</ResponsiveModalTitle>
-          <ResponsiveModalDescription>Manage client logo details</ResponsiveModalDescription>
+          <ResponsiveModalTitle>
+            {isEditing ? "Edit Client" : "Add Client"}
+          </ResponsiveModalTitle>
+          <ResponsiveModalDescription>
+            Manage client logo details
+          </ResponsiveModalDescription>
         </ResponsiveModalHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
@@ -101,17 +113,18 @@ export function ClientFormDialog({
             />
           </div>
           <div className="space-y-2">
-            <Label>Logo URL *</Label>
-            <Input
+            <ImageUpload
+              label="Client Logo *"
               value={formData.logoUrl}
-              onChange={(event) =>
-                setFormData((prev) => ({
-                  ...prev,
-                  logoUrl: event.target.value,
-                }))
-              }
-              required
+              onChange={(url) => {
+                setFormData((prev) => ({ ...prev, logoUrl: url }));
+                setLogoError("");
+              }}
+              description="Upload an image or paste a URL"
             />
+            {logoError ? (
+              <p className="text-xs text-destructive">{logoError}</p>
+            ) : null}
           </div>
           <div className="space-y-2">
             <Label>External Link *</Label>
@@ -141,7 +154,7 @@ export function ClientFormDialog({
               />
             </div>
             <div className="flex items-center justify-between pt-6">
-              <Label>Featured on Homepage</Label>
+              <Label>Featured</Label>
               <Switch
                 checked={formData.featuredOnHomepage}
                 onCheckedChange={(checked) =>

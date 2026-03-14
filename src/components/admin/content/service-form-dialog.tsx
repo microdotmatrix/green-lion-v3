@@ -3,6 +3,7 @@ import * as React from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   ResponsiveModal,
   ResponsiveModalContent,
@@ -11,7 +12,6 @@ import {
   ResponsiveModalHeader,
   ResponsiveModalTitle,
 } from "@/components/ui/responsive-modal";
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 
 import { useServiceMutations } from "./services-hooks";
@@ -67,7 +67,7 @@ export function ServiceFormDialog({
       });
     }
     setFeatureInput("");
-  }, [item, open]);
+  }, [item]);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -110,8 +110,12 @@ export function ServiceFormDialog({
         onInteractOutside={(event) => event.preventDefault()}
       >
         <ResponsiveModalHeader>
-          <ResponsiveModalTitle>{isEditing ? "Edit Service" : "Add Service"}</ResponsiveModalTitle>
-          <ResponsiveModalDescription>Manage service details</ResponsiveModalDescription>
+          <ResponsiveModalTitle>
+            {isEditing ? "Edit Service" : "Add Service"}
+          </ResponsiveModalTitle>
+          <ResponsiveModalDescription>
+            Manage service details
+          </ResponsiveModalDescription>
         </ResponsiveModalHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">

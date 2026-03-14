@@ -1,7 +1,9 @@
 import * as React from "react";
 
+import { ImageUpload } from "@/components/admin/image-upload";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   ResponsiveModal,
   ResponsiveModalContent,
@@ -10,7 +12,6 @@ import {
   ResponsiveModalHeader,
   ResponsiveModalTitle,
 } from "@/components/ui/responsive-modal";
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 
 import { useCaseStudyMutations } from "./case-studies-hooks";
@@ -40,6 +41,7 @@ export function CaseStudyFormDialog({
     externalLink: "",
     displayOrder: 0,
   });
+  const [imageError, setImageError] = React.useState("");
 
   React.useEffect(() => {
     if (item) {
@@ -61,10 +63,16 @@ export function CaseStudyFormDialog({
         displayOrder: 0,
       });
     }
-  }, [item, open]);
+    setImageError("");
+  }, [item]);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (!formData.image.trim()) {
+      setImageError("A case study image is required.");
+      return;
+    }
+
     try {
       if (isEditing && item) {
         await updateMut.mutateAsync({ id: item.id, data: formData });
@@ -90,7 +98,9 @@ export function CaseStudyFormDialog({
           <ResponsiveModalTitle>
             {isEditing ? "Edit Case Study" : "Add Case Study"}
           </ResponsiveModalTitle>
-          <ResponsiveModalDescription>Manage case study details</ResponsiveModalDescription>
+          <ResponsiveModalDescription>
+            Manage case study details
+          </ResponsiveModalDescription>
         </ResponsiveModalHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           {error && (
@@ -141,17 +151,18 @@ export function CaseStudyFormDialog({
             />
           </div>
           <div className="space-y-2">
-            <Label>Image URL *</Label>
-            <Input
+            <ImageUpload
+              label="Case Study Image *"
               value={formData.image}
-              onChange={(event) =>
-                setFormData((prev) => ({
-                  ...prev,
-                  image: event.target.value,
-                }))
-              }
-              required
+              onChange={(url) => {
+                setFormData((prev) => ({ ...prev, image: url }));
+                setImageError("");
+              }}
+              description="Upload an image or paste a URL"
             />
+            {imageError ? (
+              <p className="text-xs text-destructive">{imageError}</p>
+            ) : null}
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">

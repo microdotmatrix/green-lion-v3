@@ -25,6 +25,17 @@ const inputErrors =
             Have a question or want to learn more about our manufacturing
             solutions? We&#39;d love to hear from you.
           </p>
+          <div class="meeting-cta">
+            <p class="meeting-label">Prefer to talk directly?</p>
+            <a
+              href="https://calendly.com/mike-greenlioninnovations/intro-to-gli"
+              target="_blank"
+              rel="noopener"
+              class="meeting-link"
+            >
+              Request a Meeting
+            </a>
+          </div>
         </div>
 
         <div class="contact-form-col">
@@ -242,6 +253,40 @@ const inputErrors =
 
   .contact-subtitle {
     color: var(--muted-foreground);
+  }
+
+  .meeting-cta {
+    margin-top: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .meeting-label {
+    font-size: 0.875rem;
+    color: var(--muted-foreground);
+  }
+
+  .meeting-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius);
+    border: 1px solid var(--primary);
+    color: var(--primary);
+    padding: 0.5rem 1.25rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-decoration: none;
+    width: fit-content;
+    transition:
+      background-color 0.15s,
+      color 0.15s;
+  }
+
+  .meeting-link:hover {
+    background: var(--primary);
+    color: var(--primary-foreground);
   }
 
   .card {

@@ -2,6 +2,7 @@
 // Global footer component
 
 import { Copyright } from "@/components/icons";
+import { NAV_LINKS } from "@/lib/config";
 ---
 
 <footer class="bg-secondary/50 border-t py-8">
@@ -16,38 +17,23 @@ import { Copyright } from "@/components/icons";
           <span class="text-lg font-semibold" style="font-style: normal"
             >Green Lion Innovations</span
           >
-          <span>1280 Kalamath St.</span>
-          <span>Denver, CO 80204</span>
+          <span>1312 17th St #652</span>
+          <span>Denver, CO 80202</span>
           <span>United States</span>
         </address>
       </section>
 
-      <section
-        class="flex gap-4 [&>a]:text-gray-400 hover:[&>a]:text-primary [&>a]:transition [&>a>svg]:size-12"
-      >
-        <!-- <a
-          href="https://www.instagram.com/greenlionpartners/"
-          target="_blank"
-          title="Instagram"
-        >
-          <Instagram />
-        </a>
-
-        <a
-          href="https://twitter.com/greenlionp"
-          target="_blank"
-          title="X (Twitter)"
-        >
-          <X />
-        </a>
-
-        <a
-          href="https://www.facebook.com/greenlionpartners/"
-          target="_blank"
-          title="Facebook"
-        >
-          <Facebook />
-        </a> -->
+      <section class="footer-nav ml-auto" aria-label="Footer navigation">
+        <h2 class="footer-heading">Explore</h2>
+        <ul class="footer-links">
+          {
+            NAV_LINKS.map(({ link, title }) => (
+              <li>
+                <a href={`/${link}`}>{title}</a>
+              </li>
+            ))
+          }
+        </ul>
       </section>
     </div>
 
@@ -59,3 +45,51 @@ import { Copyright } from "@/components/icons";
     </div>
   </div>
 </footer>
+
+<style>
+  .footer-nav {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .footer-heading {
+    margin: 0;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--foreground);
+  }
+
+  .footer-links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem 1.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .footer-links a {
+    color: var(--muted-foreground);
+    text-decoration: none;
+    transition: color 200ms ease;
+  }
+
+  .footer-links a:hover {
+    color: var(--primary);
+  }
+
+  @media (min-width: 768px) {
+    .footer-nav {
+      align-items: flex-start;
+    }
+
+    .footer-links {
+      justify-content: flex-start;
+    }
+  }
+</style>

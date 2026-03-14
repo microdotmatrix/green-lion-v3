@@ -2,6 +2,7 @@ import * as React from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   ResponsiveModal,
   ResponsiveModalContent,
@@ -10,7 +11,6 @@ import {
   ResponsiveModalHeader,
   ResponsiveModalTitle,
 } from "@/components/ui/responsive-modal";
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 
 import { useTestimonialMutations } from "./testimonials-hooks";
@@ -64,7 +64,7 @@ export function TestimonialFormDialog({
         displayOrder: 0,
       });
     }
-  }, [item, open]);
+  }, [item]);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -93,7 +93,9 @@ export function TestimonialFormDialog({
           <ResponsiveModalTitle>
             {isEditing ? "Edit Testimonial" : "Add Testimonial"}
           </ResponsiveModalTitle>
-          <ResponsiveModalDescription>Manage testimonial details</ResponsiveModalDescription>
+          <ResponsiveModalDescription>
+            Manage testimonial details
+          </ResponsiveModalDescription>
         </ResponsiveModalHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           {error && (

@@ -387,7 +387,7 @@ export const clientLogos = pgTable("client_logos", {
   logoUrl: text("logo_url").notNull(),
   externalLink: text("external_link").notNull(),
   displayOrder: integer("display_order").notNull().default(0),
-  featuredOnHomepage: boolean("featured_on_homepage").notNull().default(false),
+  featuredOnHomepage: boolean("featured_on_homepage").notNull().default(true),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 

@@ -6,15 +6,33 @@ interface Props {
 }
 
 const { clients } = Astro.props;
+
+function getCols(n: number, max: number): number {
+  const cap = Math.min(n, max);
+  for (let c = cap; c >= 2; c--) {
+    if (n % c === 0) return c;
+  }
+  return cap;
+}
+
+const count = clients.length;
+const colsXs = getCols(count, 2);
+const colsSm = getCols(count, 3);
+const colsMd = getCols(count, 4);
+const colsLg = getCols(count, 5);
+const colsXl = getCols(count, 6);
 ---
 
-<div class="client-logos">
+<div
+  class="client-logos"
+  style={`--cols-xs:${colsXs};--cols-sm:${colsSm};--cols-md:${colsMd};--cols-lg:${colsLg};--cols-xl:${colsXl}`}
+>
   {
     clients.map((client) => (
       <a
         href={client.externalLink}
         target="_blank"
-        rel="noopener noreferrer"
+        rel="noopener"
         class="client-logo"
         title={client.companyName}
       >
@@ -27,32 +45,32 @@ const { clients } = Astro.props;
 <style>
   .client-logos {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(var(--cols-xs), 1fr);
     gap: 1rem;
   }
 
   @media (min-width: 480px) {
     .client-logos {
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(var(--cols-sm), 1fr);
     }
   }
 
   @media (min-width: 768px) {
     .client-logos {
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(var(--cols-md), 1fr);
     }
   }
 
   @media (min-width: 1024px) {
     .client-logos {
-      grid-template-columns: repeat(5, 1fr);
+      grid-template-columns: repeat(var(--cols-lg), 1fr);
       gap: 1.5rem;
     }
   }
 
   @media (min-width: 1280px) {
     .client-logos {
-      grid-template-columns: repeat(6, 1fr);
+      grid-template-columns: repeat(var(--cols-xl), 1fr);
     }
   }
 
@@ -60,8 +78,7 @@ const { clients } = Astro.props;
     display: flex;
     align-items: center;
     justify-content: center;
-    aspect-ratio: 3 / 2;
-    padding: 1rem;
+    aspect-ratio: 1;
     background: var(--card);
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);

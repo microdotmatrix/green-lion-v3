@@ -1,0 +1,1 @@
+ALTER TABLE "client_logos" ALTER COLUMN "featured_on_homepage" SET DEFAULT true;

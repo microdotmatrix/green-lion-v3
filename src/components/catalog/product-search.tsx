@@ -38,7 +38,6 @@ type SortDir = "asc" | "desc";
 
 export default function ProductSearch({
   products,
-  categoryName,
   categorySlug,
   attributeFilters = [],
   productAttributeMap = {},
@@ -152,56 +151,6 @@ export default function ProductSearch({
     } else {
       setSortField(field);
       setSortDir("asc");
-    }
-  };
-
-  const handleAddToQuote = (product: Product) => {
-    // Get existing cart from localStorage
-    const existingCart = localStorage.getItem("quoteCart");
-    const cart: Array<{
-      productId: string;
-      sku: string;
-      name: string;
-      quantity: number;
-      price: string | null;
-    }> = existingCart ? JSON.parse(existingCart) : [];
-
-    // Check if product already in cart
-    const existingIndex = cart.findIndex(
-      (item) => item.productId === product.id,
-    );
-
-    if (existingIndex >= 0) {
-      cart[existingIndex].quantity += product.minimumOrderQuantity;
-    } else {
-      cart.push({
-        productId: product.id,
-        sku: product.sku,
-        name: product.name,
-        quantity: product.minimumOrderQuantity,
-        price: product.price,
-      });
-    }
-
-    localStorage.setItem("quoteCart", JSON.stringify(cart));
-
-    // Dispatch custom event for UI feedback
-    window.dispatchEvent(
-      new CustomEvent("quote-cart-updated", { detail: { product } }),
-    );
-
-    // Show simple feedback
-    const btn = document.querySelector(
-      `[data-product-id="${product.id}"]`,
-    ) as HTMLButtonElement;
-    if (btn) {
-      const originalText = btn.textContent;
-      btn.textContent = "Added!";
-      btn.disabled = true;
-      setTimeout(() => {
-        btn.textContent = originalText;
-        btn.disabled = false;
-      }, 1500);
     }
   };
 
@@ -395,13 +344,11 @@ export default function ProductSearch({
                 </span>
               </div>
 
-              <button
-                type="button"
-                className="add-to-quote-btn"
-                data-product-id={product.id}
-                onClick={() => handleAddToQuote(product)}
+              <a
+                href={`/products/${categorySlug}/${product.sku.toLowerCase()}`}
+                className="view-details-btn"
               >
-                Add To Quote
+                View Details
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="16"
@@ -416,7 +363,7 @@ export default function ProductSearch({
                   <path d="M5 12h14" />
                   <path d="m12 5 7 7-7 7" />
                 </svg>
-              </button>
+              </a>
             </div>
           </article>
         ))}
@@ -835,7 +782,7 @@ export default function ProductSearch({
           color: var(--muted-foreground);
         }
 
-        .add-to-quote-btn {
+        .view-details-btn {
           width: 100%;
           display: inline-flex;
           align-items: center;
@@ -845,25 +792,20 @@ export default function ProductSearch({
           margin-top: auto;
           background: var(--primary);
           color: var(--primary-foreground);
-          border: none;
           border-radius: var(--radius-md);
+          text-decoration: none;
           font-size: 0.875rem;
           font-weight: 500;
           cursor: pointer;
           transition: background 200ms ease, transform 100ms ease;
         }
 
-        .add-to-quote-btn:hover:not(:disabled) {
+        .view-details-btn:hover {
           background: oklch(from var(--primary) l c calc(h * 1.3));
         }
 
-        .add-to-quote-btn:active:not(:disabled) {
+        .view-details-btn:active {
           transform: scale(0.98);
-        }
-
-        .add-to-quote-btn:disabled {
-          opacity: 0.8;
-          cursor: default;
         }
 
         .product-image-link {

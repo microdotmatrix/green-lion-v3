@@ -1,0 +1,135 @@
+---
+import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+
+// World map section showing team locations
+// Coordinates calibrated for viewBox="0 0 2000 857" (equirectangular projection)
+// Formula: x = (lon + 180) / 360 * 2000,  y = (90 - lat) / 180 * 857
+const locations = [
+  { city: "Denver", state: "CO", country: "US", x: 417, y: 239 },
+  { city: "Houston", state: "TX", country: "US", x: 469, y: 287 },
+  { city: "Chicago", state: "IL", country: "US", x: 513, y: 229 },
+  { city: "Shenzhen", state: "", country: "CN", x: 1634, y: 321 },
+];
+
+const svgPath = fileURLToPath(new URL("../../assets/images/world.svg", import.meta.url));
+const worldSvgRaw = readFileSync(svgPath, "utf-8");
+// Strip the XML declaration and outer <svg> wrapper — we'll provide our own
+const svgBody = worldSvgRaw
+  .replace(/<\?xml[^?]*\?>/g, "")
+  .replace(/<!--[\s\S]*?-->/g, "")
+  .replace(/<svg[^>]*>/, "")
+  .replace(/<\/svg>\s*$/, "");
+---
+
+<div class="content py-8 mt-4 max-w-screen-2xl">
+  <header class="flex flex-col items-center justify-center mb-8">
+    <h3 class="accent-underline text-center">Where We Are</h3>
+  </header>
+
+  <div class="relative w-full rounded-xl overflow-hidden bg-secondary border border-border">
+    <!-- SVG World Map -->
+    <svg
+      viewBox="0 0 2000 857"
+      xmlns="http://www.w3.org/2000/svg"
+      class="w-full h-auto world-map"
+      aria-label="World map showing team locations"
+    >
+      <!-- High-quality world map paths -->
+      <g class="countries" set:html={svgBody} />
+
+      <!-- Location markers -->
+      {locations.map((loc) => (
+        <g class="location-marker" role="img" aria-label={`${loc.city}${loc.state ? `, ${loc.state}` : ''}`}>
+          <!-- Pulse ring -->
+          <circle
+            cx={loc.x}
+            cy={loc.y}
+            r="20"
+            fill="none"
+            stroke="var(--color-primary)"
+            stroke-width="2"
+            opacity="0.4"
+            class="pulse-ring"
+          />
+          <!-- Outer dot -->
+          <circle
+            cx={loc.x}
+            cy={loc.y}
+            r="10"
+            fill="var(--color-primary)"
+            opacity="0.25"
+          />
+          <!-- Inner dot -->
+          <circle
+            cx={loc.x}
+            cy={loc.y}
+            r="6"
+            fill="var(--color-primary)"
+            opacity="0.9"
+          />
+
+          <!-- Label -->
+          <text
+            x={loc.x}
+            y={loc.y - 16}
+            text-anchor="middle"
+            font-size="18"
+            font-family="inherit"
+            fill="currentColor"
+            opacity="0.7"
+            font-weight="600"
+            letter-spacing="0.05em"
+          >
+            {loc.city}{loc.state ? `, ${loc.state}` : ''}
+          </text>
+        </g>
+      ))}
+    </svg>
+  </div>
+
+  <!-- Location pills below map -->
+  <ul class="flex flex-wrap justify-center gap-3 mt-6">
+    {locations.map((loc) => (
+      <li class="flex items-center gap-2 px-4 py-2 rounded-full bg-secondary border border-border text-xs font-medium text-muted-foreground">
+        <span class="size-2 rounded-full bg-primary opacity-80 shrink-0"></span>
+        {loc.city}{loc.state ? `, ${loc.state}` : ''}{loc.country === 'CN' ? ' 🇨🇳' : ' 🇺🇸'}
+      </li>
+    ))}
+  </ul>
+</div>
+
+<style>
+  .world-map .countries path {
+    fill: currentColor;
+    opacity: 0.12;
+    stroke: currentColor;
+    stroke-width: 0.5;
+    stroke-opacity: 0.3;
+  }
+
+  .pulse-ring {
+    animation: pulse-out 2.5s ease-out infinite;
+  }
+
+  .location-marker:nth-child(3) .pulse-ring {
+    animation-delay: 0.6s;
+  }
+  .location-marker:nth-child(4) .pulse-ring {
+    animation-delay: 1.2s;
+  }
+  .location-marker:nth-child(5) .pulse-ring {
+    animation-delay: 1.8s;
+  }
+
+  @keyframes pulse-out {
+    0% {
+      r: 10;
+      opacity: 0.6;
+    }
+    100% {
+      r: 36;
+      opacity: 0;
+    }
+  }
+</style>

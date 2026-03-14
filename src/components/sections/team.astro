@@ -6,24 +6,24 @@ import jeffDayton from "@/assets/images/team/jeff-dayton.jpg";
 import johnPolinski from "@/assets/images/team/john-polinski.jpg";
 import mattWatson from "@/assets/images/team/matt-watson.jpg";
 import mikeBologna from "@/assets/images/team/mike-bologna.jpg";
+import evanNison from "@/assets/images/team/evan-1.webp";
 ---
 
 <div class="content py-8 mt-12 max-w-screen-2xl">
   <header class="flex flex-col items-center justify-center">
-    <h2 class="accent-underline">Our Team</h2>
+    <h2 class="accent-underline text-center">Our Team</h2>
   </header>
   <div id="team-list" class="mx-auto px-4 py-8 sm:px-6 sm:py-12">
     <ul id="gli-team" class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-24">
       <li class="flex flex-col space-y-4">
         <Profile name="Mike Bologna" title="CEO" image={mikeBologna}>
           <p>
-            Mike Bologna is a decisive, personable leader with extensive
-            experience in supply chain technology, operational strategy, and
-            process optimization. He focuses on sustainable growth, efficiency,
-            and socially conscious practices across diverse industries, from
-            aerospace to cannabis. As CEO of Green Lion Innovations and an
-            advisor to portfolio companies like Whoopi and Maya, Mike addresses
-            unique challenges and opportunities within multiple sectors.
+            Mike Bologna helps companies scale complex supply chains by aligning
+            technology, process, and people. He is a Microsoft certified Supply
+            Chain consultant and CPG operator with 15+ years of experience
+            leading manufacturing businesses and delivering software
+            implementations across regulated, global, and high-growth
+            environments, building companies from startup to $10M+ revenue.
           </p>
         </Profile>
       </li>
@@ -58,11 +58,7 @@ import mikeBologna from "@/assets/images/team/mike-bologna.jpg";
         </Profile>
       </li>
       <li class="flex flex-col space-y-4">
-        <Profile
-          name="John Polinski"
-          title="Web Developer"
-          image={johnPolinski}
-        >
+        <Profile name="John Polinski" title="CTO" image={johnPolinski}>
           <p>
             John is a skilled web developer with over 10 years of experience in
             front end technologies. As lead developer and warehouse manager for
@@ -73,6 +69,23 @@ import mikeBologna from "@/assets/images/team/mike-bologna.jpg";
             website with a modern, responsive design. John is passionate about
             learning, bringing innovative ideas to life, and finding new ways to
             solve problems with the latest technology.
+          </p>
+        </Profile>
+      </li>
+      <li class="flex flex-col space-y-4 lg:col-span-2 lg:max-w-xl lg:mx-auto">
+        <Profile
+          name="Evan Nison"
+          title="Strategic Advisor — SEO & AI"
+          image={evanNison}
+        >
+          <p>
+            Evan has been working to reform cannabis laws since 2008 and founded
+            the United States' first cannabis PR agency, <ExternalLink
+              href="https://nisonco.com">NisonCo</ExternalLink
+            >, in 2012, expanding its services to include SEO and AI. NisonCo
+            remains one of the country's most influential cannabis-specific
+            agencies and consistently offers pro-bono services to cause-oriented
+            businesses and non-profits.
           </p>
         </Profile>
       </li>

@@ -5,10 +5,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 
 import { ClientFormDialog } from "./client-form-dialog";
+import { useClientMutations, useClients } from "./clients-hooks";
 import { ClientsTable } from "./clients-table";
-import { useClients, useClientMutations } from "./clients-hooks";
-import { DeleteClientDialog } from "./delete-client-dialog";
 import type { ClientLogo } from "./clients-types";
+import { DeleteClientDialog } from "./delete-client-dialog";
 
 export default function ClientsPage() {
   const [isFormOpen, setIsFormOpen] = React.useState(false);
@@ -16,9 +16,15 @@ export default function ClientsPage() {
   const [deletingItem, setDeletingItem] = React.useState<ClientLogo | null>(
     null,
   );
+  const [featureOverrides, setFeatureOverrides] = React.useState<
+    Record<string, boolean | undefined>
+  >({});
+  const [pendingFeatureIds, setPendingFeatureIds] = React.useState<Set<string>>(
+    () => new Set(),
+  );
 
   const { data: items, isLoading, error } = useClients();
-  const { deleteMut } = useClientMutations();
+  const { deleteMut, updateMut } = useClientMutations();
 
   const featuredCount = items?.filter((i) => i.featuredOnHomepage).length ?? 0;
 
@@ -30,6 +36,41 @@ export default function ClientsPage() {
     deleteMut.mutate(id, {
       onSuccess: () => setDeletingItem(null),
     });
+  };
+
+  const handleToggleFeatured = (item: ClientLogo, checked: boolean) => {
+    setFeatureOverrides((prev) => ({
+      ...prev,
+      [item.id]: checked,
+    }));
+
+    setPendingFeatureIds((prev) => {
+      const next = new Set(prev);
+      next.add(item.id);
+      return next;
+    });
+
+    updateMut.mutate(
+      {
+        id: item.id,
+        data: { featuredOnHomepage: checked },
+      },
+      {
+        onSettled: () => {
+          setFeatureOverrides((prev) => {
+            const next = { ...prev };
+            delete next[item.id];
+            return next;
+          });
+
+          setPendingFeatureIds((prev) => {
+            const next = new Set(prev);
+            next.delete(item.id);
+            return next;
+          });
+        },
+      },
+    );
   };
 
   return (
@@ -63,6 +104,10 @@ export default function ClientsPage() {
       <ClientsTable
         items={items}
         isLoading={isLoading}
+        getFeaturedChecked={(item) =>
+          featureOverrides[item.id] ?? item.featuredOnHomepage
+        }
+        isFeatureTogglePending={(id) => pendingFeatureIds.has(id)}
         onAdd={() => {
           setEditingItem(null);
           setIsFormOpen(true);
@@ -71,6 +116,7 @@ export default function ClientsPage() {
           setEditingItem(item);
           setIsFormOpen(true);
         }}
+        onToggleFeatured={handleToggleFeatured}
         onDelete={(item) => setDeletingItem(item)}
       />
 
