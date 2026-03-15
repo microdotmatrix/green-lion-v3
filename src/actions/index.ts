@@ -1,53 +1,85 @@
-import { ActionError, defineAction } from "astro:actions";
+import {
+  ActionError,
+  ActionInputError,
+  defineAction,
+  isActionError,
+} from "astro:actions";
 import { z } from "astro/zod";
 import { db } from "@/lib/db";
 import { contactSubmissions, user } from "@/lib/db/schema";
 import { resend } from "@/server/resend";
 import { eq } from "drizzle-orm";
 
+const contactSchema = z.object({
+  firstName: z.string().trim().min(1, "First name is required"),
+  lastName: z.string().trim().min(1, "Last name is required"),
+  email: z.string().trim().email("Please enter a valid email address"),
+  phone: z.string().optional().default(""),
+  companyName: z.string().trim().min(1, "Company name is required"),
+  title: z.string().trim().min(1, "Subject is required"),
+  message: z.string().optional(),
+  type: z
+    .enum(["general", "feedback", "quote_inquiry", "support"])
+    .default("general"),
+});
+
+const CONTACT_FORM_ERROR_MESSAGE =
+  "We couldn't submit your message right now. Please try again in a few minutes.";
+
 export const server = {
   contact: defineAction({
     accept: "form",
-    input: z.object({
-      firstName: z.string().min(1, "First name is required"),
-      lastName: z.string().min(1, "Last name is required"),
-      email: z.string().email("Please enter a valid email address"),
-      phone: z.string().optional().default(""),
-      companyName: z.string().min(1, "Company name is required"),
-      title: z.string().min(1, "Subject is required"),
-      message: z.string().optional(),
-      type: z
-        .enum(["general", "feedback", "quote_inquiry", "support"])
-        .default("general"),
-    }),
-    handler: async (input) => {
-      const [submission] = await db
-        .insert(contactSubmissions)
-        .values({
-          firstName: input.firstName.trim(),
-          lastName: input.lastName.trim(),
-          email: input.email.trim().toLowerCase(),
-          phone: (input.phone ?? "").trim(),
-          companyName: input.companyName.trim(),
-          title: input.title.trim(),
-          message: input.message?.trim() ?? null,
-          type: input.type,
-          status: "open",
-        })
-        .returning();
-
-      if (!submission) {
-        throw new ActionError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Failed to submit contact form",
-        });
-      }
-
-      sendAdminNotifications(submission).catch((err) =>
-        console.error("Failed to send admin notifications:", err),
+    handler: async (formData) => {
+      const parsed = await contactSchema.safeParseAsync(
+        Object.fromEntries(formData.entries()),
       );
 
-      return { success: true, id: submission.id };
+      if (!parsed.success) {
+        throw new ActionInputError(parsed.error.issues);
+      }
+
+      const input = parsed.data;
+
+      try {
+        const [submission] = await db
+          .insert(contactSubmissions)
+          .values({
+            firstName: input.firstName,
+            lastName: input.lastName,
+            email: input.email.toLowerCase(),
+            phone: (input.phone ?? "").trim(),
+            companyName: input.companyName,
+            title: input.title,
+            message: input.message?.trim() || null,
+            type: input.type,
+            status: "open",
+          })
+          .returning();
+
+        if (!submission) {
+          throw new ActionError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: CONTACT_FORM_ERROR_MESSAGE,
+          });
+        }
+
+        sendAdminNotifications(submission).catch((err) =>
+          console.error("Failed to send admin notifications:", err),
+        );
+
+        return { success: true, id: submission.id };
+      } catch (error) {
+        if (isActionError(error)) {
+          throw error;
+        }
+
+        console.error("Error creating contact submission:", error);
+
+        throw new ActionError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: CONTACT_FORM_ERROR_MESSAGE,
+        });
+      }
     },
   }),
 };

@@ -10,9 +10,22 @@ const CONTACT_TYPES = [
 ] as const;
 
 const result = Astro.getActionResult(actions.contact);
+const actionError = result?.error;
 const isSuccess = result && !result.error;
 const inputErrors =
-  result?.error && isInputError(result.error) ? result.error.fields : null;
+  actionError && isInputError(actionError)
+    ? (actionError.fields as Record<string, string[] | undefined>)
+    : null;
+const hasInputError = Boolean(inputErrors);
+const formErrorMessage = actionError
+  ? hasInputError
+    ? "Please correct the highlighted fields and try again."
+    : actionError.message || "Something went wrong. Please try again."
+  : null;
+
+function getFieldError(fieldName: string) {
+  return inputErrors?.[fieldName]?.[0];
+}
 ---
 
 <Layout title="Contact Us">
@@ -77,11 +90,8 @@ const inputErrors =
                   </p>
                 </div>
 
-                {result?.error && !isInputError(result.error) && (
-                  <div class="form-error-banner">
-                    {result.error.message ||
-                      "Something went wrong. Please try again."}
-                  </div>
+                {formErrorMessage && (
+                  <div class="form-error-banner">{formErrorMessage}</div>
                 )}
 
                 <form method="POST" action={actions.contact} class="form-grid">
@@ -97,8 +107,8 @@ const inputErrors =
                         placeholder="John"
                         required
                       />
-                      {inputErrors?.firstName && (
-                        <p class="field-error">{inputErrors.firstName}</p>
+                      {getFieldError("firstName") && (
+                        <p class="field-error">{getFieldError("firstName")}</p>
                       )}
                     </div>
                     <div class="field">
@@ -112,8 +122,8 @@ const inputErrors =
                         placeholder="Doe"
                         required
                       />
-                      {inputErrors?.lastName && (
-                        <p class="field-error">{inputErrors.lastName}</p>
+                      {getFieldError("lastName") && (
+                        <p class="field-error">{getFieldError("lastName")}</p>
                       )}
                     </div>
                   </div>
@@ -130,8 +140,8 @@ const inputErrors =
                         placeholder="john@company.com"
                         required
                       />
-                      {inputErrors?.email && (
-                        <p class="field-error">{inputErrors.email}</p>
+                      {getFieldError("email") && (
+                        <p class="field-error">{getFieldError("email")}</p>
                       )}
                     </div>
                     <div class="field">
@@ -157,8 +167,10 @@ const inputErrors =
                         placeholder="Acme Inc."
                         required
                       />
-                      {inputErrors?.companyName && (
-                        <p class="field-error">{inputErrors.companyName}</p>
+                      {getFieldError("companyName") && (
+                        <p class="field-error">
+                          {getFieldError("companyName")}
+                        </p>
                       )}
                     </div>
                     <div class="field">
@@ -182,8 +194,8 @@ const inputErrors =
                       placeholder="How can we help?"
                       required
                     />
-                    {inputErrors?.title && (
-                      <p class="field-error">{inputErrors.title}</p>
+                    {getFieldError("title") && (
+                      <p class="field-error">{getFieldError("title")}</p>
                     )}
                   </div>
 
@@ -327,6 +339,7 @@ const inputErrors =
     padding: 0.5rem 1rem;
     font-size: 0.875rem;
     font-weight: 500;
+    text-decoration: none;
     transition:
       background-color 0.15s,
       color 0.15s;
