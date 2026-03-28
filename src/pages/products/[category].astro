@@ -31,6 +31,13 @@ if (!categoryData) {
   return Astro.redirect("/products");
 }
 
+// Cache at Netlify's CDN edge for 5 minutes; serve stale for up to 1 hour
+// while revalidating in the background — ISR-equivalent behaviour.
+Astro.response.headers.set(
+  "Cache-Control",
+  "public, s-maxage=300, stale-while-revalidate=3600",
+);
+
 // Fetch products for this category
 const categoryProducts = await db
   .select({
