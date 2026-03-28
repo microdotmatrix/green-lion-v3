@@ -12,29 +12,24 @@ import {
 } from "@/lib/db/schema";
 import { eq, inArray, sql } from "drizzle-orm";
 
-// Enable static generation for this dynamic route
-export const prerender = true;
+const slug = Astro.params.category as string;
 
-// Generate static paths for all categories
-export async function getStaticPaths() {
-  const allCategories = await db.select().from(categories);
+const [categoryData] = await db
+  .select()
+  .from(categories)
+  .then((rows) =>
+    rows.filter(
+      (c) =>
+        c.name
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/(^-|-$)/g, "") === slug,
+    ),
+  );
 
-  return allCategories.map((category) => ({
-    params: {
-      category: category.name
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, "-")
-        .replace(/(^-|-$)/g, ""),
-    },
-    props: { categoryData: category },
-  }));
+if (!categoryData) {
+  return Astro.redirect("/products");
 }
-
-interface Props {
-  categoryData: typeof categories.$inferSelect;
-}
-
-const { categoryData } = Astro.props;
 
 // Fetch products for this category
 const categoryProducts = await db
