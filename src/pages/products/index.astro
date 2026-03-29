@@ -5,6 +5,8 @@ import { count, eq } from "drizzle-orm";
 import Layout from "@/layouts/default.astro";
 import CategoryCard from "@/components/catalog/category-card.astro";
 
+export const prerender = false;
+
 // Fetch all categories
 const allCategories = await db
   .select()
