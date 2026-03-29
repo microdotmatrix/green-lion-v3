@@ -10,45 +10,6 @@ import {
 } from "@/lib/db/schema";
 import { eq, and } from "drizzle-orm";
 
-// Enable static generation for this dynamic route
-export const prerender = false;
-
-// Generate static paths for all products
-export async function getStaticPaths() {
-  // Get all products with their categories
-  const allProducts = await db
-    .select({
-      id: products.id,
-      sku: products.sku,
-      name: products.name,
-      description: products.description,
-      images: products.images,
-      minimumOrderQuantity: products.minimumOrderQuantity,
-      orderQuantityIncrement: products.orderQuantityIncrement,
-      categoryId: products.categoryId,
-      categoryName: categories.name,
-    })
-    .from(products)
-    .leftJoin(categories, eq(products.categoryId, categories.id));
-
-  return allProducts.map((product) => {
-    const categorySlug = product.categoryName
-      ? product.categoryName
-          .toLowerCase()
-          .replace(/[^a-z0-9]+/g, "-")
-          .replace(/(^-|-$)/g, "")
-      : "uncategorized";
-
-    return {
-      params: {
-        category: categorySlug,
-        product: product.sku.toLowerCase(),
-      },
-      props: { productData: product, categorySlug },
-    };
-  });
-}
-
 interface Props {
   productData: {
     id: string;
