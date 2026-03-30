@@ -1,17 +1,23 @@
 ---
 import { db } from "@/lib/db";
-import { clientLogos } from "@/lib/db/schema";
+import { clientLogos, type ClientLogo } from "@/lib/db/schema";
 import { eq, desc } from "drizzle-orm";
 import Team from "@/components/sections/team.astro";
 import Locations from "@/components/sections/locations.astro";
 import ClientLogos from "@/components/catalog/client-logos.astro";
 import Layout from "@/layouts/default.astro";
 
-const featuredClients = await db
-  .select()
-  .from(clientLogos)
-  .where(eq(clientLogos.featuredOnHomepage, true))
-  .orderBy(clientLogos.displayOrder, desc(clientLogos.createdAt));
+let featuredClients: ClientLogo[] = [];
+
+try {
+  featuredClients = await db
+    .select()
+    .from(clientLogos)
+    .where(eq(clientLogos.featuredOnHomepage, true))
+    .orderBy(clientLogos.displayOrder, desc(clientLogos.createdAt));
+} catch (error) {
+  console.error("Failed to load featured clients for /about", error);
+}
 ---
 
 <Layout title="About">

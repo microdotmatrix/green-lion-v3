@@ -1,6 +1,5 @@
 ---
-import { readFileSync } from "node:fs";
-import { fileURLToPath } from "node:url";
+import worldSvgRaw from "@/assets/images/world.svg?raw";
 
 // World map section showing team locations
 // Coordinates calibrated for viewBox="0 0 2000 857" (equirectangular projection)
@@ -12,9 +11,7 @@ const locations = [
   { city: "Shenzhen", state: "", country: "CN", x: 1634, y: 321 },
 ];
 
-const svgPath = fileURLToPath(new URL("../../assets/images/world.svg", import.meta.url));
-const worldSvgRaw = readFileSync(svgPath, "utf-8");
-// Strip the XML declaration and outer <svg> wrapper — we'll provide our own
+// Import the SVG as raw text so it is bundled with the page in serverless builds.
 const svgBody = worldSvgRaw
   .replace(/<\?xml[^?]*\?>/g, "")
   .replace(/<!--[\s\S]*?-->/g, "")
