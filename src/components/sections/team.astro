@@ -11,7 +11,9 @@ const { members = [] } = Astro.props;
 
 <div class="content py-8 mt-12 max-w-screen-2xl">
   <header class="flex flex-col items-center justify-center">
-    <h2 class="accent-underline text-center">Our Team</h2>
+    <h2 class="accent-underline text-center">
+      Our <span class="text-primary">Team</span>
+    </h2>
   </header>
   {
     members.length === 0 ? (
@@ -33,7 +35,11 @@ const { members = [] } = Astro.props;
                   : "",
               ]}
             >
-              <Profile name={member.name} title={member.title} image={member.photoUrl ?? ""}>
+              <Profile
+                name={member.name}
+                title={member.title}
+                image={member.photoUrl ?? ""}
+              >
                 <div
                   class="prose prose-sm dark:prose-invert max-w-none [&_a]:text-primary [&_a]:underline [&_a]:underline-offset-2"
                   set:html={member.summaryHtml}

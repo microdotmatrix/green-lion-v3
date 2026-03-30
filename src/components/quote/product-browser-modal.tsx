@@ -36,29 +36,31 @@ interface ProductCardProps {
 
 function ProductCard({ product, isInCart, onAdd }: ProductCardProps) {
   return (
-    <div className="flex items-center gap-4 rounded-md bg-secondary p-3">
-      <div className="flex size-14 shrink-0 items-center justify-center overflow-hidden rounded-sm bg-white">
-        {product.images?.[0] ? (
-          <img
-            src={product.images[0]}
-            alt={product.name}
-            className="max-h-full max-w-full object-contain"
-          />
-        ) : (
-          <Package className="size-5 text-muted-foreground/30" />
-        )}
-      </div>
-
-      <div className="min-w-0 flex-1">
-        <span className="text-[0.6875rem] font-semibold uppercase text-primary">
-          {product.sku}
-        </span>
-        <h4 className="truncate text-sm font-semibold">{product.name}</h4>
-        <div className="flex gap-3 text-xs text-muted-foreground">
-          {product.price && (
-            <span>From ${parseFloat(product.price).toFixed(2)}</span>
+    <div className="rounded-md bg-secondary p-3">
+      <div className="flex min-w-0 items-center gap-3">
+        <div className="flex size-14 shrink-0 items-center justify-center overflow-hidden rounded-sm bg-white">
+          {product.images?.[0] ? (
+            <img
+              src={product.images[0]}
+              alt={product.name}
+              className="max-h-full max-w-full object-contain"
+            />
+          ) : (
+            <Package className="size-5 text-muted-foreground/30" />
           )}
-          <span>MOQ: {product.minimumOrderQuantity.toLocaleString()}</span>
+        </div>
+
+        <div className="min-w-0 flex-1">
+          <span className="text-[0.6875rem] font-semibold uppercase text-primary">
+            {product.sku}
+          </span>
+          <h4 className="line-clamp-2 text-sm font-semibold">{product.name}</h4>
+          <div className="flex flex-wrap gap-x-3 gap-y-0.5 text-xs text-muted-foreground">
+            {product.price && (
+              <span>From ${parseFloat(product.price).toFixed(2)}</span>
+            )}
+            <span>MOQ: {product.minimumOrderQuantity.toLocaleString()}</span>
+          </div>
         </div>
       </div>
 
@@ -66,6 +68,7 @@ function ProductCard({ product, isInCart, onAdd }: ProductCardProps) {
         size="sm"
         variant={isInCart ? "secondary" : "default"}
         onClick={onAdd}
+        className="mt-3 w-full sm:mt-0 sm:ml-auto sm:w-auto"
       >
         {isInCart ? (
           <>
@@ -223,7 +226,7 @@ export function ProductBrowserModal({
       <Drawer open={isOpen} onOpenChange={onOpenChange}>
         <DrawerContent className="max-h-[90vh]">
           <DrawerHeader className="text-left">
-            <DrawerTitle>Browse Products</DrawerTitle>
+            <DrawerTitle className="text-3xl">Browse Products</DrawerTitle>
           </DrawerHeader>
           <div className="overflow-y-auto px-4 pb-4">
             <ProductBrowserContent
