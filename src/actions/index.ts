@@ -1,6 +1,5 @@
 import {
   ActionError,
-  ActionInputError,
   defineAction,
   isActionError,
 } from "astro:actions";
@@ -29,17 +28,8 @@ const CONTACT_FORM_ERROR_MESSAGE =
 export const server = {
   contact: defineAction({
     accept: "form",
-    handler: async (formData) => {
-      const parsed = await contactSchema.safeParseAsync(
-        Object.fromEntries(formData.entries()),
-      );
-
-      if (!parsed.success) {
-        throw new ActionInputError(parsed.error.issues);
-      }
-
-      const input = parsed.data;
-
+    input: contactSchema,
+    handler: async (input) => {
       try {
         const [submission] = await db
           .insert(contactSubmissions)
