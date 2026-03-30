@@ -1,6 +1,6 @@
 ---
 import { db } from "@/lib/db";
-import { clientLogos, type ClientLogo } from "@/lib/db/schema";
+import { clientLogos, teamMembers, type ClientLogo, type TeamMember } from "@/lib/db/schema";
 import { eq, desc } from "drizzle-orm";
 import Team from "@/components/sections/team.astro";
 import Locations from "@/components/sections/locations.astro";
@@ -8,6 +8,7 @@ import ClientLogos from "@/components/catalog/client-logos.astro";
 import Layout from "@/layouts/default.astro";
 
 let featuredClients: ClientLogo[] = [];
+let members: TeamMember[] = [];
 
 try {
   featuredClients = await db
@@ -18,11 +19,20 @@ try {
 } catch (error) {
   console.error("Failed to load featured clients for /about", error);
 }
+
+try {
+  members = await db
+    .select()
+    .from(teamMembers)
+    .orderBy(teamMembers.displayOrder, desc(teamMembers.createdAt));
+} catch (error) {
+  console.error("Failed to load team members for /about", error);
+}
 ---
 
 <Layout title="About">
   <section id="team" class="fl-px-4/8 md:fl-px-8/24">
-    <Team />
+    <Team members={members} />
   </section>
   <section id="locations" class="fl-px-4/8 md:fl-px-8/24 pb-16">
     <Locations />

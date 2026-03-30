@@ -1,18 +1,32 @@
 ---
-// Profile card component used in team members section
+// Profile card component used in team members section.
+// `image` accepts either an astro:assets imported image object or a plain URL string.
 
 import { Image } from "astro:assets";
 
 const { name, title, image } = Astro.props;
+const isUrl = typeof image === "string";
 ---
 
 <header class="flex items-center bg-secondary">
   <figure class="flex-none fl-w-28/40">
-    <Image
-      src={image}
-      alt={name}
-      class="aspect-square size-full object-cover"
-    />
+    {
+      isUrl ? (
+        <img
+          src={image}
+          alt={name}
+          class="aspect-square size-full object-cover"
+          loading="lazy"
+          decoding="async"
+        />
+      ) : (
+        <Image
+          src={image}
+          alt={name}
+          class="aspect-square size-full object-cover"
+        />
+      )
+    }
   </figure>
   <div class="flex-1 fl-space-y-1/2 fl-px-4/8">
     <h5>{name}</h5>

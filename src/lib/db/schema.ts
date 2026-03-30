@@ -801,6 +801,24 @@ export const insertBlogPostSchema = createInsertSchema(blogPosts).omit({
   updatedAt: true,
 });
 
+// Team member bios for the About page
+export const teamMembers = pgTable("team_members", {
+  id: varchar("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
+  name: text("name").notNull(),
+  title: text("title").notNull(),
+  summaryHtml: text("summary_html").notNull().default(""),
+  photoUrl: text("photo_url"),
+  displayOrder: integer("display_order").notNull().default(0),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const insertTeamMemberSchema = createInsertSchema(teamMembers).omit({
+  id: true,
+  createdAt: true,
+});
+
 // Select types
 export type Category = typeof categories.$inferSelect;
 export type CategoryWithHeaderProduct = Category & {
@@ -832,6 +850,7 @@ export type TermsConditions = typeof termsConditions.$inferSelect;
 export type ProductCatalog = typeof productCatalogs.$inferSelect;
 export type BlogCategory = typeof blogCategories.$inferSelect;
 export type BlogPost = typeof blogPosts.$inferSelect;
+export type TeamMember = typeof teamMembers.$inferSelect;
 
 // Insert types
 export type InsertCategory = z.infer<typeof insertCategorySchema>;
@@ -871,3 +890,4 @@ export type InsertTermsConditions = z.infer<typeof insertTermsConditionsSchema>;
 export type InsertProductCatalog = z.infer<typeof insertProductCatalogSchema>;
 export type InsertBlogCategory = z.infer<typeof insertBlogCategorySchema>;
 export type InsertBlogPost = z.infer<typeof insertBlogPostSchema>;
+export type InsertTeamMember = z.infer<typeof insertTeamMemberSchema>;

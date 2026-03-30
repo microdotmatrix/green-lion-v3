@@ -1,96 +1,50 @@
 ---
 import Profile from "@/components/elements/profile.astro";
-import ExternalLink from "../elements/external-link.astro";
+import type { TeamMember } from "@/lib/db/schema";
 
-import jeffDayton from "@/assets/images/team/jeff-dayton.jpg";
-import johnPolinski from "@/assets/images/team/john-polinski.jpg";
-import mattWatson from "@/assets/images/team/matt-watson.jpg";
-import mikeBologna from "@/assets/images/team/mike-bologna.jpg";
-import evanNison from "@/assets/images/team/evan-1.webp";
+interface Props {
+  members?: TeamMember[];
+}
+
+const { members = [] } = Astro.props;
 ---
 
 <div class="content py-8 mt-12 max-w-screen-2xl">
   <header class="flex flex-col items-center justify-center">
     <h2 class="accent-underline text-center">Our Team</h2>
   </header>
-  <div id="team-list" class="mx-auto px-4 py-8 sm:px-6 sm:py-12">
-    <ul id="gli-team" class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-24">
-      <li class="flex flex-col space-y-4">
-        <Profile name="Mike Bologna" title="CEO" image={mikeBologna}>
-          <p>
-            Mike Bologna helps companies scale complex supply chains by aligning
-            technology, process, and people. He is a Microsoft certified Supply
-            Chain consultant and CPG operator with 15+ years of experience
-            leading manufacturing businesses and delivering software
-            implementations across regulated, global, and high-growth
-            environments, building companies from startup to $10M+ revenue.
-          </p>
-        </Profile>
-      </li>
-      <li class="flex flex-col space-y-4">
-        <Profile name="Matt Watson" title="CDO" image={mattWatson}>
-          <p>
-            Matt Watson began his career in the cannabis industry as a
-            glassblower in the early 2000s, opening his first retail store and
-            glass gallery in 2009. With deep expertise in glassblowing,
-            electronics, and consumer retail, Matt has designed and manufactured
-            pioneering products, including his first patented electronic dabbing
-            device in 2015. As the lead product developer for <ExternalLink
-              href="https://dipdevices.com">Dip Devices</ExternalLink
-            > and Green Lion Innovations, he continues to drive market innovation
-            with cutting-edge designs.
-          </p>
-        </Profile>
-      </li>
-      <li class="flex flex-col space-y-4">
-        <Profile name="Jeff Dayton" title="Partner" image={jeffDayton}>
-          <p>
-            Jeff Dayton built the investor network at <ExternalLink
-              href="https://www.arcviewgroup.com/"
-              >The Arcview Group</ExternalLink
-            > and is currently the Vice President of Strategy at TRP Co. He is also
-            a Partner at <ExternalLink href="https://dipdevices.com"
-              >Dip Devices</ExternalLink
-            > and Green Lion Innovations. He's been a longtime advocate for drug policy
-            reform and continues to diversify his investments of time and capital
-            across the cannabis, health/wellness, and real estate sectors.
-          </p>
-        </Profile>
-      </li>
-      <li class="flex flex-col space-y-4">
-        <Profile name="John Polinski" title="CTO" image={johnPolinski}>
-          <p>
-            John is a skilled web developer with over 10 years of experience in
-            front end technologies. As lead developer and warehouse manager for
-            <ExternalLink href="https://dipdevices.com"
-              >Dip Devices</ExternalLink
-            >, he used his experience in e-commerce to bring modern solutions to
-            inventory management and logistics, and redeveloped the company's
-            website with a modern, responsive design. John is passionate about
-            learning, bringing innovative ideas to life, and finding new ways to
-            solve problems with the latest technology.
-          </p>
-        </Profile>
-      </li>
-      <li class="flex flex-col space-y-4 lg:col-span-2 lg:max-w-xl lg:mx-auto">
-        <Profile
-          name="Evan Nison"
-          title="Strategic Advisor — SEO & AI"
-          image={evanNison}
+  {
+    members.length === 0 ? (
+      <p class="text-center text-muted-foreground py-8">
+        Team member profiles coming soon.
+      </p>
+    ) : (
+      <div id="team-list" class="mx-auto px-4 py-8 sm:px-6 sm:py-12">
+        <ul
+          id="gli-team"
+          class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-24"
         >
-          <p>
-            Evan has been working to reform cannabis laws since 2008 and founded
-            the United States' first cannabis PR agency, <ExternalLink
-              href="https://nisonco.com">NisonCo</ExternalLink
-            >, in 2012, expanding its services to include SEO and AI. NisonCo
-            remains one of the country's most influential cannabis-specific
-            agencies and consistently offers pro-bono services to cause-oriented
-            businesses and non-profits.
-          </p>
-        </Profile>
-      </li>
-    </ul>
-  </div>
+          {members.map((member, index) => (
+            <li
+              class:list={[
+                "flex flex-col space-y-4",
+                members.length % 2 !== 0 && index === members.length - 1
+                  ? "lg:col-span-2 lg:max-w-xl lg:mx-auto"
+                  : "",
+              ]}
+            >
+              <Profile name={member.name} title={member.title} image={member.photoUrl ?? ""}>
+                <div
+                  class="prose prose-sm dark:prose-invert max-w-none [&_a]:text-primary [&_a]:underline [&_a]:underline-offset-2"
+                  set:html={member.summaryHtml}
+                />
+              </Profile>
+            </li>
+          ))}
+        </ul>
+      </div>
+    )
+  }
 </div>
 
 <style>

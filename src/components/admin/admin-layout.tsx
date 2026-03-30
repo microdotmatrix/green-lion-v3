@@ -135,6 +135,11 @@ const contentNavItems = [
     url: "/admin/services",
     icon: Image,
   },
+  {
+    title: "Team Members",
+    url: "/admin/team-members",
+    icon: Users,
+  },
 ];
 
 const systemNavItems = [

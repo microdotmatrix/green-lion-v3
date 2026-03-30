@@ -50,6 +50,13 @@
       "when": 1773434838672,
       "tag": "0006_absent_wendigo",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1774898934078,
+      "tag": "0007_amused_psynapse",
+      "breakpoints": true
     }
   ]
 }

@@ -1,0 +1,8 @@
+---
+import { AdminTeamMembersPage } from "@/components/admin/pages/admin-team-members-page";
+import AdminLayout from "@/layouts/admin.astro";
+---
+
+<AdminLayout title="Team Members" description="Manage Team Bios">
+  <AdminTeamMembersPage client:load />
+</AdminLayout>
