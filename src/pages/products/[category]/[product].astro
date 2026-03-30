@@ -8,24 +8,65 @@ import {
   productAttributes,
   products,
 } from "@/lib/db/schema";
-import { eq, and } from "drizzle-orm";
+import { eq, and, sql } from "drizzle-orm";
 
-interface Props {
-  productData: {
-    id: string;
-    sku: string;
-    name: string;
-    description: string;
-    images: string[];
-    minimumOrderQuantity: number;
-    orderQuantityIncrement: number;
-    categoryId: string | null;
-    categoryName: string | null;
-  };
-  categorySlug: string;
+const categorySlug = Astro.params.category;
+const productParam = Astro.params.product;
+
+if (!categorySlug || !productParam) {
+  return Astro.redirect("/products");
 }
 
-const { productData, categorySlug } = Astro.props;
+const [categoryData] = await db
+  .select()
+  .from(categories)
+  .then((rows) =>
+    rows.filter(
+      (c) =>
+        c.name
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/(^-|-$)/g, "") === categorySlug,
+    ),
+  );
+
+if (!categoryData) {
+  return Astro.redirect("/products");
+}
+
+const [productRow] = await db
+  .select({
+    id: products.id,
+    sku: products.sku,
+    name: products.name,
+    description: products.description,
+    images: products.images,
+    minimumOrderQuantity: products.minimumOrderQuantity,
+    orderQuantityIncrement: products.orderQuantityIncrement,
+    categoryId: products.categoryId,
+  })
+  .from(products)
+  .where(
+    and(
+      eq(products.categoryId, categoryData.id),
+      sql`lower(${products.sku}) = ${productParam.toLowerCase()}`,
+    ),
+  )
+  .limit(1);
+
+if (!productRow) {
+  return Astro.redirect(`/products/${categorySlug}`);
+}
+
+const productData = {
+  ...productRow,
+  categoryName: categoryData.name,
+};
+
+Astro.response.headers.set(
+  "Cache-Control",
+  "public, s-maxage=300, stale-while-revalidate=3600",
+);
 
 // Fetch pricing tiers for this product
 const tiers = await db
