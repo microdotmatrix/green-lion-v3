@@ -4,7 +4,7 @@
 import Logo from "../elements/logo.astro";
 import Navigation from "../layout/navigation.astro";
 import ThemeSwitch from "../theme/toggle.astro";
-import BasketIcon from "../icons/basket.astro";
+import { Basket } from "../icons";
 ---
 
 <header class="bg-secondary sticky top-0 mt-0 z-50 w-full">
@@ -41,7 +41,7 @@ import BasketIcon from "../icons/basket.astro";
             class="relative inline-flex items-center justify-center rounded-md p-2 text-foreground hover:bg-accent hover:text-accent-foreground transition-colors group z-50"
             title="View Quote"
           >
-            <BasketIcon
+            <Basket
               class="size-7.5 group-hover:opacity-90 transition-all duration-200 group-hover:scale-110"
             />
             <span

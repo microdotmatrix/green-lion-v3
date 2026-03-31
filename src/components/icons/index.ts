@@ -1,8 +1,10 @@
+export { default as Basket } from "./basket.astro";
 export { default as Battery } from "./battery.astro";
 export { default as Calendar } from "./calendar.astro";
 export { default as Clock } from "./clock.astro";
 export { default as Copyright } from "./copyright.astro";
 export { default as Design } from "./design.astro";
+export { default as Email } from "./email.astro";
 export { default as Factory } from "./factory.astro";
 export { default as Innovation } from "./innovation.astro";
 export { default as LaserTool } from "./laser-tool.astro";
