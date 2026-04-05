@@ -62,26 +62,27 @@ function ProductCard({ product, isInCart, onAdd }: ProductCardProps) {
             <span>MOQ: {product.minimumOrderQuantity.toLocaleString()}</span>
           </div>
         </div>
-      </div>
 
-      <Button
-        size="sm"
-        variant={isInCart ? "secondary" : "default"}
-        onClick={onAdd}
-        className="mt-3 w-full sm:mt-0 sm:ml-auto sm:w-auto"
-      >
-        {isInCart ? (
-          <>
-            <Check className="size-3.5" />
-            Added
-          </>
-        ) : (
-          <>
-            <Plus className="size-3.5" />
-            Add
-          </>
-        )}
-      </Button>
+        <Button
+          type="button"
+          size="icon"
+          variant={isInCart ? "secondary" : "default"}
+          onClick={onAdd}
+          className="shrink-0"
+        >
+          {isInCart ? (
+            <>
+              <Check className="size-3.5" />
+              <span className="sr-only">Added</span>
+            </>
+          ) : (
+            <>
+              <Plus className="size-3.5" />
+              <span className="sr-only">Add</span>
+            </>
+          )}
+        </Button>
+      </div>
     </div>
   );
 }
