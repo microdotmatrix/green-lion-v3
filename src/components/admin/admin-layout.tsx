@@ -55,19 +55,6 @@ interface AdminLayoutProps {
   children: React.ReactNode;
 }
 
-const mainNavItems = [
-  {
-    title: "Dashboard",
-    url: "/admin",
-    icon: LayoutDashboard,
-  },
-  {
-    title: "View Site",
-    url: "/",
-    icon: Eye,
-  },
-];
-
 const catalogNavItems = [
   {
     title: "Catalogs",
@@ -88,6 +75,11 @@ const catalogNavItems = [
     title: "Attributes",
     url: "/admin/attributes",
     icon: Sliders,
+  },
+  {
+    title: "Services",
+    url: "/admin/services",
+    icon: Image,
   },
 ];
 
@@ -129,11 +121,6 @@ const contentNavItems = [
     title: "Clients",
     url: "/admin/clients",
     icon: Star,
-  },
-  {
-    title: "Services",
-    url: "/admin/services",
-    icon: Image,
   },
   {
     title: "Team Members",
@@ -210,20 +197,30 @@ export function AdminLayout({ user, children }: AdminLayoutProps) {
             <SidebarGroup>
               <SidebarGroupContent>
                 <SidebarMenu>
-                  {mainNavItems.map((item) => (
-                    <SidebarMenuItem key={item.title}>
-                      <SidebarMenuButton
-                        asChild
-                        isActive={currentPath === item.url}
-                        tooltip={item.title}
-                      >
-                        <a href={item.url}>
-                          <item.icon />
-                          <span>{item.title}</span>
-                        </a>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  ))}
+                  <SidebarMenuItem>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={currentPath === "/admin/dashboard"}
+                      tooltip="Dashboard"
+                    >
+                      <a href="/admin/dashboard">
+                        <LayoutDashboard />
+                        <span>Dashboard</span>
+                      </a>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={currentPath === "/"}
+                      tooltip="View Site"
+                    >
+                      <a href="/" target="_blank" rel="noopener noreferrer">
+                        <Eye />
+                        <span>View Site</span>
+                      </a>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
                 </SidebarMenu>
               </SidebarGroupContent>
             </SidebarGroup>

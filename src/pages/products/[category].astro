@@ -1,6 +1,7 @@
 ---
 import ProductSearch from "@/components/catalog/product-search.tsx";
 import Layout from "@/layouts/default.astro";
+import { buttonVariants } from "@/components/ui/button";
 import { db } from "@/lib/db";
 import {
   categories,
@@ -135,7 +136,14 @@ const categorySlug = categoryData.name
 <Layout title={categoryData.name}>
   <section class="category-header">
     <div class="content">
-      <a href="/products" class="back-link">
+      <a
+        href="/products"
+        class={buttonVariants({
+          variant: "secondary",
+          size: "lg",
+          className: "back-link",
+        })}
+      >
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="16"
@@ -185,15 +193,18 @@ const categorySlug = categoryData.name
     align-items: center;
     gap: 0.5rem;
     color: var(--primary);
-    font-size: 0.875rem;
+    font-size: 0.975rem;
     font-weight: 500;
     margin-bottom: 1rem;
     text-decoration: none;
-    transition: gap 200ms ease;
+    scale: 1;
+    cursor: pointer;
+    transform-origin: center;
+    transition: scale 200ms ease;
   }
 
   .back-link:hover {
-    gap: 0.75rem;
+    scale: 1.05;
   }
 
   .category-header h1 {
