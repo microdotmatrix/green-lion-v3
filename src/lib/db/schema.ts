@@ -694,16 +694,22 @@ export const blogPosts = pgTable(
   ],
 );
 
-export const productCatalogsRelations = relations(productCatalogs, ({ one }) => ({
-  uploadedByUser: one(user, {
-    fields: [productCatalogs.uploadedBy],
-    references: [user.id],
+export const productCatalogsRelations = relations(
+  productCatalogs,
+  ({ one }) => ({
+    uploadedByUser: one(user, {
+      fields: [productCatalogs.uploadedBy],
+      references: [user.id],
+    }),
   }),
-}));
+);
 
-export const blogCategoriesRelations = relations(blogCategories, ({ many }) => ({
-  posts: many(blogPosts),
-}));
+export const blogCategoriesRelations = relations(
+  blogCategories,
+  ({ many }) => ({
+    posts: many(blogPosts),
+  }),
+);
 
 export const blogPostsRelations = relations(blogPosts, ({ one }) => ({
   category: one(blogCategories, {
@@ -786,15 +792,19 @@ export const insertTradeshowLeadSchema = createInsertSchema(
 export const insertTermsConditionsSchema = createInsertSchema(
   termsConditions,
 ).omit({ id: true, createdAt: true });
-export const insertProductCatalogSchema = createInsertSchema(productCatalogs).omit({
+export const insertProductCatalogSchema = createInsertSchema(
+  productCatalogs,
+).omit({
   id: true,
   createdAt: true,
   updatedAt: true,
 });
-export const insertBlogCategorySchema = createInsertSchema(blogCategories).omit({
-  id: true,
-  createdAt: true,
-});
+export const insertBlogCategorySchema = createInsertSchema(blogCategories).omit(
+  {
+    id: true,
+    createdAt: true,
+  },
+);
 export const insertBlogPostSchema = createInsertSchema(blogPosts).omit({
   id: true,
   createdAt: true,
@@ -818,6 +828,54 @@ export const insertTeamMemberSchema = createInsertSchema(teamMembers).omit({
   id: true,
   createdAt: true,
 });
+
+// Singleton global SEO (single row, id = "global")
+export const SEO_SETTINGS_ROW_ID = "global" as const;
+
+export const seoSettings = pgTable("seo_settings", {
+  id: text("id").primaryKey().default("global").notNull(),
+  // Core
+  defaultTitle: text("default_title"),
+  titleTemplate: text("title_template"), // e.g. "{{title}} | {{site}}"
+  defaultDescription: text("default_description"),
+  defaultKeywords: text("default_keywords"), // comma-separated
+  defaultOgImageUrl: text("default_og_image_url"),
+  // Social
+  twitterCard: text("twitter_card"), // summary_large_image, summary, ...
+  twitterSite: text("twitter_site"), // @handle
+  twitterCreator: text("twitter_creator"),
+  facebookAppId: text("facebook_app_id"),
+  // Indexing
+  robotsIndex: boolean("robots_index").notNull().default(true),
+  robotsFollow: boolean("robots_follow").notNull().default(true),
+  canonicalBaseUrl: text("canonical_base_url"),
+  // Verification
+  googleSiteVerification: text("google_site_verification"),
+  bingSiteVerification: text("bing_site_verification"),
+  // JSON-LD Organization
+  organizationName: text("organization_name"),
+  organizationUrl: text("organization_url"),
+  organizationLogoUrl: text("organization_logo_url"),
+  sameAs: jsonb("same_as")
+    .$type<string[] | null>()
+    .default(sql`'[]'::jsonb`),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at")
+    .defaultNow()
+    .$onUpdate(() => new Date())
+    .notNull(),
+});
+
+export const insertSeoSettingsSchema = createInsertSchema(seoSettings).omit({
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const updateSeoSettingsBodySchema = createInsertSchema(seoSettings, {
+  sameAs: z.array(z.string()).optional().nullable(),
+})
+  .omit({ id: true, createdAt: true, updatedAt: true })
+  .partial();
 
 // Select types
 export type Category = typeof categories.$inferSelect;
@@ -851,6 +909,7 @@ export type ProductCatalog = typeof productCatalogs.$inferSelect;
 export type BlogCategory = typeof blogCategories.$inferSelect;
 export type BlogPost = typeof blogPosts.$inferSelect;
 export type TeamMember = typeof teamMembers.$inferSelect;
+export type SeoSettings = typeof seoSettings.$inferSelect;
 
 // Insert types
 export type InsertCategory = z.infer<typeof insertCategorySchema>;
@@ -891,3 +950,4 @@ export type InsertProductCatalog = z.infer<typeof insertProductCatalogSchema>;
 export type InsertBlogCategory = z.infer<typeof insertBlogCategorySchema>;
 export type InsertBlogPost = z.infer<typeof insertBlogPostSchema>;
 export type InsertTeamMember = z.infer<typeof insertTeamMemberSchema>;
+export type UpdateSeoSettingsBody = z.infer<typeof updateSeoSettingsBodySchema>;

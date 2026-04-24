@@ -117,10 +117,15 @@ export function CategoriesTable({
                     {category.description || "—"}
                   </TableCell>
                   <TableCell className="text-center">
-                    <Badge variant="secondary" className="gap-1">
-                      <Package className="h-3 w-3" />
-                      {category.productsCount ?? 0}
-                    </Badge>
+                    <a href={`/admin/products?categoryId=${category.id}`}>
+                      <Badge
+                        variant="secondary"
+                        className="gap-1 cursor-pointer hover:bg-secondary/70 transition-colors"
+                      >
+                        <Package className="h-3 w-3" />
+                        {category.productsCount ?? 0}
+                      </Badge>
+                    </a>
                   </TableCell>
                   <TableCell className="text-center">
                     {category.displayOrder}

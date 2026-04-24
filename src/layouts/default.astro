@@ -6,8 +6,14 @@ import { TailwindIndicator } from "@/components/elements/tailwind-indicator.tsx"
 import Footer from "@/components/layout/footer.astro";
 import Header from "@/components/layout/header.astro";
 import Meta from "@/components/layout/meta.astro";
-
-import { SITE } from "@/lib/config";
+import {
+  buildCanonicalForRequest,
+  buildDocumentTitle,
+  buildPageJsonLd,
+  formatRobotsMetaContent,
+  getEffectiveGlobalSeo,
+  resolveSocialImageHref,
+} from "@/lib/seo/global-seo";
 
 interface Props {
   title: string;
@@ -15,15 +21,57 @@ interface Props {
   ogImage?: string;
 }
 
-const { title, description = SITE.desc, ogImage } = Astro.props;
+const {
+  title,
+  description: descriptionFromProps,
+  ogImage: ogImageFromProps,
+} = Astro.props;
+
+const effective = await getEffectiveGlobalSeo();
+const description = descriptionFromProps ?? effective.defaultDescription;
+const documentTitle = buildDocumentTitle(title, effective);
+const socialImageHref = resolveSocialImageHref(
+  ogImageFromProps,
+  Astro.url.origin,
+  Astro.site?.toString(),
+  effective,
+);
+const canonicalURL = buildCanonicalForRequest({
+  pathname: Astro.url.pathname,
+  site: Astro.site?.toString(),
+  requestOrigin: Astro.url.origin,
+  canonicalBaseUrl: effective.canonicalBaseUrl,
+});
+const jsonLd = buildPageJsonLd({
+  documentTitle,
+  pageDescription: description,
+  imageHref: socialImageHref,
+  effective,
+});
+const robotsContent = formatRobotsMetaContent(
+  effective.robotsIndex,
+  effective.robotsFollow,
+);
 ---
 
 <!doctype html>
 <html lang="en">
   <Meta
-    title={`${title} | ${SITE.title}`}
+    title={documentTitle}
+    author={effective.author}
     description={description}
-    ogImage={ogImage}
+    socialImageUrl={socialImageHref}
+    canonicalURL={canonicalURL}
+    metaKeywords={effective.defaultKeywords}
+    ogSiteName={effective.defaultTitle}
+    twitterCard={effective.twitterCard}
+    twitterSite={effective.twitterSite}
+    twitterCreator={effective.twitterCreator}
+    facebookAppId={effective.facebookAppId}
+    robotsContent={robotsContent}
+    googleSiteVerification={effective.googleSiteVerification}
+    bingSiteVerification={effective.bingSiteVerification}
+    jsonLd={jsonLd}
   />
   <body>
     <Header />

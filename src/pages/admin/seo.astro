@@ -1,0 +1,11 @@
+---
+import { AdminSeoPage } from "@/components/admin/pages/admin-seo-page";
+import AdminLayout from "@/layouts/admin.astro";
+---
+
+<AdminLayout
+  title="Global SEO"
+  description="Manage default SEO and social metadata for the public site."
+>
+  <AdminSeoPage client:load />
+</AdminLayout>

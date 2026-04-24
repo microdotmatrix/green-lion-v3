@@ -5,41 +5,93 @@ import { formatCanonicalURL } from "@/lib/utils";
 import { SITE } from "@/lib/config";
 import Fonts from "./fonts.astro";
 
+export type MetaJsonLd = object;
+
 export interface Props {
   title?: string;
   author?: string;
-  profile?: string;
   description?: string;
+  /** Path or full URL; used when socialImageUrl is not provided */
   ogImage?: string;
-  canonicalURL?: string;
+  /** Precomputed absolute URL for og / twitter (preferred when provided) */
+  socialImageUrl?: string;
+  canonicalURL?: string | URL;
+  metaKeywords?: string;
+  ogSiteName?: string;
+  /** twitter:card: summary, summary_large_image, app, player */
+  twitterCard?: string;
+  /** without @, we prefix @ for twitter: meta when it looks like a handle */
+  twitterSite?: string;
+  twitterCreator?: string;
+  facebookAppId?: string;
+  /** Full robots content, e.g. "index, follow" */
+  robotsContent?: string;
+  googleSiteVerification?: string;
+  bingSiteVerification?: string;
+  /** When true, do not include google / bing verification (e.g. admin) */
+  omitSiteVerification?: boolean;
+  /** JSON-LD; when omitted, a minimal WebPage/Organization graph is not generated here — layouts should pass */
+  jsonLd?: MetaJsonLd;
+  /** If false, omit some open graph site tags (admin) */
+  includeOpenGraph?: boolean;
 }
 
 const {
   title = SITE.title,
   author = SITE.author,
-  profile = SITE.profile,
   description = SITE.desc,
   ogImage = SITE.ogImage,
-  canonicalURL = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin),
+  socialImageUrl: socialImageUrlProp,
+  canonicalURL: canonicalURLProp = new URL(
+    Astro.url.pathname,
+    Astro.site ?? Astro.url.origin,
+  ),
+  metaKeywords = "",
+  ogSiteName = SITE.title,
+  twitterCard = "summary_large_image",
+  twitterSite = "",
+  twitterCreator = "",
+  facebookAppId = "",
+  robotsContent: robotsContentProp,
+  googleSiteVerification = "",
+  bingSiteVerification = "",
+  omitSiteVerification = false,
+  jsonLd: jsonLdProp,
+  includeOpenGraph = true,
 } = Astro.props;
 
-const socialImageURL = new URL(
-  ogImage ?? SITE.ogImage ?? "og.png",
-  Astro.site ?? Astro.url.origin,
-).href;
+const canonicalURL =
+  typeof canonicalURLProp === "string"
+    ? new URL(canonicalURLProp)
+    : canonicalURLProp;
 
-const structuredData = {
+const socialImageURL =
+  socialImageUrlProp ??
+  new URL(ogImage ?? SITE.ogImage ?? "og.png", Astro.site ?? Astro.url.origin)
+    .href;
+
+const asTwitterHandle = (h: string) => {
+  const t = h.trim();
+  if (!t) return "";
+  if (t.startsWith("@")) return t;
+  if (/^https?:\/\//i.test(t) || t.includes("/")) return t;
+  if (/\s/.test(t)) return t;
+  return `@${t.replace(/^@+/, "")}`;
+};
+
+const twitterSiteTag = asTwitterHandle(twitterSite);
+const twitterCreatorTag = asTwitterHandle(twitterCreator);
+
+const defaultRobots = "index, follow";
+const robotsContent = robotsContentProp ?? defaultRobots;
+const hasKeywords = Boolean(metaKeywords.trim());
+
+const structuredData = jsonLdProp ?? {
   "@context": "https://schema.org",
-  "@type": "Marketing",
-  headline: `${title}`,
-  image: `${socialImageURL}`,
-  author: [
-    {
-      "@type": "Person",
-      name: `${author}`,
-      url: `${profile}`,
-    },
-  ],
+  "@type": "WebPage",
+  name: title,
+  description,
+  image: socialImageURL,
 };
 ---
 
@@ -50,29 +102,61 @@ const structuredData = {
   <link rel="icon" type="image/x-icon" href="/favicon.ico" />
   <link rel="canonical" href={formatCanonicalURL(canonicalURL)} />
   <meta name="generator" content={Astro.generator} />
+  {robotsContent && <meta name="robots" content={robotsContent} />}
 
   <title>{title}</title>
 
   <meta name="description" content={description} />
+  {hasKeywords && <meta name="keywords" content={metaKeywords} />}
   <meta name="author" content={author} />
+  {
+    omitSiteVerification ? null : (
+      <>
+        {googleSiteVerification.trim() && (
+          <meta
+            name="google-site-verification"
+            content={googleSiteVerification.trim()}
+          />
+        )}
+        {bingSiteVerification.trim() && (
+          <meta name="msvalidate.01" content={bingSiteVerification.trim()} />
+        )}
+      </>
+    )
+  }
 
-  <!-- Open Graph / Facebook -->
-  <meta property="og:title" content={title} />
-  <meta property="og:description" content={description} />
-  <meta property="og:url" content={formatCanonicalURL(canonicalURL)} />
-  <meta property="og:image" content={socialImageURL} />
-
-  <!-- Twitter/X -->
-  <meta property="twitter:card" content="summary_large_image" />
-  <meta property="twitter:url" content={formatCanonicalURL(canonicalURL)} />
-  <meta property="twitter:title" content={title} />
-  <meta property="twitter:description" content={description} />
-  <meta property="twitter:image" content={socialImageURL} />
+  <!-- Open Graph / Facebook + Twitter (optional for admin) -->
+  {
+    includeOpenGraph && (
+      <>
+        <meta property="og:site_name" content={ogSiteName} />
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content={title} />
+        <meta property="og:description" content={description} />
+        <meta property="og:url" content={formatCanonicalURL(canonicalURL)} />
+        <meta property="og:image" content={socialImageURL} />
+        {facebookAppId.trim() && (
+          <meta property="fb:app_id" content={facebookAppId.trim()} />
+        )}
+        <meta name="twitter:card" content={twitterCard} />
+        <meta name="twitter:url" content={formatCanonicalURL(canonicalURL)} />
+        <meta name="twitter:title" content={title} />
+        <meta name="twitter:description" content={description} />
+        <meta name="twitter:image" content={socialImageURL} />
+        {twitterSiteTag && (
+          <meta name="twitter:site" content={twitterSiteTag} />
+        )}
+        {twitterCreatorTag && (
+          <meta name="twitter:creator" content={twitterCreatorTag} />
+        )}
+      </>
+    )
+  }
 
   <!-- Fonts -->
   <Fonts />
 
-  <!-- Google JSON-LD Structured data -->
+  <!-- JSON-LD -->
   <script
     is:inline
     type="application/ld+json"

@@ -39,6 +39,7 @@ import {
   MessageSquareQuote,
   Newspaper,
   Package,
+  Search,
   Sliders,
   Star,
   Users,
@@ -131,6 +132,11 @@ const contentNavItems = [
 
 const systemNavItems = [
   {
+    title: "SEO",
+    url: "/admin/seo",
+    icon: Search,
+  },
+  {
     title: "Users",
     url: "/admin/users",
     icon: Users,
@@ -200,10 +206,12 @@ export function AdminLayout({ user, children }: AdminLayoutProps) {
                   <SidebarMenuItem>
                     <SidebarMenuButton
                       asChild
-                      isActive={currentPath === "/admin/dashboard"}
+                      isActive={
+                        currentPath === "/admin" || currentPath === "/admin/"
+                      }
                       tooltip="Dashboard"
                     >
-                      <a href="/admin/dashboard">
+                      <a href="/admin">
                         <LayoutDashboard />
                         <span>Dashboard</span>
                       </a>

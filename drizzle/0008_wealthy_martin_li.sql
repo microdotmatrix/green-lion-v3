@@ -1,0 +1,23 @@
+CREATE TABLE "seo_settings" (
+	"id" text PRIMARY KEY DEFAULT 'global' NOT NULL,
+	"default_title" text,
+	"title_template" text,
+	"default_description" text,
+	"default_keywords" text,
+	"default_og_image_url" text,
+	"twitter_card" text,
+	"twitter_site" text,
+	"twitter_creator" text,
+	"facebook_app_id" text,
+	"robots_index" boolean DEFAULT true NOT NULL,
+	"robots_follow" boolean DEFAULT true NOT NULL,
+	"canonical_base_url" text,
+	"google_site_verification" text,
+	"bing_site_verification" text,
+	"organization_name" text,
+	"organization_url" text,
+	"organization_logo_url" text,
+	"same_as" jsonb DEFAULT '[]'::jsonb,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL
+);
