@@ -25,6 +25,7 @@ export default defineConfig({
     plugins: [tailwindcss()],
     optimizeDeps: {
       include: [
+        "cmdk",
         "@tiptap/react",
         "@tiptap/react/menus",
         "@tiptap/starter-kit",
