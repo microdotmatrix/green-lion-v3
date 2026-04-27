@@ -1,5 +1,6 @@
 import type {
   RepFormData,
+  RepUpdateData,
   TradeshowData,
   TradeshowRep,
   TradeshowRepDetail,
@@ -38,7 +39,7 @@ export async function createRep(data: RepFormData): Promise<TradeshowRep> {
 
 export async function updateRep(
   id: string,
-  data: Partial<RepFormData>,
+  data: RepUpdateData,
 ): Promise<TradeshowRep> {
   const response = await fetch(`/api/admin/tradeshows/${id}`, {
     method: "PUT",

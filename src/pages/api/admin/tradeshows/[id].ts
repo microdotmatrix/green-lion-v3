@@ -140,7 +140,7 @@ export const PUT: APIRoute = async ({ params, request, locals }) => {
 
     // Check if rep exists
     const [existing] = await db
-      .select({ id: tradeshowReps.id, slug: tradeshowReps.slug })
+      .select()
       .from(tradeshowReps)
       .where(eq(tradeshowReps.id, id));
 
@@ -166,19 +166,45 @@ export const PUT: APIRoute = async ({ params, request, locals }) => {
       }
     }
 
-    // Update rep
-    const [updated] = await db
-      .update(tradeshowReps)
-      .set(parsed.data)
-      .where(eq(tradeshowReps.id, id))
-      .returning();
+    if (categoryIds !== undefined && !Array.isArray(categoryIds)) {
+      return new Response(
+        JSON.stringify({ error: "categoryIds must be an array" }),
+        { status: 400, headers: { "Content-Type": "application/json" } },
+      );
+    }
+
+    if (productIds !== undefined && !Array.isArray(productIds)) {
+      return new Response(
+        JSON.stringify({ error: "productIds must be an array" }),
+        { status: 400, headers: { "Content-Type": "application/json" } },
+      );
+    }
+
+    if (serviceIds !== undefined && !Array.isArray(serviceIds)) {
+      return new Response(
+        JSON.stringify({ error: "serviceIds must be an array" }),
+        { status: 400, headers: { "Content-Type": "application/json" } },
+      );
+    }
+
+    let updated = existing;
+
+    // Selection-only updates have no rep columns to set.
+    if (Object.keys(parsed.data).length > 0) {
+      const [updatedRep] = await db
+        .update(tradeshowReps)
+        .set(parsed.data)
+        .where(eq(tradeshowReps.id, id))
+        .returning();
+      updated = updatedRep ?? existing;
+    }
 
     // Update category assignments if provided
     if (categoryIds !== undefined) {
       await db
         .delete(tradeshowRepCategories)
         .where(eq(tradeshowRepCategories.repId, id));
-      if (Array.isArray(categoryIds) && categoryIds.length > 0) {
+      if (categoryIds.length > 0) {
         await db.insert(tradeshowRepCategories).values(
           categoryIds.map((catId: string) => ({
             repId: id,
@@ -193,7 +219,7 @@ export const PUT: APIRoute = async ({ params, request, locals }) => {
       await db
         .delete(tradeshowRepProducts)
         .where(eq(tradeshowRepProducts.repId, id));
-      if (Array.isArray(productIds) && productIds.length > 0) {
+      if (productIds.length > 0) {
         await db.insert(tradeshowRepProducts).values(
           productIds.map((prodId: string) => ({
             repId: id,
@@ -208,7 +234,7 @@ export const PUT: APIRoute = async ({ params, request, locals }) => {
       await db
         .delete(tradeshowRepServices)
         .where(eq(tradeshowRepServices.repId, id));
-      if (Array.isArray(serviceIds) && serviceIds.length > 0) {
+      if (serviceIds.length > 0) {
         await db.insert(tradeshowRepServices).values(
           serviceIds.map((svcId: string) => ({
             repId: id,

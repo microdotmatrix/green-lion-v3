@@ -70,4 +70,10 @@ export interface RepFormData {
   active: boolean;
 }
 
+export type RepUpdateData = Partial<RepFormData> & {
+  categoryIds?: string[];
+  productIds?: string[];
+  serviceIds?: string[];
+};
+
 export type TradeshowRepDetail = TradeshowRep & { leads: Lead[] };

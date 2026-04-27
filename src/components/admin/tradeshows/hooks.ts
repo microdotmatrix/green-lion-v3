@@ -8,7 +8,7 @@ import {
   fetchTradeshowData,
   updateRep,
 } from "./api";
-import type { RepFormData } from "./types";
+import type { RepUpdateData } from "./types";
 
 export function useTradeshowReps() {
   return useQuery({
@@ -44,7 +44,7 @@ export function useTradeshowRepMutations() {
   });
 
   const updateRepMut = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: Partial<RepFormData> }) =>
+    mutationFn: ({ id, data }: { id: string; data: RepUpdateData }) =>
       updateRep(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-tradeshows"] });

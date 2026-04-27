@@ -12,7 +12,11 @@ import { LeadSubmissions } from "./lead-submissions";
 import { QrCodeDialog } from "./qr-code-dialog";
 import { RepCard } from "./rep-card";
 import { RepFormDialog } from "./rep-form-dialog";
-import type { TradeshowRep, TradeshowRepWithSelections } from "./types";
+import type {
+  RepUpdateData,
+  TradeshowRep,
+  TradeshowRepWithSelections,
+} from "./types";
 
 export default function TradeshowsPage() {
   const [isFormOpen, setIsFormOpen] = React.useState(false);
@@ -50,7 +54,7 @@ export default function TradeshowsPage() {
     ids: string[],
   ) => {
     try {
-      const payload: Record<string, string[]> = {};
+      const payload: RepUpdateData = {};
       if (type === "categories") payload.categoryIds = ids;
       if (type === "products") payload.productIds = ids;
       if (type === "services") payload.serviceIds = ids;
@@ -64,8 +68,8 @@ export default function TradeshowsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="min-w-0">
           <h1 className="text-3xl font-bold tracking-tight">Trade Shows</h1>
           <p className="text-muted-foreground">
             Manage sales representatives and their QR codes for lead collection
@@ -76,7 +80,7 @@ export default function TradeshowsPage() {
             setEditingRep(null);
             setIsFormOpen(true);
           }}
-          className="bg-green-600 hover:bg-green-700"
+          className="w-full bg-green-600 hover:bg-green-700 sm:w-auto"
         >
           <Plus className="h-4 w-4 mr-2" />
           Add Rep
