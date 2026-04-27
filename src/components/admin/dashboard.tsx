@@ -190,14 +190,14 @@ export default function AdminDashboard() {
         {/* Recent Quotes */}
         <Card>
           <CardHeader>
-            <div className="flex items-center justify-between">
-              <div>
+            <div className="flex items-center justify-between gap-3">
+              <div className="min-w-0">
                 <CardTitle>Recent Quotes</CardTitle>
                 <CardDescription>Latest quote requests</CardDescription>
               </div>
               <a
                 href="/admin/quotes"
-                className="text-sm text-primary hover:underline flex items-center gap-1"
+                className="flex shrink-0 items-center gap-1 text-sm text-primary hover:underline"
               >
                 View all
                 <ArrowUpRight className="h-3 w-3" />
@@ -221,9 +221,9 @@ export default function AdminDashboard() {
                   <a
                     key={quote.id}
                     href={`/admin/quotes/${quote.id}`}
-                    className="flex items-center justify-between py-2 px-3 -mx-3 rounded-lg hover:bg-muted/50 transition-colors"
+                    className="-mx-3 flex flex-col gap-3 rounded-lg px-3 py-2 transition-colors hover:bg-muted/50 sm:flex-row sm:items-center sm:justify-between"
                   >
-                    <div className="space-y-1">
+                    <div className="min-w-0 space-y-1">
                       <p className="text-sm font-medium leading-none">
                         {quote.firstName} {quote.lastName}
                       </p>
@@ -231,8 +231,8 @@ export default function AdminDashboard() {
                         {quote.companyName}
                       </p>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <div className="text-right">
+                    <div className="flex items-center justify-between gap-3 sm:justify-end">
+                      <div className="text-left sm:text-right">
                         <p className="text-sm font-medium">
                           {formatCurrency(quote.estimatedTotal)}
                         </p>
@@ -253,14 +253,14 @@ export default function AdminDashboard() {
         {/* Recent Leads */}
         <Card>
           <CardHeader>
-            <div className="flex items-center justify-between">
-              <div>
+            <div className="flex items-center justify-between gap-3">
+              <div className="min-w-0">
                 <CardTitle>Recent Leads</CardTitle>
                 <CardDescription>Latest trade show leads</CardDescription>
               </div>
               <a
                 href="/admin/tradeshows"
-                className="text-sm text-primary hover:underline flex items-center gap-1"
+                className="flex shrink-0 items-center gap-1 text-sm text-primary hover:underline"
               >
                 View all
                 <ArrowUpRight className="h-3 w-3" />
@@ -283,9 +283,9 @@ export default function AdminDashboard() {
                 {stats?.recentLeads?.map((lead) => (
                   <div
                     key={lead.id}
-                    className="flex items-center justify-between py-2 px-3 -mx-3 rounded-lg"
+                    className="-mx-3 flex flex-col gap-3 rounded-lg px-3 py-2 sm:flex-row sm:items-center sm:justify-between"
                   >
-                    <div className="space-y-1">
+                    <div className="min-w-0 space-y-1">
                       <p className="text-sm font-medium leading-none">
                         {lead.leadName}
                       </p>
@@ -296,7 +296,7 @@ export default function AdminDashboard() {
                         </p>
                       )}
                     </div>
-                    <div className="text-right">
+                    <div className="text-left sm:text-right">
                       <Badge variant="outline" className="capitalize">
                         {lead.contactMethod}
                       </Badge>

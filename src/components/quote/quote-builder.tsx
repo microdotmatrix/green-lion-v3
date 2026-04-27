@@ -246,7 +246,7 @@ export default function QuoteBuilder({
         <a
           href="https://calendly.com/mike-greenlioninnovations/intro-to-gli"
           target="_blank"
-          rel="noopener noreferrer"
+          rel="noopener"
           className="inline-flex items-center gap-2 rounded-md border px-4 py-2 text-sm transition-colors hover:border-primary hover:text-primary"
           style={{ textDecoration: "none" }}
         >

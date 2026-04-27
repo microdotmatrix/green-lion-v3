@@ -35,6 +35,7 @@ const colsXl = getCols(count, 6);
         rel="noopener"
         class="client-logo"
         title={client.companyName}
+        aria-label={`Visit ${client.companyName} website`}
       >
         <img src={client.logoUrl} alt={client.companyName} loading="lazy" />
       </a>
@@ -82,6 +83,8 @@ const colsXl = getCols(count, 6);
     background: var(--card);
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
+    background-color: var(--color-white);
+    padding: 1rem;
     transition:
       transform 200ms ease,
       border-color 200ms ease,
@@ -94,12 +97,17 @@ const colsXl = getCols(count, 6);
     box-shadow: 0 8px 24px color-mix(in srgb, var(--primary) 10%, transparent);
   }
 
+  .client-logo:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 3px;
+  }
+
   .client-logo img {
     max-width: 100%;
     max-height: 100%;
     object-fit: contain;
-    filter: grayscale(100%);
-    opacity: 0.6;
+    filter: grayscale(10%);
+    opacity: 0.8;
     transition:
       filter 200ms ease,
       opacity 200ms ease;
@@ -108,5 +116,16 @@ const colsXl = getCols(count, 6);
   .client-logo:hover img {
     filter: grayscale(0%);
     opacity: 1;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .client-logo,
+    .client-logo img {
+      transition: none;
+    }
+
+    .client-logo:hover {
+      transform: none;
+    }
   }
 </style>

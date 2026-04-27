@@ -1,5 +1,10 @@
 import { db } from "@/lib/db";
-import { insertProductSchema, pricingTiers, products } from "@/lib/db/schema";
+import {
+  categories,
+  insertProductSchema,
+  pricingTiers,
+  products,
+} from "@/lib/db/schema";
 import type { APIRoute } from "astro";
 import { eq } from "drizzle-orm";
 
@@ -22,8 +27,23 @@ export const GET: APIRoute = async ({ params, locals }) => {
 
   try {
     const [product] = await db
-      .select()
+      .select({
+        id: products.id,
+        sku: products.sku,
+        name: products.name,
+        description: products.description,
+        images: products.images,
+        categoryId: products.categoryId,
+        categoryName: categories.name,
+        minimumOrderQuantity: products.minimumOrderQuantity,
+        orderQuantityIncrement: products.orderQuantityIncrement,
+        logoCost: products.logoCost,
+        packagingCost: products.packagingCost,
+        createdAt: products.createdAt,
+        updatedAt: products.updatedAt,
+      })
       .from(products)
+      .leftJoin(categories, eq(products.categoryId, categories.id))
       .where(eq(products.id, id));
 
     if (!product) {

@@ -45,6 +45,7 @@ function getFieldError(fieldName: string) {
               target="_blank"
               rel="noopener"
               class="meeting-link"
+              aria-label="Request a meeting on Calendly"
             >
               Request a Meeting
             </a>
@@ -94,7 +95,13 @@ function getFieldError(fieldName: string) {
                   <div class="form-error-banner">{formErrorMessage}</div>
                 )}
 
-                <form method="POST" action={actions.contact} class="form-grid">
+                <form
+                  method="POST"
+                  action={actions.contact}
+                  class="form-grid"
+                  novalidate
+                  data-contact-form
+                >
                   <div class="grid gap-4 sm:grid-cols-2">
                     <div class="field">
                       <label for="firstName">
@@ -106,10 +113,20 @@ function getFieldError(fieldName: string) {
                         type="text"
                         placeholder="John"
                         required
+                        autocomplete="given-name"
+                        aria-describedby="firstName-error"
+                        aria-invalid={
+                          getFieldError("firstName") ? "true" : "false"
+                        }
                       />
-                      {getFieldError("firstName") && (
-                        <p class="field-error">{getFieldError("firstName")}</p>
-                      )}
+                      <p
+                        class="field-error"
+                        id="firstName-error"
+                        role="alert"
+                        hidden={!getFieldError("firstName")}
+                      >
+                        {getFieldError("firstName")}
+                      </p>
                     </div>
                     <div class="field">
                       <label for="lastName">
@@ -121,10 +138,20 @@ function getFieldError(fieldName: string) {
                         type="text"
                         placeholder="Doe"
                         required
+                        autocomplete="family-name"
+                        aria-describedby="lastName-error"
+                        aria-invalid={
+                          getFieldError("lastName") ? "true" : "false"
+                        }
                       />
-                      {getFieldError("lastName") && (
-                        <p class="field-error">{getFieldError("lastName")}</p>
-                      )}
+                      <p
+                        class="field-error"
+                        id="lastName-error"
+                        role="alert"
+                        hidden={!getFieldError("lastName")}
+                      >
+                        {getFieldError("lastName")}
+                      </p>
                     </div>
                   </div>
 
@@ -139,10 +166,18 @@ function getFieldError(fieldName: string) {
                         type="email"
                         placeholder="john@company.com"
                         required
+                        autocomplete="email"
+                        aria-describedby="email-error"
+                        aria-invalid={getFieldError("email") ? "true" : "false"}
                       />
-                      {getFieldError("email") && (
-                        <p class="field-error">{getFieldError("email")}</p>
-                      )}
+                      <p
+                        class="field-error"
+                        id="email-error"
+                        role="alert"
+                        hidden={!getFieldError("email")}
+                      >
+                        {getFieldError("email")}
+                      </p>
                     </div>
                     <div class="field">
                       <label for="phone">Phone</label>
@@ -151,6 +186,14 @@ function getFieldError(fieldName: string) {
                         name="phone"
                         type="tel"
                         placeholder="+1 (555) 000-0000"
+                        autocomplete="tel"
+                        aria-describedby="phone-error"
+                      />
+                      <p
+                        class="field-error"
+                        id="phone-error"
+                        role="alert"
+                        hidden
                       />
                     </div>
                   </div>
@@ -166,12 +209,20 @@ function getFieldError(fieldName: string) {
                         type="text"
                         placeholder="Acme Inc."
                         required
+                        autocomplete="organization"
+                        aria-describedby="companyName-error"
+                        aria-invalid={
+                          getFieldError("companyName") ? "true" : "false"
+                        }
                       />
-                      {getFieldError("companyName") && (
-                        <p class="field-error">
-                          {getFieldError("companyName")}
-                        </p>
-                      )}
+                      <p
+                        class="field-error"
+                        id="companyName-error"
+                        role="alert"
+                        hidden={!getFieldError("companyName")}
+                      >
+                        {getFieldError("companyName")}
+                      </p>
                     </div>
                     <div class="field">
                       <label for="type">Request Type</label>
@@ -193,10 +244,17 @@ function getFieldError(fieldName: string) {
                       type="text"
                       placeholder="How can we help?"
                       required
+                      aria-describedby="title-error"
+                      aria-invalid={getFieldError("title") ? "true" : "false"}
                     />
-                    {getFieldError("title") && (
-                      <p class="field-error">{getFieldError("title")}</p>
-                    )}
+                    <p
+                      class="field-error"
+                      id="title-error"
+                      role="alert"
+                      hidden={!getFieldError("title")}
+                    >
+                      {getFieldError("title")}
+                    </p>
                   </div>
 
                   <div class="field">
@@ -206,6 +264,13 @@ function getFieldError(fieldName: string) {
                       name="message"
                       placeholder="Tell us more about your inquiry..."
                       rows="5"
+                      aria-describedby="message-error"
+                    />
+                    <p
+                      class="field-error"
+                      id="message-error"
+                      role="alert"
+                      hidden
                     />
                   </div>
 
@@ -235,6 +300,114 @@ function getFieldError(fieldName: string) {
     </div>
   </section>
 </Layout>
+
+<script>
+  type FieldName = "firstName" | "lastName" | "email" | "companyName" | "title";
+
+  type Rule = {
+    required?: boolean;
+    label: string;
+    type?: "email";
+  };
+
+  const RULES: Record<FieldName, Rule> = {
+    firstName: { required: true, label: "First name" },
+    lastName: { required: true, label: "Last name" },
+    email: { required: true, label: "Email", type: "email" },
+    companyName: { required: true, label: "Company name" },
+    title: { required: true, label: "Subject" },
+  };
+
+  // Reasonably permissive RFC-ish email regex; mirrors HTML5 type=email semantics.
+  const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  function validate(name: FieldName, rawValue: string): string | null {
+    const rule = RULES[name];
+    const value = rawValue.trim();
+
+    if (rule.required && value.length === 0) {
+      return `${rule.label} is required.`;
+    }
+
+    if (rule.type === "email" && value.length > 0 && !EMAIL_RE.test(value)) {
+      return "Please enter a valid email address.";
+    }
+
+    return null;
+  }
+
+  function setFieldError(
+    field: HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement,
+    errorEl: HTMLElement,
+    message: string | null,
+  ) {
+    if (message) {
+      errorEl.textContent = message;
+      errorEl.hidden = false;
+      field.setAttribute("aria-invalid", "true");
+    } else {
+      errorEl.textContent = "";
+      errorEl.hidden = true;
+      field.setAttribute("aria-invalid", "false");
+    }
+  }
+
+  function initContactForm(form: HTMLFormElement) {
+    const fieldNames = Object.keys(RULES) as FieldName[];
+
+    type Bound = {
+      name: FieldName;
+      field: HTMLInputElement;
+      errorEl: HTMLElement;
+      touched: boolean;
+    };
+
+    const bound: Bound[] = [];
+
+    for (const name of fieldNames) {
+      const field = form.elements.namedItem(name);
+      const errorEl = document.getElementById(`${name}-error`);
+      if (!(field instanceof HTMLInputElement) || !errorEl) continue;
+
+      const entry: Bound = { name, field, errorEl, touched: false };
+      bound.push(entry);
+
+      // Validate on blur (first interaction marks field as touched).
+      field.addEventListener("blur", () => {
+        entry.touched = true;
+        setFieldError(field, errorEl, validate(name, field.value));
+      });
+
+      // After a field has been touched (or already shows an error), re-validate
+      // on input so feedback clears as soon as the value becomes valid.
+      field.addEventListener("input", () => {
+        if (!entry.touched && field.getAttribute("aria-invalid") !== "true") {
+          return;
+        }
+        setFieldError(field, errorEl, validate(name, field.value));
+      });
+    }
+
+    form.addEventListener("submit", (event) => {
+      let firstInvalid: HTMLInputElement | null = null;
+
+      for (const entry of bound) {
+        entry.touched = true;
+        const message = validate(entry.name, entry.field.value);
+        setFieldError(entry.field, entry.errorEl, message);
+        if (message && !firstInvalid) firstInvalid = entry.field;
+      }
+
+      if (firstInvalid) {
+        event.preventDefault();
+        firstInvalid.focus();
+      }
+    });
+  }
+
+  const form = document.querySelector<HTMLFormElement>("[data-contact-form]");
+  if (form) initContactForm(form);
+</script>
 
 <style>
   .contact-section {
@@ -423,6 +596,19 @@ function getFieldError(fieldName: string) {
     box-shadow: 0 0 0 2px hsl(var(--ring) / 0.2);
   }
 
+  .field input[aria-invalid="true"],
+  .field select[aria-invalid="true"],
+  .field textarea[aria-invalid="true"] {
+    border-color: var(--destructive);
+  }
+
+  .field input[aria-invalid="true"]:focus-visible,
+  .field select[aria-invalid="true"]:focus-visible,
+  .field textarea[aria-invalid="true"]:focus-visible {
+    border-color: var(--destructive);
+    box-shadow: 0 0 0 2px hsl(var(--destructive) / 0.2);
+  }
+
   .field select {
     appearance: none;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2371717a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
@@ -438,7 +624,13 @@ function getFieldError(fieldName: string) {
 
   .field-error {
     font-size: 0.8125rem;
+    line-height: 1.25;
     color: var(--destructive);
+    margin: 0;
+  }
+
+  .field-error[hidden] {
+    display: none;
   }
 
   .submit-btn {

@@ -72,9 +72,7 @@ export function FeedbackDetailView({
     return (
       <Card className="border-destructive">
         <CardContent className="py-4">
-          <p className="text-destructive">
-            Failed to load submission details.
-          </p>
+          <p className="text-destructive">Failed to load submission details.</p>
           <Button variant="outline" onClick={onBack} className="mt-2">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Feedback
@@ -87,11 +85,16 @@ export function FeedbackDetailView({
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon" onClick={onBack}>
+      <div className="flex flex-wrap items-start gap-3 sm:items-center sm:gap-4">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="shrink-0"
+          onClick={onBack}
+        >
           <ArrowLeft className="h-4 w-4" />
         </Button>
-        <div className="flex-1">
+        <div className="min-w-0 flex-1 basis-full sm:basis-auto">
           <h1 className="text-2xl font-bold">{submission.title}</h1>
           <p className="text-muted-foreground">
             Submitted {formatDate(submission.createdAt)}
@@ -200,7 +203,7 @@ export function FeedbackDetailView({
                     key={reply.id}
                     className="rounded-lg border p-4 space-y-2"
                   >
-                    <div className="flex items-center justify-between">
+                    <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                       <div className="flex items-center gap-2">
                         <Badge variant="secondary" className="text-xs">
                           Admin

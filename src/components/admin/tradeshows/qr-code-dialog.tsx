@@ -81,7 +81,12 @@ export const QrCodeDialog = ({
               )}
             </Button>
             <Button variant="outline" size="icon" asChild>
-              <a href={leadUrl} target="_blank" rel="noopener noreferrer">
+              <a
+                href={leadUrl}
+                target="_blank"
+                rel="noopener"
+                aria-label={`Open lead capture page for ${rep.name}`}
+              >
                 <ExternalLink className="h-4 w-4" />
               </a>
             </Button>

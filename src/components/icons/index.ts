@@ -12,4 +12,5 @@ export { default as Manufacturing } from "./manufacturing.astro";
 export { default as Package } from "./package.astro";
 export { default as Precision } from "./precision.astro";
 export { default as RobotArm } from "./robot-arm.astro";
+export { default as ShoppingCart } from "./shopping-cart.astro";
 export { default as Source } from "./source.astro";

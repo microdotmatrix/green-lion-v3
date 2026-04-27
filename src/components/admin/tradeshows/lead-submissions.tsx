@@ -123,22 +123,27 @@ export const LeadSubmissions = ({
   return (
     <Card>
       <CardHeader>
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <CardTitle>Lead Submissions</CardTitle>
-          <Button variant="outline" size="sm" onClick={handleExportCsv}>
+          <Button
+            variant="outline"
+            size="sm"
+            className="w-full sm:w-auto"
+            onClick={handleExportCsv}
+          >
             <Download className="h-4 w-4 mr-2" />
             Export to CSV
           </Button>
         </div>
       </CardHeader>
       <CardContent>
-        <div className="flex gap-4 mb-4">
+        <div className="mb-4 flex flex-col gap-4 sm:flex-row">
           <div className="space-y-1">
             <label className="text-sm text-muted-foreground">
               Filter by Rep
             </label>
             <Select value={selectedRepId} onValueChange={setSelectedRepId}>
-              <SelectTrigger className="w-[200px]">
+              <SelectTrigger className="w-full sm:w-[200px]">
                 <SelectValue placeholder="All Reps" />
               </SelectTrigger>
               <SelectContent>
@@ -156,7 +161,7 @@ export const LeadSubmissions = ({
               Filter by Date Range
             </label>
             <Select value={dateRange} onValueChange={setDateRange}>
-              <SelectTrigger className="w-[200px]">
+              <SelectTrigger className="w-full sm:w-[200px]">
                 <SelectValue placeholder="All Time" />
               </SelectTrigger>
               <SelectContent>

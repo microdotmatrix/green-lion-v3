@@ -20,7 +20,9 @@ interface CatalogUploadDialogProps {
   createCatalogMut: ReturnType<typeof useCatalogMutations>["createCatalogMut"];
 }
 
-export function CatalogUploadDialog({ createCatalogMut }: CatalogUploadDialogProps) {
+export function CatalogUploadDialog({
+  createCatalogMut,
+}: CatalogUploadDialogProps) {
   const [open, setOpen] = React.useState(false);
   const [displayName, setDisplayName] = React.useState("");
   const [selectedFile, setSelectedFile] = React.useState<File | null>(null);
@@ -67,9 +69,15 @@ export function CatalogUploadDialog({ createCatalogMut }: CatalogUploadDialogPro
   }
 
   return (
-    <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) resetForm(); }}>
+    <Dialog
+      open={open}
+      onOpenChange={(v) => {
+        setOpen(v);
+        if (!v) resetForm();
+      }}
+    >
       <DialogTrigger asChild>
-        <Button size="sm">
+        <Button size="sm" className="w-full sm:w-auto">
           <Plus className="mr-2 h-4 w-4" />
           Add Version
         </Button>
@@ -101,7 +109,9 @@ export function CatalogUploadDialog({ createCatalogMut }: CatalogUploadDialogPro
           </div>
           {isUploading && (
             <div className="space-y-1">
-              <p className="text-sm text-muted-foreground">Uploading... {progress}%</p>
+              <p className="text-sm text-muted-foreground">
+                Uploading... {progress}%
+              </p>
               <Progress value={progress} />
             </div>
           )}
@@ -109,12 +119,18 @@ export function CatalogUploadDialog({ createCatalogMut }: CatalogUploadDialogPro
             <Button
               type="button"
               variant="outline"
-              onClick={() => { setOpen(false); resetForm(); }}
+              onClick={() => {
+                setOpen(false);
+                resetForm();
+              }}
               disabled={isUploading}
             >
               Cancel
             </Button>
-            <Button type="submit" disabled={isUploading || createCatalogMut.isPending}>
+            <Button
+              type="submit"
+              disabled={isUploading || createCatalogMut.isPending}
+            >
               {isUploading ? "Uploading..." : "Upload"}
             </Button>
           </DialogFooter>

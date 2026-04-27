@@ -21,7 +21,7 @@ const { members = [] } = Astro.props;
         Team member profiles coming soon.
       </p>
     ) : (
-      <div id="team-list" class="mx-auto px-4 py-8 sm:px-6 sm:py-12">
+      <div class="mx-auto px-4 py-8 sm:px-6 sm:py-12">
         <ul
           id="gli-team"
           class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-24"
@@ -41,7 +41,7 @@ const { members = [] } = Astro.props;
                 image={member.photoUrl ?? ""}
               >
                 <div
-                  class="prose prose-sm dark:prose-invert max-w-none [&_a]:text-primary [&_a]:underline [&_a]:underline-offset-2"
+                  class="prose prose-sm dark:prose-invert text-muted-foreground max-w-none [&_a]:text-primary [&_a]:underline [&_a]:underline-offset-2 text-balance"
                   set:html={member.summaryHtml}
                 />
               </Profile>
@@ -60,12 +60,12 @@ const { members = [] } = Astro.props;
    * and reduced motion is not preferred.
    */
   @supports (animation-timeline: scroll()) {
-    @media (--motionOK) {
+    @media (prefers-reduced-motion: no-preference) {
       #team-list ul {
         opacity: 1;
-        @media (--lg-min) {
+        @media (min-width: 1024px) {
           animation: fade-in forwards;
-          animation-timeline: scroll();
+          animation-timeline: view();
           animation-range: entry;
           animation-range: 0 100px;
         }
@@ -74,7 +74,7 @@ const { members = [] } = Astro.props;
           animation-timeline: view();
           animation-range: 0 33%;
           animation-timing-function: cubic-bezier(0.175, 0.885, 0.32, 1.275);
-          @media (--lg-min) {
+          @media (min-width: 1024px) {
             animation-range: entry;
           }
         }
@@ -83,7 +83,7 @@ const { members = [] } = Astro.props;
           animation-timeline: view();
           animation-range: 0 33%;
           animation-timing-function: cubic-bezier(0.175, 0.885, 0.32, 1.275);
-          @media (--lg-min) {
+          @media (min-width: 1024px) {
             animation-range: entry;
           }
         }

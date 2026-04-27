@@ -76,15 +76,23 @@ const { name, description, imageUrl, productCount, href } = Astro.props;
     transition:
       transform 200ms ease,
       box-shadow 200ms ease,
-      border-color 200ms ease;
+      border-color 200ms ease,
+      outline-color 200ms ease;
     text-decoration: none;
     color: inherit;
+    outline: 2px solid transparent;
+    outline-offset: 3px;
   }
 
-  .category-card:hover {
+  .category-card:hover,
+  .category-card:focus-visible {
     transform: translateY(-4px);
     box-shadow: 0 12px 32px color-mix(in srgb, var(--primary) 15%, transparent);
     border-color: color-mix(in srgb, var(--primary) 40%, transparent);
+  }
+
+  .category-card:focus-visible {
+    outline-color: var(--primary);
   }
 
   .category-image {
@@ -103,7 +111,8 @@ const { name, description, imageUrl, productCount, href } = Astro.props;
     transition: transform 300ms ease;
   }
 
-  .category-card:hover .category-image img {
+  .category-card:hover .category-image img,
+  .category-card:focus-visible .category-image img {
     transform: scale(1.05);
   }
 
@@ -163,7 +172,28 @@ const { name, description, imageUrl, productCount, href } = Astro.props;
     transition: gap 200ms ease;
   }
 
-  .category-card:hover .browse-button {
+  .category-card:hover .browse-button,
+  .category-card:focus-visible .browse-button {
     gap: 0.625rem;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .category-card,
+    .category-image img,
+    .browse-button {
+      transition:
+        outline-color 200ms ease,
+        border-color 200ms ease;
+    }
+
+    .category-card:hover,
+    .category-card:focus-visible {
+      transform: none;
+    }
+
+    .category-card:hover .category-image img,
+    .category-card:focus-visible .category-image img {
+      transform: none;
+    }
   }
 </style>

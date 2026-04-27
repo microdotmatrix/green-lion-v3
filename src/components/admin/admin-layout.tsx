@@ -26,7 +26,6 @@ import {
 import { authClient } from "@/lib/auth/client";
 import {
   BookOpen,
-  Briefcase,
   Building2,
   ChevronDown,
   Eye,
@@ -107,11 +106,6 @@ const contentNavItems = [
     title: "Blog",
     url: "/admin/blog",
     icon: Newspaper,
-  },
-  {
-    title: "Case Studies",
-    url: "/admin/case-studies",
-    icon: Briefcase,
   },
   {
     title: "Testimonials",
@@ -375,13 +369,13 @@ export function AdminLayout({ user, children }: AdminLayoutProps) {
           </SidebarFooter>
         </Sidebar>
 
-        <SidebarInset>
+        <SidebarInset className="min-w-0">
           <header className="flex h-16 shrink-0 items-center gap-2 border-b border-zinc-800 px-4">
             <SidebarTrigger className="-ml-1" />
             <Separator orientation="vertical" className="mr-2 h-4" />
             <div className="flex-1" />
           </header>
-          <main className="flex-1 min-h-0 overflow-auto p-4 md:p-6">
+          <main className="flex-1 min-h-0 w-full min-w-0 max-w-full overflow-auto p-3 sm:p-4 md:p-6">
             {children}
           </main>
         </SidebarInset>

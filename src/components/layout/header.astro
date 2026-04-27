@@ -4,7 +4,7 @@
 import Logo from "../elements/logo.astro";
 import Navigation from "../layout/navigation.astro";
 import ThemeSwitch from "../theme/toggle.astro";
-import { Basket } from "../icons";
+import { ShoppingCart } from "../icons";
 ---
 
 <header class="bg-secondary sticky top-0 mt-0 z-50 w-full">
@@ -41,12 +41,12 @@ import { Basket } from "../icons";
             class="relative inline-flex items-center justify-center rounded-md p-2 text-foreground hover:bg-accent hover:text-accent-foreground transition-colors group z-50"
             title="View Quote"
           >
-            <Basket
-              class="size-7.5 group-hover:opacity-90 transition-all duration-200 group-hover:scale-110"
+            <ShoppingCart
+              class="size-8 group-hover:opacity-90 transition-all duration-300 group-hover:scale-110"
             />
             <span
               id="quote-cart-count"
-              class="absolute top-2 right-1 flex items-center justify-center min-w-5 h-5 px-1.5 text-xs font-bold text-primary-foreground bg-primary rounded-full"
+              class="absolute top-0.5 right-1 flex items-center justify-center min-w-5 h-5 px-1.5 text-xs font-bold text-primary-foreground bg-primary rounded-full"
               style="display: none;"
             >
               0

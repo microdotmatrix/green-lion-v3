@@ -20,14 +20,15 @@ export function QuotesFilters({
   onSearchChange,
   statusCounts,
 }: QuotesFiltersProps) {
-  const totalAll = Object.values(statusCounts || {}).reduce(
-    (a, b) => a + b,
-    0,
-  );
+  const totalAll = Object.values(statusCounts || {}).reduce((a, b) => a + b, 0);
 
   return (
-    <div className="flex items-center gap-4">
-      <Tabs value={status} onValueChange={onStatusChange} className="flex-1">
+    <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+      <Tabs
+        value={status}
+        onValueChange={onStatusChange}
+        className="w-full min-w-0 sm:flex-1"
+      >
         <TabsList>
           <TabsTrigger value="all">All ({totalAll})</TabsTrigger>
           <TabsTrigger value="pending">
@@ -44,7 +45,7 @@ export function QuotesFilters({
           </TabsTrigger>
         </TabsList>
       </Tabs>
-      <div className="relative w-64">
+      <div className="relative w-full sm:w-64">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <Input
           placeholder="Search quotes..."

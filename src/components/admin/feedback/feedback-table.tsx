@@ -137,11 +137,11 @@ export function FeedbackTable({
             </Table>
 
             {data && data.pagination.totalPages > 1 && (
-              <div className="flex items-center justify-between mt-4">
+              <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <p className="text-sm text-muted-foreground">
                   Page {data.pagination.page} of {data.pagination.totalPages}
                 </p>
-                <div className="flex gap-2">
+                <div className="flex flex-wrap gap-2">
                   <Button
                     variant="outline"
                     size="sm"

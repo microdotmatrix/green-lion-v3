@@ -22,16 +22,18 @@ function BlogPageInner() {
   const { deletePostMut, toggleStatusMut } = useBlogMutations();
 
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-6">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <h1 className="text-2xl font-semibold">Blog Posts</h1>
-        <Button asChild>
+        <Button className="w-full sm:w-auto" asChild>
           <a href="/admin/blog/new">+ New Post</a>
         </Button>
       </div>
 
       {isLoading ? (
-        <div className="text-center py-12 text-muted-foreground">Loading...</div>
+        <div className="text-center py-12 text-muted-foreground">
+          Loading...
+        </div>
       ) : (
         <BlogTable
           posts={data?.posts ?? []}

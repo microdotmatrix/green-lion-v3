@@ -56,7 +56,8 @@ export function TestimonialsCarousel({
                       <a
                         href={testimonial.companyLink}
                         target="_blank"
-                        rel="noopener noreferrer"
+                        rel="noopener"
+                        aria-label={`Visit ${testimonial.companyName} website`}
                         className="text-primary hover:underline"
                       >
                         {testimonial.companyName}

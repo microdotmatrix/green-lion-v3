@@ -11,9 +11,9 @@ function CatalogsPageInner() {
   const { createCatalogMut, setActiveMut, deleteMut } = useCatalogMutations();
 
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
+    <div className="space-y-6">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="min-w-0">
           <h1 className="text-2xl font-semibold">Product Catalogs</h1>
           <p className="text-sm text-muted-foreground mt-1">
             Manage PDF catalog versions. Only one version is active at a time.
@@ -23,7 +23,9 @@ function CatalogsPageInner() {
       </div>
 
       {isLoading ? (
-        <div className="text-center py-12 text-muted-foreground">Loading...</div>
+        <div className="text-center py-12 text-muted-foreground">
+          Loading...
+        </div>
       ) : (
         <CatalogsTable
           catalogs={catalogs}

@@ -4,6 +4,7 @@ import * as React from "react";
 import { ImageUpload } from "@/components/admin/image-upload";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   ResponsiveModal,
   ResponsiveModalContent,
@@ -12,7 +13,6 @@ import {
   ResponsiveModalHeader,
   ResponsiveModalTitle,
 } from "@/components/ui/responsive-modal";
-import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -21,12 +21,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 
 import { useProductDetail, useProductMutations } from "./hooks";
-import type { Category, PricingTier, ProductFormData } from "./types";
 import { ProductAttributesTab } from "./product-attributes-tab";
+import type { Category, PricingTier, ProductFormData } from "./types";
 
 type ProductFormDialogProps = {
   open: boolean;
@@ -92,7 +92,20 @@ export function ProductFormDialog({
         pricingTiers: [{ minQuantity: 1, pricePerUnit: "0" }],
       });
     }
-  }, [existingProduct, productId, open]);
+  }, [existingProduct, productId]);
+
+  const selectedCategoryName = React.useMemo(() => {
+    if (!formData.categoryId) {
+      return "";
+    }
+
+    return (
+      categories.find((category) => category.id === formData.categoryId)
+        ?.name ||
+      existingProduct?.categoryName ||
+      ""
+    );
+  }, [categories, existingProduct?.categoryName, formData.categoryId]);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -103,7 +116,10 @@ export function ProductFormDialog({
 
     try {
       if (isEditing && productId) {
-        await updateProductMut.mutateAsync({ id: productId, data: dataToSubmit });
+        await updateProductMut.mutateAsync({
+          id: productId,
+          data: dataToSubmit,
+        });
       } else {
         await createProductMut.mutateAsync(dataToSubmit as ProductFormData);
       }
@@ -154,7 +170,9 @@ export function ProductFormDialog({
         onInteractOutside={(event) => event.preventDefault()}
       >
         <ResponsiveModalHeader>
-          <ResponsiveModalTitle>{isEditing ? "Edit Product" : "Create Product"}</ResponsiveModalTitle>
+          <ResponsiveModalTitle>
+            {isEditing ? "Edit Product" : "Create Product"}
+          </ResponsiveModalTitle>
           <ResponsiveModalDescription>
             {isEditing
               ? "Update product details."
@@ -171,18 +189,24 @@ export function ProductFormDialog({
         ) : isEditing ? (
           <Tabs defaultValue="basic">
             <TabsList className="w-full">
-              <TabsTrigger value="basic" className="flex-1">Basic Info</TabsTrigger>
-              <TabsTrigger value="attributes" className="flex-1">Attributes</TabsTrigger>
+              <TabsTrigger value="basic" className="flex-1">
+                Basic Info
+              </TabsTrigger>
+              <TabsTrigger value="attributes" className="flex-1">
+                Attributes
+              </TabsTrigger>
             </TabsList>
             <TabsContent value="basic">
               <form onSubmit={handleSubmit} className="space-y-4">
                 {error && (
                   <div className="text-sm text-destructive bg-destructive/10 p-3 rounded-md">
-                    {error instanceof Error ? error.message : "Something went wrong"}
+                    {error instanceof Error
+                      ? error.message
+                      : "Something went wrong"}
                   </div>
                 )}
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid gap-4 sm:grid-cols-2">
                   <div className="space-y-2">
                     <Label htmlFor="sku">SKU *</Label>
                     <Input
@@ -207,7 +231,9 @@ export function ProductFormDialog({
                       }
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder="Select category" />
+                        <SelectValue placeholder="Select category">
+                          {selectedCategoryName}
+                        </SelectValue>
                       </SelectTrigger>
                       <SelectContent>
                         {categories.map((cat) => (
@@ -265,7 +291,7 @@ export function ProductFormDialog({
                   description="Upload an image or paste a URL"
                 />
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid gap-4 sm:grid-cols-2">
                   <div className="space-y-2">
                     <Label htmlFor="moq">Minimum Order Qty</Label>
                     <Input
@@ -300,7 +326,7 @@ export function ProductFormDialog({
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid gap-4 sm:grid-cols-2">
                   <div className="space-y-2">
                     <Label htmlFor="logoCost">Logo Cost ($)</Label>
                     <Input
@@ -409,21 +435,25 @@ export function ProductFormDialog({
               </form>
             </TabsContent>
             <TabsContent value="attributes">
-              <ProductAttributesTab
-                productId={productId!}
-                categoryId={formData.categoryId}
-              />
+              {productId ? (
+                <ProductAttributesTab
+                  productId={productId}
+                  categoryId={formData.categoryId}
+                />
+              ) : null}
             </TabsContent>
           </Tabs>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
             {error && (
               <div className="text-sm text-destructive bg-destructive/10 p-3 rounded-md">
-                {error instanceof Error ? error.message : "Something went wrong"}
+                {error instanceof Error
+                  ? error.message
+                  : "Something went wrong"}
               </div>
             )}
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
                 <Label htmlFor="sku">SKU *</Label>
                 <Input
@@ -448,7 +478,9 @@ export function ProductFormDialog({
                   }
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Select category" />
+                    <SelectValue placeholder="Select category">
+                      {selectedCategoryName}
+                    </SelectValue>
                   </SelectTrigger>
                   <SelectContent>
                     {categories.map((cat) => (
@@ -506,7 +538,7 @@ export function ProductFormDialog({
               description="Upload an image or paste a URL"
             />
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
                 <Label htmlFor="moq">Minimum Order Qty</Label>
                 <Input
@@ -541,7 +573,7 @@ export function ProductFormDialog({
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
                 <Label htmlFor="logoCost">Logo Cost ($)</Label>
                 <Input

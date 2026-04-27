@@ -1,4 +1,4 @@
-import { ImageIcon, Link2, Upload, X } from "lucide-react";
+import { CheckCircle2, ImageIcon, Link2, Upload, X } from "lucide-react";
 import * as React from "react";
 
 import { Button } from "@/components/ui/button";
@@ -176,9 +176,43 @@ export function ImageUpload({
               console.error("Upload error:", error);
               alert(`Upload failed: ${error.message}`);
             }}
+            content={{
+              uploadIcon: ({ files, isUploading }) => {
+                if (isUploading) {
+                  return (
+                    <Upload
+                      className="h-10 w-10 animate-pulse text-primary"
+                      aria-hidden="true"
+                    />
+                  );
+                }
+
+                if (files.length > 0) {
+                  return (
+                    <CheckCircle2
+                      className="h-10 w-10 text-emerald-600 dark:text-emerald-400"
+                      aria-hidden="true"
+                    />
+                  );
+                }
+
+                return (
+                  <Upload
+                    className="h-10 w-10 text-muted-foreground"
+                    aria-hidden="true"
+                  />
+                );
+              },
+            }}
             appearance={{
-              container:
-                "border-2 border-dashed border-muted-foreground/25 rounded-lg p-4 hover:border-muted-foreground/50 transition-colors ut-uploading:border-primary",
+              container: ({ files, isDragActive }) =>
+                `border-2 border-dashed rounded-lg p-4 transition-colors ${
+                  isDragActive
+                    ? "border-primary bg-primary/5"
+                    : files.length > 0
+                      ? "border-emerald-500/60 bg-emerald-500/5"
+                      : "border-muted-foreground/25 hover:border-muted-foreground/50"
+                }`,
               label: "text-sm text-muted-foreground",
               allowedContent: "text-xs text-muted-foreground/75",
               button:

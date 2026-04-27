@@ -1,5 +1,6 @@
 // @ts-check
 import { defineConfig, envField } from "astro/config";
+import sitemap from "@astrojs/sitemap";
 
 import react from "@astrojs/react";
 import tailwindcss from "@tailwindcss/vite";
@@ -17,6 +18,7 @@ export default defineConfig({
         plugins: ["babel-plugin-react-compiler"],
       },
     }),
+    sitemap(),
   ],
 
   vite: {

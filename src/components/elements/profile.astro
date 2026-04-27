@@ -8,7 +8,9 @@ const { name, title, image } = Astro.props;
 const isUrl = typeof image === "string";
 ---
 
-<header class="flex items-center bg-secondary">
+<header
+  class="flex items-center rounded-2xl overflow-clip bg-linear-90 from-muted to-background"
+>
   <figure class="flex-none fl-w-28/40">
     {
       isUrl ? (
@@ -33,6 +35,6 @@ const isUrl = typeof image === "string";
     <p class="text-sm text-muted-foreground">{title}</p>
   </div>
 </header>
-<div class="flex flex-col space-y-4">
+<div class="flex flex-col space-y-4 px-2">
   <slot />
 </div>

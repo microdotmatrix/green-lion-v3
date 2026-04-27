@@ -1,11 +1,4 @@
-import {
-  ArrowLeft,
-  Building2,
-  Mail,
-  Package,
-  Phone,
-} from "lucide-react";
-import * as React from "react";
+import { ArrowLeft, Building2, Mail, Package, Phone } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -64,11 +57,16 @@ export function QuoteDetailView({ quoteId, onBack }: QuoteDetailViewProps) {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon" onClick={onBack}>
+      <div className="flex items-start gap-3 sm:items-center sm:gap-4">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="shrink-0"
+          onClick={onBack}
+        >
           <ArrowLeft className="h-4 w-4" />
         </Button>
-        <div className="flex-1">
+        <div className="min-w-0 flex-1">
           <h1 className="text-2xl font-bold">
             {quote.quoteNumber || `Quote #${quote.id.slice(0, 8)}`}
           </h1>
@@ -76,7 +74,9 @@ export function QuoteDetailView({ quoteId, onBack }: QuoteDetailViewProps) {
             Created {formatDate(quote.createdAt)}
           </p>
         </div>
-        <QuoteStatusBadge status={quote.status} />
+        <div className="shrink-0">
+          <QuoteStatusBadge status={quote.status} />
+        </div>
       </div>
 
       <div className="grid gap-6 md:grid-cols-3">
@@ -150,7 +150,10 @@ export function QuoteDetailView({ quoteId, onBack }: QuoteDetailViewProps) {
           <CardContent>
             <div className="space-y-4">
               {quote.items.map((item) => (
-                <div key={item.id} className="flex gap-4 p-4 rounded-lg border">
+                <div
+                  key={item.id}
+                  className="flex flex-col gap-4 rounded-lg border p-3 sm:flex-row sm:p-4"
+                >
                   {item.productImages?.[0] ? (
                     <img
                       src={item.productImages[0]}
@@ -164,13 +167,13 @@ export function QuoteDetailView({ quoteId, onBack }: QuoteDetailViewProps) {
                   )}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-start justify-between">
-                      <div>
+                      <div className="min-w-0">
                         <p className="font-medium">{item.productName}</p>
                         <p className="text-sm text-muted-foreground">
                           SKU: {item.productSku}
                         </p>
                       </div>
-                      <div className="text-right">
+                      <div className="shrink-0 text-left sm:text-right">
                         <p className="font-medium">
                           {formatCurrency(item.lineTotal)}
                         </p>
@@ -208,9 +211,7 @@ export function QuoteDetailView({ quoteId, onBack }: QuoteDetailViewProps) {
 
             <div className="flex justify-end">
               <div className="text-right">
-                <p className="text-sm text-muted-foreground">
-                  Estimated Total
-                </p>
+                <p className="text-sm text-muted-foreground">Estimated Total</p>
                 <p className="text-2xl font-bold">
                   {formatCurrency(quote.estimatedTotal)}
                 </p>

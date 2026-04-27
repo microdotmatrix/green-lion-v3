@@ -1,9 +1,4 @@
-import {
-  ArrowLeft,
-  Check,
-  Copy,
-  ExternalLink,
-} from "lucide-react";
+import { ArrowLeft, Check, Copy, ExternalLink } from "lucide-react";
 import * as React from "react";
 
 import { Badge } from "@/components/ui/badge";
@@ -74,17 +69,24 @@ export function RepDetailView({ repId, onBack }: RepDetailViewProps) {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon" onClick={onBack}>
+      <div className="flex items-start gap-3 sm:items-center sm:gap-4">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="shrink-0"
+          onClick={onBack}
+        >
           <ArrowLeft className="h-4 w-4" />
         </Button>
-        <div className="flex-1">
+        <div className="min-w-0 flex-1">
           <h1 className="text-2xl font-bold">{rep.name}</h1>
           <p className="text-muted-foreground">{rep.company}</p>
         </div>
-        <Badge variant={rep.active ? "default" : "secondary"}>
-          {rep.active ? "Active" : "Inactive"}
-        </Badge>
+        <div className="shrink-0">
+          <Badge variant={rep.active ? "default" : "secondary"}>
+            {rep.active ? "Active" : "Inactive"}
+          </Badge>
+        </div>
       </div>
 
       <div className="grid gap-6 md:grid-cols-3">
@@ -109,10 +111,19 @@ export function RepDetailView({ repId, onBack }: RepDetailViewProps) {
                   /leads/{rep.slug}
                 </code>
                 <Button variant="ghost" size="icon" onClick={handleCopyUrl}>
-                  {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                  {copied ? (
+                    <Check className="h-4 w-4" />
+                  ) : (
+                    <Copy className="h-4 w-4" />
+                  )}
                 </Button>
                 <Button variant="ghost" size="icon" asChild>
-                  <a href={`/leads/${rep.slug}`} target="_blank" rel="noopener">
+                  <a
+                    href={`/leads/${rep.slug}`}
+                    target="_blank"
+                    rel="noopener"
+                    aria-label={`Open lead capture page for ${rep.name}`}
+                  >
                     <ExternalLink className="h-4 w-4" />
                   </a>
                 </Button>
@@ -129,7 +140,9 @@ export function RepDetailView({ repId, onBack }: RepDetailViewProps) {
         <Card className="md:col-span-2">
           <CardHeader>
             <CardTitle className="text-lg">Captured Leads</CardTitle>
-            <CardDescription>Leads captured by this representative</CardDescription>
+            <CardDescription>
+              Leads captured by this representative
+            </CardDescription>
           </CardHeader>
           <CardContent>
             {rep.leads?.length === 0 ? (

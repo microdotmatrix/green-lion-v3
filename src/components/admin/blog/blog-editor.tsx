@@ -143,9 +143,9 @@ function BlogEditorInner({ mode, postId }: BlogEditorProps) {
   return (
     <>
       {/* Header bar - sticky */}
-      <div className="sticky -top-4 md:-top-6 z-20 -mx-4 md:-mx-6 flex items-center justify-between gap-4 border-b bg-background px-4 md:px-6 py-4 mb-6">
+      <div className="sticky -top-3 z-20 -mx-3 mb-6 flex flex-col gap-3 border-b bg-background px-3 py-4 sm:-mx-4 sm:flex-row sm:items-center sm:justify-between sm:px-4 md:-top-6 md:-mx-6 md:px-6">
         <h1 className="text-2xl font-bold">{pageTitle}</h1>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           {mode === "edit" ? (
             <Button
               type="button"

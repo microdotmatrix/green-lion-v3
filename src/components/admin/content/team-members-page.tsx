@@ -13,7 +13,9 @@ import type { TeamMember } from "./team-members-types";
 export default function TeamMembersPage() {
   const [isFormOpen, setIsFormOpen] = React.useState(false);
   const [editingItem, setEditingItem] = React.useState<TeamMember | null>(null);
-  const [deletingItem, setDeletingItem] = React.useState<TeamMember | null>(null);
+  const [deletingItem, setDeletingItem] = React.useState<TeamMember | null>(
+    null,
+  );
 
   const { data: items, isLoading, error } = useTeamMembers();
   const { deleteMut } = useTeamMemberMutations();
@@ -30,14 +32,15 @@ export default function TeamMembersPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="min-w-0">
           <h1 className="text-3xl font-bold tracking-tight">Team Members</h1>
           <p className="text-muted-foreground">
             Manage team profile bios shown on the About page
           </p>
         </div>
         <Button
+          className="w-full sm:w-auto"
           onClick={() => {
             setEditingItem(null);
             setIsFormOpen(true);

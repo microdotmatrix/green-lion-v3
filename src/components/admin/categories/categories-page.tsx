@@ -33,14 +33,15 @@ export default function CategoriesPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="min-w-0">
           <h1 className="text-3xl font-bold tracking-tight">Categories</h1>
           <p className="text-muted-foreground">
             Manage product categories and organization
           </p>
         </div>
         <Button
+          className="w-full sm:w-auto"
           onClick={() => {
             setEditingCategory(null);
             setIsFormOpen(true);
