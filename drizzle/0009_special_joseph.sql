@@ -1,0 +1,1 @@
+ALTER TABLE "seo_settings" ADD COLUMN "ga_id" text;

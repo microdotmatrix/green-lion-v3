@@ -49,6 +49,7 @@ type FormState = {
   canonicalBaseUrl: string;
   googleSiteVerification: string;
   bingSiteVerification: string;
+  gaId: string;
   organizationName: string;
   organizationUrl: string;
   organizationLogoUrl: string;
@@ -70,6 +71,7 @@ const defaultForm = (): FormState => ({
   canonicalBaseUrl: "",
   googleSiteVerification: "",
   bingSiteVerification: "",
+  gaId: "",
   organizationName: "",
   organizationUrl: "",
   organizationLogoUrl: "",
@@ -98,6 +100,7 @@ const rowToForm = (d: SeoSettingsResponse): FormState => {
     googleSiteVerification:
       d.googleSiteVerification ?? base.googleSiteVerification,
     bingSiteVerification: d.bingSiteVerification ?? base.bingSiteVerification,
+    gaId: d.gaId ?? base.gaId,
     organizationName: d.organizationName ?? base.organizationName,
     organizationUrl: d.organizationUrl ?? base.organizationUrl,
     organizationLogoUrl: d.organizationLogoUrl ?? base.organizationLogoUrl,
@@ -120,6 +123,7 @@ const formToPut = (f: FormState): SeoSettingsPutBody => ({
   canonicalBaseUrl: f.canonicalBaseUrl.trim() || null,
   googleSiteVerification: f.googleSiteVerification.trim() || null,
   bingSiteVerification: f.bingSiteVerification.trim() || null,
+  gaId: f.gaId.trim() || null,
   organizationName: f.organizationName.trim() || null,
   organizationUrl: f.organizationUrl.trim() || null,
   organizationLogoUrl: f.organizationLogoUrl.trim() || null,
@@ -376,6 +380,30 @@ const SeoForm = () => {
               type="url"
               placeholder="https://www.example.com"
               autoComplete="off"
+            />
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Analytics</CardTitle>
+          <CardDescription>
+            Configure Google Analytics Measurement ID (e.g. G-XXXXXXXXXX).
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="grid gap-4 sm:max-w-md">
+          <div className="space-y-2">
+            <Label htmlFor="gaId">Google Analytics Measurement ID</Label>
+            <Input
+              id="gaId"
+              name="gaId"
+              value={form.gaId}
+              onChange={(e) =>
+                setForm((s) => ({ ...s, gaId: e.target.value }))
+              }
+              autoComplete="off"
+              placeholder="G-XXXXXXXXXX"
             />
           </div>
         </CardContent>

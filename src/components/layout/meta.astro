@@ -4,6 +4,7 @@
 import { formatCanonicalURL } from "@/lib/utils";
 import { SITE } from "@/lib/config";
 import Fonts from "./fonts.astro";
+import Analytics from "../elements/analytics.astro";
 
 export type MetaJsonLd = object;
 
@@ -28,6 +29,7 @@ export interface Props {
   robotsContent?: string;
   googleSiteVerification?: string;
   bingSiteVerification?: string;
+  gaId?: string;
   /** When true, do not include google / bing verification (e.g. admin) */
   omitSiteVerification?: boolean;
   /** JSON-LD; when omitted, a minimal WebPage/Organization graph is not generated here — layouts should pass */
@@ -55,6 +57,7 @@ const {
   robotsContent: robotsContentProp,
   googleSiteVerification = "",
   bingSiteVerification = "",
+  gaId = "",
   omitSiteVerification = false,
   jsonLd: jsonLdProp,
   includeOpenGraph = true,
@@ -169,4 +172,7 @@ const structuredData = jsonLdProp ?? {
       document.documentElement.setAttribute("data-theme", "dark");
     }
   </script>
+
+  <!-- Google Analytics -->
+  <Analytics gaId={gaId} />
 </head>

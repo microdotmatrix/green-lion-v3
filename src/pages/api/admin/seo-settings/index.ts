@@ -62,6 +62,7 @@ const putBodySchema = z
     canonicalBaseUrl: optionalUrl,
     googleSiteVerification: z.string().max(200).optional().nullable(),
     bingSiteVerification: z.string().max(200).optional().nullable(),
+    gaId: z.string().max(64).optional().nullable(),
     organizationName: z.string().max(200).optional().nullable(),
     organizationUrl: optionalUrl,
     organizationLogoUrl: optionalUrl,
@@ -94,6 +95,7 @@ const normalize = (b: PutIn) => ({
   bingSiteVerification: emptyToNull(
     b.bingSiteVerification as string | null | undefined,
   ),
+  gaId: emptyToNull(b.gaId as string | null | undefined),
   organizationName: emptyToNull(
     b.organizationName as string | null | undefined,
   ),
@@ -147,6 +149,7 @@ const mergeForUpdate = (
     n.bingSiteVerification !== undefined
       ? n.bingSiteVerification
       : existing.bingSiteVerification,
+  gaId: n.gaId !== undefined ? n.gaId : existing.gaId,
   organizationName:
     n.organizationName !== undefined
       ? n.organizationName
@@ -246,6 +249,7 @@ export const PUT: APIRoute = async ({ request, locals }) => {
           canonicalBaseUrl: n.canonicalBaseUrl ?? null,
           googleSiteVerification: n.googleSiteVerification ?? null,
           bingSiteVerification: n.bingSiteVerification ?? null,
+          gaId: n.gaId ?? null,
           organizationName: n.organizationName ?? null,
           organizationUrl: n.organizationUrl ?? null,
           organizationLogoUrl: n.organizationLogoUrl ?? null,
@@ -276,6 +280,7 @@ export const PUT: APIRoute = async ({ request, locals }) => {
         canonicalBaseUrl: merged.canonicalBaseUrl,
         googleSiteVerification: merged.googleSiteVerification,
         bingSiteVerification: merged.bingSiteVerification,
+        gaId: merged.gaId,
         organizationName: merged.organizationName,
         organizationUrl: merged.organizationUrl,
         organizationLogoUrl: merged.organizationLogoUrl,

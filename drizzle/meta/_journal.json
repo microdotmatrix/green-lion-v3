@@ -64,6 +64,13 @@
       "when": 1777060220681,
       "tag": "0008_wealthy_martin_li",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1777764787458,
+      "tag": "0009_special_joseph",
+      "breakpoints": true
     }
   ]
 }

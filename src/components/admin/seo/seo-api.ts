@@ -31,6 +31,7 @@ export type SeoSettingsPutBody = {
   canonicalBaseUrl: string | null;
   googleSiteVerification: string | null;
   bingSiteVerification: string | null;
+  gaId: string | null;
   organizationName: string | null;
   organizationUrl: string | null;
   organizationLogoUrl: string | null;

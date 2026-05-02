@@ -54,14 +54,14 @@ export const QrCodeDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="w-fit max-w-[calc(100vw-2rem)] sm:max-w-[calc(100vw-2rem)]">
         <DialogHeader>
           <DialogTitle>QR Code for {rep.name}</DialogTitle>
           <DialogDescription>
             Scan this QR code to access the lead capture form for {rep.name}.
           </DialogDescription>
         </DialogHeader>
-        <div className="flex flex-col items-center gap-4 py-4">
+        <div className="flex min-w-0 flex-col items-center gap-4 py-4">
           <img
             src={qrCodeUrl}
             alt={`QR Code for ${rep.name}`}
@@ -69,27 +69,29 @@ export const QrCodeDialog = ({
             width={200}
             height={200}
           />
-          <div className="flex items-center gap-2 w-full">
-            <code className="flex-1 bg-muted px-3 py-2 rounded text-sm truncate">
+          <div className="flex w-full max-w-full min-w-0 flex-col gap-2 sm:flex-row sm:items-center">
+            <code className="bg-muted text-muted-foreground block min-w-0 w-full flex-1 rounded px-3 py-2 font-mono text-xs break-all sm:text-sm">
               {leadUrl}
             </code>
-            <Button variant="outline" size="icon" onClick={handleCopy}>
-              {copied ? (
-                <Check className="h-4 w-4" />
-              ) : (
-                <Copy className="h-4 w-4" />
-              )}
-            </Button>
-            <Button variant="outline" size="icon" asChild>
-              <a
-                href={leadUrl}
-                target="_blank"
-                rel="noopener"
-                aria-label={`Open lead capture page for ${rep.name}`}
-              >
-                <ExternalLink className="h-4 w-4" />
-              </a>
-            </Button>
+            <div className="flex shrink-0 gap-2 self-stretch sm:self-auto">
+              <Button variant="outline" size="icon" onClick={handleCopy}>
+                {copied ? (
+                  <Check className="h-4 w-4" />
+                ) : (
+                  <Copy className="h-4 w-4" />
+                )}
+              </Button>
+              <Button variant="outline" size="icon" asChild>
+                <a
+                  href={leadUrl}
+                  target="_blank"
+                  rel="noopener"
+                  aria-label={`Open lead capture page for ${rep.name}`}
+                >
+                  <ExternalLink className="h-4 w-4" />
+                </a>
+              </Button>
+            </div>
           </div>
         </div>
       </DialogContent>

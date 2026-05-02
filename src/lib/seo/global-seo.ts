@@ -30,6 +30,7 @@ export type EffectiveGlobalSeo = {
   canonicalBaseUrl: string | null;
   googleSiteVerification: string;
   bingSiteVerification: string;
+  gaId: string;
   organizationName: string;
   organizationUrl: string;
   organizationLogoUrl: string;
@@ -63,6 +64,7 @@ export function effectiveGlobalSeoFromRow(
     canonicalBaseUrl: row?.canonicalBaseUrl?.trim() || null,
     googleSiteVerification: (row?.googleSiteVerification ?? "").trim(),
     bingSiteVerification: (row?.bingSiteVerification ?? "").trim(),
+    gaId: (row?.gaId ?? "").trim(),
     organizationName: (row?.organizationName ?? "").trim(),
     organizationUrl: (row?.organizationUrl ?? "").trim(),
     organizationLogoUrl: (row?.organizationLogoUrl ?? "").trim(),

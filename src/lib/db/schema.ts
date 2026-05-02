@@ -852,6 +852,7 @@ export const seoSettings = pgTable("seo_settings", {
   // Verification
   googleSiteVerification: text("google_site_verification"),
   bingSiteVerification: text("bing_site_verification"),
+  gaId: text("ga_id"),
   // JSON-LD Organization
   organizationName: text("organization_name"),
   organizationUrl: text("organization_url"),
