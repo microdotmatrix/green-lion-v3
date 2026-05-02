@@ -8,7 +8,11 @@ import { uploadRouter } from "@/server/uploadthing";
  * No data will be fetched on the client.
  */
 const routerConfig = extractRouterConfig(uploadRouter);
-(globalThis as any).__UPLOADTHING ??= routerConfig;
+(
+  globalThis as typeof globalThis & {
+    __UPLOADTHING?: typeof routerConfig;
+  }
+).__UPLOADTHING ??= routerConfig;
 ---
 
 <script define:vars={{ routerConfig }} is:inline>
