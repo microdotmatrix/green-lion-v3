@@ -5,7 +5,7 @@ import SignUpForm from "../components/auth/sign-up";
 const inviteToken = Astro.url.searchParams.get("invite") || undefined;
 ---
 
-<Layout title="Sign Up">
+<Layout title="Sign Up" robotsContent="noindex, nofollow">
   <div class="flex flex-1 w-full items-center justify-center p-6 md:p-10">
     <SignUpForm client:load inviteToken={inviteToken} />
   </div>

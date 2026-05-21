@@ -1,7 +1,10 @@
 import type { APIRoute } from "astro";
 
 const getRobotsTxt = (sitemapUrl: URL) => `User-agent: *
-Allow: /
+Disallow: /admin
+Disallow: /api
+Disallow: /signin
+Disallow: /signup
 
 Sitemap: ${sitemapUrl.href}
 `;

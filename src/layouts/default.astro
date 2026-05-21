@@ -19,12 +19,14 @@ interface Props {
   title: string;
   description?: string;
   ogImage?: string;
+  robotsContent?: string;
 }
 
 const {
   title,
   description: descriptionFromProps,
   ogImage: ogImageFromProps,
+  robotsContent: robotsContentOverride,
 } = Astro.props;
 
 const effective = await getEffectiveGlobalSeo();
@@ -48,10 +50,9 @@ const jsonLd = buildPageJsonLd({
   imageHref: socialImageHref,
   effective,
 });
-const robotsContent = formatRobotsMetaContent(
-  effective.robotsIndex,
-  effective.robotsFollow,
-);
+const robotsContent =
+  robotsContentOverride ??
+  formatRobotsMetaContent(effective.robotsIndex, effective.robotsFollow);
 ---
 
 <!doctype html>
