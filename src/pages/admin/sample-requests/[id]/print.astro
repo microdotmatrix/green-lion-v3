@@ -1,0 +1,323 @@
+---
+import { db } from "@/lib/db";
+import {
+  categories,
+  products,
+  sampleRequestItems,
+  sampleRequests,
+} from "@/lib/db/schema";
+import { categoryNameToSlug } from "@/lib/products/slug";
+import { eq } from "drizzle-orm";
+import QRCode from "qrcode";
+
+// Bare page by design: @page print CSS must own the whole document, so this
+// route intentionally skips AdminLayout chrome. Auth is still enforced by the
+// global middleware for /admin/*; this is the same defense-in-depth check
+// every admin page performs.
+const user = Astro.locals.user;
+const session = Astro.locals.session;
+if (!user || !session) {
+  return Astro.redirect(
+    `/signin?redirect=${encodeURIComponent(Astro.url.pathname)}`,
+  );
+}
+
+const { id } = Astro.params;
+if (!id) {
+  return Astro.redirect("/admin/sample-requests");
+}
+
+const [request] = await db
+  .select()
+  .from(sampleRequests)
+  .where(eq(sampleRequests.id, id));
+
+if (!request) {
+  return Astro.redirect("/admin/sample-requests");
+}
+
+const items = await db
+  .select({
+    id: sampleRequestItems.id,
+    sku: sampleRequestItems.sku,
+    productName: sampleRequestItems.productName,
+    capacity: sampleRequestItems.capacity,
+    quantity: sampleRequestItems.quantity,
+    categoryName: categories.name,
+  })
+  .from(sampleRequestItems)
+  .leftJoin(products, eq(sampleRequestItems.productId, products.id))
+  .leftJoin(categories, eq(products.categoryId, categories.id))
+  .where(eq(sampleRequestItems.sampleRequestId, id))
+  .orderBy(sampleRequestItems.createdAt);
+
+const origin = Astro.url.origin;
+
+// QR codes are rendered server-side into the initial HTML so labels are
+// complete before any client JS runs — no race with the print dialog
+const labels = await Promise.all(
+  items.map(async (item) => {
+    const targetUrl = item.categoryName
+      ? `${origin}/products/${categoryNameToSlug(item.categoryName)}/${item.sku.toLowerCase()}`
+      : origin;
+    const qrSvg = await QRCode.toString(targetUrl, {
+      type: "svg",
+      margin: 0,
+      errorCorrectionLevel: "M",
+      color: { dark: "#000000", light: "#ffffff" },
+    });
+    return { ...item, qrSvg };
+  }),
+);
+
+const printDate = new Intl.DateTimeFormat("en-US", {
+  month: "2-digit",
+  day: "2-digit",
+  year: "2-digit",
+}).format(new Date());
+
+const recipientLine = request.recipientName;
+const companyLine = request.companyName;
+const requestNumber = request.requestNumber || `#${request.id.slice(0, 8)}`;
+const pageTitle = `Labels — ${requestNumber}`;
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>{pageTitle}</title>
+  </head>
+  <body>
+    <div class="toolbar no-print">
+      <a href="/admin/sample-requests">&larr; Back to Sample Requests</a>
+      <span class="toolbar-info">
+        {requestNumber} — {labels.length}
+        {labels.length === 1 ? "label" : "labels"} (4&quot; &times; 6&quot;)
+      </span>
+      <button type="button" id="print-button">Print Labels</button>
+    </div>
+
+    {
+      labels.map((label) => (
+        <section class="label">
+          <header class="label-header">
+            <span class="request-number">{requestNumber}</span>
+            <span class="print-date">{printDate}</span>
+          </header>
+          <div class="label-body">
+            <p class="sku">{label.sku}</p>
+            <p class="cap-qty">
+              {label.capacity
+                ? `${label.capacity}  ×  ${label.quantity}`
+                : `Qty: ${label.quantity}`}
+            </p>
+            <p class="product-name">{label.productName}</p>
+          </div>
+          <footer class="label-footer">
+            <div class="recipient">
+              <p class="recipient-name">{recipientLine}</p>
+              {companyLine && <p class="recipient-company">{companyLine}</p>}
+            </div>
+            <div class="qr" set:html={label.qrSvg} />
+          </footer>
+        </section>
+      ))
+    }
+
+    <script
+      is:inline
+      define:vars={{ requestId: request.id, requestStatus: request.status }}
+    >
+      document.getElementById("print-button")?.addEventListener("click", () => {
+        window.print();
+      });
+
+      window.addEventListener("load", () => {
+        window.print();
+      });
+
+      // Best-effort convenience transition; the admin can also set the
+      // status manually from the detail view (afterprint is unreliable in
+      // some browsers and also fires when the dialog is cancelled)
+      window.addEventListener("afterprint", () => {
+        if (requestStatus !== "pending") return;
+        fetch(`/api/admin/sample-requests/${requestId}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ status: "printed" }),
+        }).catch(() => {});
+      });
+    </script>
+
+    <style>
+      @page {
+        size: 4in 6in;
+        margin: 0;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        font-family:
+          system-ui,
+          -apple-system,
+          "Segoe UI",
+          sans-serif;
+      }
+
+      .toolbar {
+        position: sticky;
+        top: 0;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 0.75rem 1rem;
+        background: #18181b;
+        color: #fafafa;
+        font-size: 0.875rem;
+      }
+
+      .toolbar a {
+        color: #fafafa;
+      }
+
+      .toolbar-info {
+        flex: 1;
+        text-align: center;
+        color: #a1a1aa;
+      }
+
+      .toolbar button {
+        padding: 0.5rem 1.25rem;
+        border: none;
+        border-radius: 0.375rem;
+        background: #fafafa;
+        color: #18181b;
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      /* Monochrome thermal output: pure black on white, no thin hairlines */
+      .label {
+        width: 4in;
+        height: 6in;
+        padding: 0.25in;
+        display: flex;
+        flex-direction: column;
+        color: #000;
+        background: #fff;
+      }
+
+      .label-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        font-size: 14pt;
+        font-weight: 600;
+        border-bottom: 3px solid #000;
+        padding-bottom: 0.08in;
+      }
+
+      .label-body {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        gap: 0.12in;
+      }
+
+      .sku {
+        margin: 0;
+        font-size: 46pt;
+        line-height: 1.05;
+        font-weight: 800;
+        letter-spacing: -0.01em;
+        word-break: break-all;
+      }
+
+      .cap-qty {
+        margin: 0;
+        font-size: 26pt;
+        font-weight: 600;
+      }
+
+      .product-name {
+        margin: 0;
+        font-size: 12pt;
+        color: #000;
+      }
+
+      .label-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        gap: 0.15in;
+        border-top: 3px solid #000;
+        padding-top: 0.12in;
+      }
+
+      .recipient {
+        min-width: 0;
+      }
+
+      .recipient-name {
+        margin: 0;
+        font-size: 16pt;
+        font-weight: 700;
+      }
+
+      .recipient-company {
+        margin: 0.04in 0 0;
+        font-size: 13pt;
+      }
+
+      .qr {
+        flex-shrink: 0;
+        width: 1.5in;
+        height: 1.5in;
+      }
+
+      .qr :global(svg) {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+
+      @media screen {
+        body {
+          background: #3f3f46;
+        }
+
+        .label {
+          margin: 1rem auto;
+          box-shadow: 0 2px 8px rgb(0 0 0 / 0.4);
+        }
+      }
+
+      @media print {
+        .no-print {
+          display: none !important;
+        }
+
+        .label {
+          page-break-after: always;
+          break-after: page;
+        }
+
+        .label:last-of-type {
+          page-break-after: auto;
+          break-after: auto;
+        }
+      }
+    </style>
+  </body>
+</html>

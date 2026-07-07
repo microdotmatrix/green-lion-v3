@@ -71,6 +71,13 @@
       "when": 1777764787458,
       "tag": "0009_special_joseph",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1783401258142,
+      "tag": "0010_talented_freak",
+      "breakpoints": true
     }
   ]
 }

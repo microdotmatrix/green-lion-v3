@@ -38,6 +38,7 @@ import {
   MessageSquareQuote,
   Newspaper,
   Package,
+  PackageOpen,
   Search,
   Sliders,
   Star,
@@ -88,6 +89,11 @@ const businessNavItems = [
     title: "Quotes",
     url: "/admin/quotes",
     icon: FileText,
+  },
+  {
+    title: "Sample Requests",
+    url: "/admin/sample-requests",
+    icon: PackageOpen,
   },
   {
     title: "Feedback",

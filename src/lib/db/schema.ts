@@ -878,6 +878,91 @@ export const updateSeoSettingsBodySchema = createInsertSchema(seoSettings, {
   .omit({ id: true, createdAt: true, updatedAt: true })
   .partial();
 
+// Sample requests — admin-created requests to send physical product samples.
+// Address is stored for reference only; fulfillment happens in a separate shipping app.
+export const sampleRequests = pgTable("sample_requests", {
+  id: varchar("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
+  requestNumber: text("request_number").unique(), // SMP-10001 format, generated on save
+  recipientName: text("recipient_name").notNull(),
+  companyName: text("company_name"),
+  email: text("email"),
+  phone: text("phone"),
+  addressLine1: text("address_line1").notNull(),
+  addressLine2: text("address_line2"),
+  city: text("city").notNull(),
+  state: text("state"),
+  postalCode: text("postal_code").notNull(),
+  country: text("country").notNull().default("US"),
+  notes: text("notes"),
+  status: text("status").notNull().default("pending"), // 'pending', 'printed', 'packed'
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at")
+    .defaultNow()
+    .$onUpdate(() => /* @__PURE__ */ new Date())
+    .notNull(),
+});
+
+export const sampleRequestsRelations = relations(sampleRequests, ({ many }) => ({
+  items: many(sampleRequestItems),
+}));
+
+// Individual line items in a sample request — snapshots product data so
+// printed labels remain accurate even if the source product is edited later
+export const sampleRequestItems = pgTable(
+  "sample_request_items",
+  {
+    id: varchar("id")
+      .primaryKey()
+      .default(sql`gen_random_uuid()`),
+    sampleRequestId: varchar("sample_request_id")
+      .notNull()
+      .references(() => sampleRequests.id, { onDelete: "cascade" }),
+    productId: varchar("product_id").references(() => products.id, {
+      onDelete: "set null",
+    }),
+    sku: text("sku").notNull(), // snapshot — label text source of truth
+    productName: text("product_name").notNull(), // snapshot
+    capacity: text("capacity"), // snapshot of chosen capacity option or free text
+    quantity: integer("quantity").notNull().default(1),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (table) => [
+    index("sample_request_items_sampleRequestId_idx").on(
+      table.sampleRequestId,
+    ),
+  ],
+);
+
+export const sampleRequestItemsRelations = relations(
+  sampleRequestItems,
+  ({ one }) => ({
+    sampleRequest: one(sampleRequests, {
+      fields: [sampleRequestItems.sampleRequestId],
+      references: [sampleRequests.id],
+    }),
+    product: one(products, {
+      fields: [sampleRequestItems.productId],
+      references: [products.id],
+    }),
+  }),
+);
+
+export const insertSampleRequestSchema = createInsertSchema(
+  sampleRequests,
+).omit({
+  id: true,
+  requestNumber: true,
+  status: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertSampleRequestItemSchema = createInsertSchema(
+  sampleRequestItems,
+).omit({ id: true, sampleRequestId: true, createdAt: true });
+
 // Select types
 export type Category = typeof categories.$inferSelect;
 export type CategoryWithHeaderProduct = Category & {
@@ -911,6 +996,8 @@ export type BlogCategory = typeof blogCategories.$inferSelect;
 export type BlogPost = typeof blogPosts.$inferSelect;
 export type TeamMember = typeof teamMembers.$inferSelect;
 export type SeoSettings = typeof seoSettings.$inferSelect;
+export type SampleRequest = typeof sampleRequests.$inferSelect;
+export type SampleRequestItem = typeof sampleRequestItems.$inferSelect;
 
 // Insert types
 export type InsertCategory = z.infer<typeof insertCategorySchema>;
@@ -952,3 +1039,7 @@ export type InsertBlogCategory = z.infer<typeof insertBlogCategorySchema>;
 export type InsertBlogPost = z.infer<typeof insertBlogPostSchema>;
 export type InsertTeamMember = z.infer<typeof insertTeamMemberSchema>;
 export type UpdateSeoSettingsBody = z.infer<typeof updateSeoSettingsBodySchema>;
+export type InsertSampleRequest = z.infer<typeof insertSampleRequestSchema>;
+export type InsertSampleRequestItem = z.infer<
+  typeof insertSampleRequestItemSchema
+>;

@@ -9,6 +9,7 @@ import {
   productAttributes,
   products,
 } from "@/lib/db/schema";
+import { categoryNameToSlug } from "@/lib/products/slug";
 import { eq, and, sql } from "drizzle-orm";
 
 const categorySlug = Astro.params.category;
@@ -22,13 +23,7 @@ const [categoryData] = await db
   .select()
   .from(categories)
   .then((rows) =>
-    rows.filter(
-      (c) =>
-        c.name
-          .toLowerCase()
-          .replace(/[^a-z0-9]+/g, "-")
-          .replace(/(^-|-$)/g, "") === categorySlug,
-    ),
+    rows.filter((c) => categoryNameToSlug(c.name) === categorySlug),
   );
 
 if (!categoryData) {

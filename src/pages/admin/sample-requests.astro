@@ -1,0 +1,8 @@
+---
+import { AdminSampleRequestsPage } from "@/components/admin/pages/admin-sample-requests-page";
+import AdminLayout from "@/layouts/admin.astro";
+---
+
+<AdminLayout title="Sample Requests" description="Manage Sample Requests">
+  <AdminSampleRequestsPage client:load />
+</AdminLayout>
