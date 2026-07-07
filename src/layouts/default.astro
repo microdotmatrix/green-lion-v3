@@ -14,12 +14,15 @@ import {
   getEffectiveGlobalSeo,
   resolveSocialImageHref,
 } from "@/lib/seo/global-seo";
+import type { MetaJsonLd } from "@/components/layout/meta.astro";
 
 interface Props {
   title: string;
   description?: string;
   ogImage?: string;
   robotsContent?: string;
+  /** Per-entity structured data (e.g. Product). Overrides the default WebPage/Organization graph. */
+  jsonLd?: MetaJsonLd;
 }
 
 const {
@@ -27,6 +30,7 @@ const {
   description: descriptionFromProps,
   ogImage: ogImageFromProps,
   robotsContent: robotsContentOverride,
+  jsonLd: jsonLdOverride,
 } = Astro.props;
 
 const effective = await getEffectiveGlobalSeo();
@@ -44,12 +48,14 @@ const canonicalURL = buildCanonicalForRequest({
   requestOrigin: Astro.url.origin,
   canonicalBaseUrl: effective.canonicalBaseUrl,
 });
-const jsonLd = buildPageJsonLd({
-  documentTitle,
-  pageDescription: description,
-  imageHref: socialImageHref,
-  effective,
-});
+const jsonLd =
+  jsonLdOverride ??
+  buildPageJsonLd({
+    documentTitle,
+    pageDescription: description,
+    imageHref: socialImageHref,
+    effective,
+  });
 const robotsContent =
   robotsContentOverride ??
   formatRobotsMetaContent(effective.robotsIndex, effective.robotsFollow);

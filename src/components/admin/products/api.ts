@@ -97,19 +97,41 @@ export interface ImportResult {
   skipped: Array<{ row: number; sku?: string; reason: string }>;
 }
 
+// Generous ceiling so large imports finish, but bounded so a stalled request can
+// never leave the dialog spinning forever with no feedback.
+const IMPORT_TIMEOUT_MS = 120_000;
+
 export async function importProducts(file: File): Promise<ImportResult> {
   const formData = new FormData();
   formData.append("file", file);
-  // Do NOT set Content-Type header — browser sets multipart boundary automatically
-  const res = await fetch("/api/admin/products/import", {
-    method: "POST",
-    body: formData,
-  });
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.error ?? "Import failed");
+
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), IMPORT_TIMEOUT_MS);
+
+  try {
+    // Do NOT set Content-Type header — browser sets multipart boundary automatically
+    const res = await fetch("/api/admin/products/import", {
+      method: "POST",
+      body: formData,
+      signal: controller.signal,
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error ?? "Import failed");
+    }
+    return (await res.json()) as ImportResult;
+  } catch (error) {
+    // Abort fires client-side only — the server may still finish the import, so
+    // tell the user to reopen the dialog rather than implying the import failed.
+    if (error instanceof DOMException && error.name === "AbortError") {
+      throw new Error(
+        "Import timed out. The server may still be processing — close this dialog and reopen it to check the results.",
+      );
+    }
+    throw error;
+  } finally {
+    clearTimeout(timeout);
   }
-  return res.json();
 }
 
 export async function exportProducts(): Promise<void> {

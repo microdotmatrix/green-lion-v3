@@ -2,6 +2,7 @@
 import ProductSearch from "@/components/catalog/product-search.tsx";
 import Layout from "@/layouts/default.astro";
 import { buttonVariants } from "@/components/ui/button";
+import { SITE } from "@/lib/config";
 import { db } from "@/lib/db";
 import {
   categories,
@@ -131,9 +132,21 @@ const categorySlug = categoryData.name
   .toLowerCase()
   .replace(/[^a-z0-9]+/g, "-")
   .replace(/(^-|-$)/g, "");
+
+// Per-entity SEO
+const metaDescription = (
+  categoryData.description?.trim() ||
+  `Browse ${categoryData.name} products from ${SITE.title}.`
+)
+  .replace(/\s+/g, " ")
+  .slice(0, 160);
 ---
 
-<Layout title={categoryData.name}>
+<Layout
+  title={categoryData.name}
+  description={metaDescription}
+  ogImage={categoryData.imageUrl ?? undefined}
+>
   <section class="category-header">
     <div class="content">
       <a

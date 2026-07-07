@@ -12,7 +12,10 @@ const allServices = await db
   .orderBy(services.displayOrder, desc(services.createdAt));
 ---
 
-<Layout title="Services">
+<Layout
+  title="Services"
+  description="Comprehensive custom manufacturing services — from concept and product development to full-scale production, tailored to your industry."
+>
   <section class="services-hero">
     <div class="content text-center">
       <h2>

@@ -2,8 +2,8 @@ import { SITE } from "@/lib/config";
 import { db } from "@/lib/db";
 import {
   SEO_SETTINGS_ROW_ID,
-  seoSettings,
   type SeoSettings,
+  seoSettings,
 } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 
@@ -65,8 +65,10 @@ export function effectiveGlobalSeoFromRow(
     googleSiteVerification: (row?.googleSiteVerification ?? "").trim(),
     bingSiteVerification: (row?.bingSiteVerification ?? "").trim(),
     gaId: (row?.gaId ?? "").trim(),
-    organizationName: (row?.organizationName ?? "").trim(),
-    organizationUrl: (row?.organizationUrl ?? "").trim(),
+    // Fall back to the site's brand config so Organization JSON-LD always
+    // renders even before the admin fills in the SEO settings row.
+    organizationName: (row?.organizationName ?? "").trim() || SITE.title,
+    organizationUrl: (row?.organizationUrl ?? "").trim() || SITE.website,
     organizationLogoUrl: (row?.organizationLogoUrl ?? "").trim(),
     sameAs: normalizeSameAs(row?.sameAs ?? null),
     author: SITE.author,
@@ -207,11 +209,14 @@ export function buildPageJsonLd(options: PageJsonLdOptions): object {
         org.url = effective.organizationUrl;
       }
     }
-    if (effective.organizationLogoUrl) {
+    // Prefer an explicit logo URL; otherwise fall back to the (already
+    // absolute) social image so the Organization node is always complete.
+    const logoCandidate = effective.organizationLogoUrl || imageHref;
+    if (logoCandidate) {
       try {
-        org.logo = new URL(effective.organizationLogoUrl).href;
+        org.logo = new URL(logoCandidate).href;
       } catch {
-        org.logo = effective.organizationLogoUrl;
+        org.logo = logoCandidate;
       }
     }
     if (effective.sameAs.length) {

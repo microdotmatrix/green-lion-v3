@@ -1,6 +1,11 @@
 ---
 import { db } from "@/lib/db";
-import { clientLogos, teamMembers, type ClientLogo, type TeamMember } from "@/lib/db/schema";
+import {
+  clientLogos,
+  teamMembers,
+  type ClientLogo,
+  type TeamMember,
+} from "@/lib/db/schema";
 import { eq, desc } from "drizzle-orm";
 import Team from "@/components/sections/team.astro";
 import Locations from "@/components/sections/locations.astro";
@@ -30,7 +35,10 @@ try {
 }
 ---
 
-<Layout title="About">
+<Layout
+  title="About"
+  description="Meet the team behind Green Lion Innovations — a Denver, CO based business strategy firm focused on product development and manufacturing."
+>
   <section id="team" class="fl-px-4/8 md:fl-px-8/24">
     <Team members={members} />
   </section>

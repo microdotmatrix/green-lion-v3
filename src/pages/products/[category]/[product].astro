@@ -1,6 +1,7 @@
 ---
 import Layout from "@/layouts/default.astro";
 import { buttonVariants } from "@/components/ui/button";
+import { SITE } from "@/lib/config";
 import { db } from "@/lib/db";
 import {
   categories,
@@ -89,9 +90,58 @@ const prodAttrs = await db
   .where(eq(productAttributes.productId, productData.id));
 
 const primaryImage = productData.images?.[0];
+
+// Per-entity SEO
+const metaDescription = productData.description
+  .replace(/\s+/g, " ")
+  .trim()
+  .slice(0, 160);
+
+const absoluteImages = (productData.images ?? [])
+  .map((src) => {
+    try {
+      return new URL(src, Astro.site ?? Astro.url.origin).href;
+    } catch {
+      return null;
+    }
+  })
+  .filter((v): v is string => Boolean(v));
+
+const lowestTierPrice = tiers.reduce<number | null>((min, tier) => {
+  const price = parseFloat(tier.pricePerUnit);
+  if (Number.isNaN(price)) return min;
+  return min === null || price < min ? price : min;
+}, null);
+
+const productJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Product",
+  name: productData.name,
+  description: metaDescription,
+  sku: productData.sku,
+  ...(absoluteImages.length ? { image: absoluteImages } : {}),
+  category: productData.categoryName,
+  brand: { "@type": "Brand", name: SITE.title },
+  ...(lowestTierPrice !== null
+    ? {
+        offers: {
+          "@type": "AggregateOffer",
+          priceCurrency: "USD",
+          lowPrice: lowestTierPrice.toFixed(2),
+          offerCount: tiers.length,
+          availability: "https://schema.org/InStock",
+        },
+      }
+    : {}),
+};
 ---
 
-<Layout title={productData.name}>
+<Layout
+  title={productData.name}
+  description={metaDescription}
+  ogImage={primaryImage ?? undefined}
+  jsonLd={productJsonLd}
+>
   <section class="bg-gradient-to-b from-secondary to-background">
     <div class="content">
       <a

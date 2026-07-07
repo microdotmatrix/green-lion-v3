@@ -25,6 +25,26 @@ export const CSV_COLUMNS = [
   "tier5_price",
 ] as const;
 
+// Empty CSV cells arrive as "" (Papa trims every value). Feeding "" into
+// z.coerce.number() coerces it to 0, which then fails the .positive() check and
+// rejects the ENTIRE row — even though the column is meant to be optional. Treat a
+// blank cell as absent so .optional()/.default() apply instead of coercing to 0.
+const blankToUndefined = (value: unknown): unknown =>
+  typeof value === "string" && value.trim() === "" ? undefined : value;
+
+// Optional positive integer that tolerates blank cells (used for pricing tiers).
+const optionalPositiveInt = z.preprocess(
+  blankToUndefined,
+  z.coerce.number().int().positive().optional(),
+);
+
+// Positive integer with a fallback default that also tolerates blank cells.
+const positiveIntWithDefault = (fallback: number) =>
+  z.preprocess(
+    blankToUndefined,
+    z.coerce.number().int().positive().optional().default(fallback),
+  );
+
 // Per-row Zod validation schema for CSV import.
 // Only sku and name are required — all other fields are optional with safe defaults.
 // Do NOT use insertProductSchema here — it rejects empty description/images.
@@ -33,20 +53,20 @@ export const csvRowSchema = z.object({
   name: z.string().min(1, "name is required"),
   description: z.string().optional().default(""),
   category: z.string().optional(),
-  min_order_qty: z.coerce.number().int().positive().optional().default(1),
-  order_qty_increment: z.coerce.number().int().positive().optional().default(1),
+  min_order_qty: positiveIntWithDefault(1),
+  order_qty_increment: positiveIntWithDefault(1),
   logo_cost: z.string().optional().default("0"),
   packaging_cost: z.string().optional().default("0"),
   image_url: z.string().url().optional().or(z.literal("")),
-  tier1_min_qty: z.coerce.number().int().positive().optional(),
+  tier1_min_qty: optionalPositiveInt,
   tier1_price: z.string().optional(),
-  tier2_min_qty: z.coerce.number().int().positive().optional(),
+  tier2_min_qty: optionalPositiveInt,
   tier2_price: z.string().optional(),
-  tier3_min_qty: z.coerce.number().int().positive().optional(),
+  tier3_min_qty: optionalPositiveInt,
   tier3_price: z.string().optional(),
-  tier4_min_qty: z.coerce.number().int().positive().optional(),
+  tier4_min_qty: optionalPositiveInt,
   tier4_price: z.string().optional(),
-  tier5_min_qty: z.coerce.number().int().positive().optional(),
+  tier5_min_qty: optionalPositiveInt,
   tier5_price: z.string().optional(),
 });
 
