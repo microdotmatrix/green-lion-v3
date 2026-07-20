@@ -10,11 +10,17 @@ import { contactSubmissions, user } from "@/lib/db/schema";
 import { resend } from "@/server/resend";
 import { eq } from "drizzle-orm";
 
+/** Astro form actions coerce empty inputs to `null`; normalize to string. */
+const emptyableString = z
+  .string()
+  .nullish()
+  .transform((value) => value ?? "");
+
 const contactSchema = z.object({
   firstName: z.string().trim().min(1, "First name is required"),
   lastName: z.string().trim().min(1, "Last name is required"),
   email: z.string().trim().email("Please enter a valid email address"),
-  phone: z.string().optional().default(""),
+  phone: emptyableString,
   companyName: z.string().trim().min(1, "Company name is required"),
   title: z
     .string()
@@ -23,20 +29,16 @@ const contactSchema = z.object({
     .refine((value) => !isLikelyGibberish(value), {
       message: PLAIN_LANGUAGE_ERROR,
     }),
-  message: z
-    .string()
-    .optional()
-    .refine(
-      (value) =>
-        !value || value.trim().length === 0 || !isLikelyGibberish(value),
-      { message: PLAIN_LANGUAGE_ERROR },
-    ),
+  message: emptyableString.refine(
+    (value) => value.length === 0 || !isLikelyGibberish(value),
+    { message: PLAIN_LANGUAGE_ERROR },
+  ),
   type: z
     .enum(["general", "feedback", "quote_inquiry", "support"])
     .default("general"),
   // Honeypot fields — must stay empty. Declared so form posts are accepted.
-  website: z.string().optional().default(""),
-  companyUrl: z.string().optional().default(""),
+  website: emptyableString,
+  companyUrl: emptyableString,
 });
 
 const CONTACT_FORM_ERROR_MESSAGE =
@@ -67,10 +69,10 @@ export const server = {
             firstName: input.firstName,
             lastName: input.lastName,
             email: input.email.toLowerCase(),
-            phone: (input.phone ?? "").trim(),
+            phone: input.phone.trim(),
             companyName: input.companyName,
             title: input.title,
-            message: input.message?.trim() || null,
+            message: input.message.trim() || null,
             type: input.type,
             status: "open",
           })

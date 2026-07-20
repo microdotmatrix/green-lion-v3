@@ -208,13 +208,16 @@ function getFieldError(fieldName: string) {
                         placeholder="+1 (555) 000-0000"
                         autocomplete="tel"
                         aria-describedby="phone-error"
+                        aria-invalid={getFieldError("phone") ? "true" : "false"}
                       />
                       <p
                         class="field-error"
                         id="phone-error"
                         role="alert"
-                        hidden
-                      />
+                        hidden={!getFieldError("phone")}
+                      >
+                        {getFieldError("phone")}
+                      </p>
                     </div>
                   </div>
 
