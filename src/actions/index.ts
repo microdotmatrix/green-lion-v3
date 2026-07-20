@@ -1,9 +1,10 @@
-import {
-  ActionError,
-  defineAction,
-  isActionError,
-} from "astro:actions";
+import { ActionError, defineAction, isActionError } from "astro:actions";
 import { z } from "astro/zod";
+import {
+  isHoneypotTriggered,
+  isLikelyGibberish,
+  PLAIN_LANGUAGE_ERROR,
+} from "@/lib/contact-spam";
 import { db } from "@/lib/db";
 import { contactSubmissions, user } from "@/lib/db/schema";
 import { resend } from "@/server/resend";
@@ -15,21 +16,50 @@ const contactSchema = z.object({
   email: z.string().trim().email("Please enter a valid email address"),
   phone: z.string().optional().default(""),
   companyName: z.string().trim().min(1, "Company name is required"),
-  title: z.string().trim().min(1, "Subject is required"),
-  message: z.string().optional(),
+  title: z
+    .string()
+    .trim()
+    .min(1, "Subject is required")
+    .refine((value) => !isLikelyGibberish(value), {
+      message: PLAIN_LANGUAGE_ERROR,
+    }),
+  message: z
+    .string()
+    .optional()
+    .refine(
+      (value) =>
+        !value || value.trim().length === 0 || !isLikelyGibberish(value),
+      { message: PLAIN_LANGUAGE_ERROR },
+    ),
   type: z
     .enum(["general", "feedback", "quote_inquiry", "support"])
     .default("general"),
+  // Honeypot fields — must stay empty. Declared so form posts are accepted.
+  website: z.string().optional().default(""),
+  companyUrl: z.string().optional().default(""),
 });
 
 const CONTACT_FORM_ERROR_MESSAGE =
   "We couldn't submit your message right now. Please try again in a few minutes.";
+
+/** Fake id returned when a honeypot is tripped so bots see a "success". */
+const HONEYPOT_SUCCESS_ID = "ok";
 
 export const server = {
   contact: defineAction({
     accept: "form",
     input: contactSchema,
     handler: async (input) => {
+      // Silent success: do not persist or email when a bot fills honeypots.
+      if (
+        isHoneypotTriggered({
+          website: input.website,
+          companyUrl: input.companyUrl,
+        })
+      ) {
+        return { success: true, id: HONEYPOT_SUCCESS_ID };
+      }
+
       try {
         const [submission] = await db
           .insert(contactSubmissions)

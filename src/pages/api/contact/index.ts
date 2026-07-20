@@ -1,3 +1,8 @@
+import {
+  isHoneypotTriggered,
+  isLikelyGibberish,
+  PLAIN_LANGUAGE_ERROR,
+} from "@/lib/contact-spam";
 import { db } from "@/lib/db";
 import { contactSubmissions, user } from "@/lib/db/schema";
 import { resend } from "@/server/resend";
@@ -11,11 +16,26 @@ const contactSchema = z.object({
   email: z.string().email("Invalid email address").trim().toLowerCase(),
   phone: z.string().trim(),
   companyName: z.string().min(1, "Company name is required").trim(),
-  title: z.string().min(1, "Subject is required").trim(),
-  message: z.string().optional(),
+  title: z
+    .string()
+    .min(1, "Subject is required")
+    .trim()
+    .refine((value) => !isLikelyGibberish(value), {
+      message: PLAIN_LANGUAGE_ERROR,
+    }),
+  message: z
+    .string()
+    .optional()
+    .refine(
+      (value) =>
+        !value || value.trim().length === 0 || !isLikelyGibberish(value),
+      { message: PLAIN_LANGUAGE_ERROR },
+    ),
   type: z
     .enum(["general", "feedback", "quote_inquiry", "support"])
     .default("general"),
+  website: z.string().optional().default(""),
+  companyUrl: z.string().optional().default(""),
 });
 
 export const POST: APIRoute = async ({ request }) => {
@@ -34,6 +54,19 @@ export const POST: APIRoute = async ({ request }) => {
     }
 
     const data = parsed.data;
+
+    // Silent success when honeypots are filled — do not persist or notify.
+    if (
+      isHoneypotTriggered({
+        website: data.website,
+        companyUrl: data.companyUrl,
+      })
+    ) {
+      return new Response(JSON.stringify({ success: true, id: "ok" }), {
+        status: 201,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
 
     const [submission] = await db
       .insert(contactSubmissions)

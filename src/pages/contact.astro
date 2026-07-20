@@ -102,6 +102,26 @@ function getFieldError(fieldName: string) {
                   novalidate
                   data-contact-form
                 >
+                  {/* Honeypots: hidden from humans, filled by naive bots */}
+                  <div class="hp-field" aria-hidden="true">
+                    <label for="website">Website</label>
+                    <input
+                      id="website"
+                      name="website"
+                      type="text"
+                      tabindex="-1"
+                      autocomplete="off"
+                    />
+                    <label for="companyUrl">Company URL</label>
+                    <input
+                      id="companyUrl"
+                      name="companyUrl"
+                      type="url"
+                      tabindex="-1"
+                      autocomplete="off"
+                    />
+                  </div>
+
                   <div class="grid gap-4 sm:grid-cols-2">
                     <div class="field">
                       <label for="firstName">
@@ -265,13 +285,16 @@ function getFieldError(fieldName: string) {
                       placeholder="Tell us more about your inquiry..."
                       rows="5"
                       aria-describedby="message-error"
+                      aria-invalid={getFieldError("message") ? "true" : "false"}
                     />
                     <p
                       class="field-error"
                       id="message-error"
                       role="alert"
-                      hidden
-                    />
+                      hidden={!getFieldError("message")}
+                    >
+                      {getFieldError("message")}
+                    </p>
                   </div>
 
                   <button type="submit" class="submit-btn">
@@ -302,12 +325,25 @@ function getFieldError(fieldName: string) {
 </Layout>
 
 <script>
-  type FieldName = "firstName" | "lastName" | "email" | "companyName" | "title";
+  import {
+    isHoneypotTriggered,
+    isLikelyGibberish,
+    PLAIN_LANGUAGE_ERROR,
+  } from "@/lib/contact-spam";
+
+  type FieldName =
+    | "firstName"
+    | "lastName"
+    | "email"
+    | "companyName"
+    | "title"
+    | "message";
 
   type Rule = {
     required?: boolean;
     label: string;
     type?: "email";
+    plainLanguage?: boolean;
   };
 
   const RULES: Record<FieldName, Rule> = {
@@ -315,7 +351,8 @@ function getFieldError(fieldName: string) {
     lastName: { required: true, label: "Last name" },
     email: { required: true, label: "Email", type: "email" },
     companyName: { required: true, label: "Company name" },
-    title: { required: true, label: "Subject" },
+    title: { required: true, label: "Subject", plainLanguage: true },
+    message: { required: false, label: "Message", plainLanguage: true },
   };
 
   // Reasonably permissive RFC-ish email regex; mirrors HTML5 type=email semantics.
@@ -331,6 +368,10 @@ function getFieldError(fieldName: string) {
 
     if (rule.type === "email" && value.length > 0 && !EMAIL_RE.test(value)) {
       return "Please enter a valid email address.";
+    }
+
+    if (rule.plainLanguage && value.length > 0 && isLikelyGibberish(value)) {
+      return PLAIN_LANGUAGE_ERROR;
     }
 
     return null;
@@ -357,7 +398,7 @@ function getFieldError(fieldName: string) {
 
     type Bound = {
       name: FieldName;
-      field: HTMLInputElement;
+      field: HTMLInputElement | HTMLTextAreaElement;
       errorEl: HTMLElement;
       touched: boolean;
     };
@@ -367,7 +408,10 @@ function getFieldError(fieldName: string) {
     for (const name of fieldNames) {
       const field = form.elements.namedItem(name);
       const errorEl = document.getElementById(`${name}-error`);
-      if (!(field instanceof HTMLInputElement) || !errorEl) continue;
+      const isTextInput =
+        field instanceof HTMLInputElement ||
+        field instanceof HTMLTextAreaElement;
+      if (!isTextInput || !errorEl) continue;
 
       const entry: Bound = { name, field, errorEl, touched: false };
       bound.push(entry);
@@ -389,7 +433,22 @@ function getFieldError(fieldName: string) {
     }
 
     form.addEventListener("submit", (event) => {
-      let firstInvalid: HTMLInputElement | null = null;
+      // If a honeypot was filled, block the post without explaining why.
+      // (Server also silently accepts honeypot hits as a fake success.)
+      const website = form.elements.namedItem("website");
+      const companyUrl = form.elements.namedItem("companyUrl");
+      if (
+        isHoneypotTriggered({
+          website: website instanceof HTMLInputElement ? website.value : "",
+          companyUrl:
+            companyUrl instanceof HTMLInputElement ? companyUrl.value : "",
+        })
+      ) {
+        event.preventDefault();
+        return;
+      }
+
+      let firstInvalid: HTMLInputElement | HTMLTextAreaElement | null = null;
 
       for (const entry of bound) {
         entry.touched = true;
@@ -552,6 +611,16 @@ function getFieldError(fieldName: string) {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
+  }
+
+  /* Visually hide honeypots without display:none so naive bots still fill them. */
+  .hp-field {
+    position: absolute;
+    left: -10000px;
+    top: auto;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
   }
 
   .field {
