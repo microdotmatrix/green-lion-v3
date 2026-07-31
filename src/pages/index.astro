@@ -5,6 +5,9 @@ import Mission from "../components/sections/mission.astro";
 import Testimonials from "../components/sections/testimonials.astro";
 import TopProducts from "../components/sections/top-products.astro";
 import Layout from "../layouts/default.astro";
+import { setPublicPageCache } from "@/lib/http/cache";
+
+setPublicPageCache(Astro.response.headers);
 ---
 
 <Layout title="Home">

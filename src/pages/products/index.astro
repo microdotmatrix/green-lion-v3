@@ -4,6 +4,9 @@ import { categories, products } from "@/lib/db/schema";
 import { count, eq } from "drizzle-orm";
 import Layout from "@/layouts/default.astro";
 import CategoryCard from "@/components/catalog/category-card.astro";
+import { setPublicPageCache } from "@/lib/http/cache";
+
+setPublicPageCache(Astro.response.headers);
 
 // Fetch all categories
 const allCategories = await db

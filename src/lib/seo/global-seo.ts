@@ -76,12 +76,26 @@ export function effectiveGlobalSeoFromRow(
   };
 }
 
+// Both layouts read this row on every render. Without a cache that is one
+// Neon query per page request, which keeps the database compute awake.
+const SEO_CACHE_TTL_MS = 5 * 60 * 1000;
+
+let seoRowCache: { row: SeoSettings | null; expiresAt: number } | null = null;
+
+export function invalidateSeoSettingsCache(): void {
+  seoRowCache = null;
+}
+
 export async function getSeoSettingsRow(): Promise<SeoSettings | null> {
+  if (seoRowCache && seoRowCache.expiresAt > Date.now()) {
+    return seoRowCache.row;
+  }
   const [r] = await db
     .select()
     .from(seoSettings)
     .where(eq(seoSettings.id, SEO_SETTINGS_ROW_ID))
     .limit(1);
+  seoRowCache = { row: r ?? null, expiresAt: Date.now() + SEO_CACHE_TTL_MS };
   return r ?? null;
 }
 

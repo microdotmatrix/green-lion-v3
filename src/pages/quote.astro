@@ -4,6 +4,9 @@ import Layout from "@/layouts/default.astro";
 import { db } from "@/lib/db";
 import { categories, pricingTiers, products } from "@/lib/db/schema";
 import { sql } from "drizzle-orm";
+import { setPublicPageCache } from "@/lib/http/cache";
+
+setPublicPageCache(Astro.response.headers);
 
 // Fetch all products with pricing for the product browser
 const allProducts = await db

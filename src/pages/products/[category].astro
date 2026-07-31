@@ -12,6 +12,7 @@ import {
   productAttributes,
   products,
 } from "@/lib/db/schema";
+import { setPublicPageCache } from "@/lib/http/cache";
 import { eq, inArray, sql } from "drizzle-orm";
 
 const slug = Astro.params.category as string;
@@ -33,12 +34,7 @@ if (!categoryData) {
   return Astro.redirect("/products");
 }
 
-// Cache at Netlify's CDN edge for 5 minutes; serve stale for up to 1 hour
-// while revalidating in the background — ISR-equivalent behaviour.
-Astro.response.headers.set(
-  "Cache-Control",
-  "public, s-maxage=300, stale-while-revalidate=3600",
-);
+setPublicPageCache(Astro.response.headers);
 
 // Fetch products for this category
 const categoryProducts = await db

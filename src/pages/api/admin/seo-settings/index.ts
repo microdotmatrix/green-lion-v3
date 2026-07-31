@@ -1,4 +1,7 @@
-import { getSeoSettingsRow } from "@/lib/seo/global-seo";
+import {
+  getSeoSettingsRow,
+  invalidateSeoSettingsCache,
+} from "@/lib/seo/global-seo";
 import { db } from "@/lib/db";
 import {
   SEO_SETTINGS_ROW_ID,
@@ -228,6 +231,8 @@ export const PUT: APIRoute = async ({ request, locals }) => {
   const n = normalize(parsed.data);
 
   try {
+    // Bypass the in-memory cache so the merge always starts from fresh data.
+    invalidateSeoSettingsCache();
     const existing = await getSeoSettingsRow();
 
     if (!existing) {
@@ -256,6 +261,7 @@ export const PUT: APIRoute = async ({ request, locals }) => {
           sameAs: n.sameAs ?? null,
         })
         .returning();
+      invalidateSeoSettingsCache();
       return new Response(JSON.stringify(inserted), {
         status: 201,
         headers: { "Content-Type": "application/json" },
@@ -289,6 +295,7 @@ export const PUT: APIRoute = async ({ request, locals }) => {
       })
       .where(eq(seoSettings.id, SEO_SETTINGS_ROW_ID))
       .returning();
+    invalidateSeoSettingsCache();
     return new Response(JSON.stringify(updated), {
       status: 200,
       headers: { "Content-Type": "application/json" },

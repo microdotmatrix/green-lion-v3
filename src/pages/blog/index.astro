@@ -7,6 +7,9 @@ import { db } from "@/lib/db";
 import { blogPosts, blogCategories } from "@/lib/db/schema";
 import { eq, desc, and } from "drizzle-orm";
 import { formatReadingTime } from "@/lib/reading-time";
+import { setPublicPageCache } from "@/lib/http/cache";
+
+setPublicPageCache(Astro.response.headers);
 
 const posts = await db
   .select({

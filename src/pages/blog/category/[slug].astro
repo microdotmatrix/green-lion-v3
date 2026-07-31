@@ -7,6 +7,7 @@ import { db } from "@/lib/db";
 import { blogPosts, blogCategories } from "@/lib/db/schema";
 import { eq, desc, and } from "drizzle-orm";
 import { formatReadingTime } from "@/lib/reading-time";
+import { setPublicPageCache } from "@/lib/http/cache";
 
 const { slug } = Astro.params;
 
@@ -17,6 +18,8 @@ const [category] = await db
   .limit(1);
 
 if (!category) return new Response(null, { status: 404 });
+
+setPublicPageCache(Astro.response.headers);
 
 const posts = await db
   .select({

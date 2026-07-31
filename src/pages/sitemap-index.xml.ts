@@ -1,4 +1,5 @@
 import type { APIRoute } from "astro";
+import { publicCacheHeaders, SITEMAP_CACHE } from "@/lib/http/cache";
 import {
   buildSitemapIndexXml,
   formatSitemapDate,
@@ -15,9 +16,6 @@ export const GET: APIRoute = ({ request, site }) => {
   ];
 
   return new Response(buildSitemapIndexXml(entries), {
-    headers: {
-      "Content-Type": "application/xml; charset=utf-8",
-      "Cache-Control": "public, max-age=0, s-maxage=3600",
-    },
+    headers: publicCacheHeaders("application/xml; charset=utf-8", SITEMAP_CACHE),
   });
 };

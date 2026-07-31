@@ -6,6 +6,7 @@ import { blogPosts, blogCategories, user } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { formatReadingTime } from "@/lib/reading-time";
 import PostMeta from "@/components/blog/post-meta.astro";
+import { setPublicPageCache } from "@/lib/http/cache";
 
 const { slug } = Astro.params;
 
@@ -33,6 +34,8 @@ const [post] = await db
 if (!post || post.status !== "published") {
   return new Response(null, { status: 404 });
 }
+
+setPublicPageCache(Astro.response.headers);
 
 const readTime = formatReadingTime(post.readTimeMinutes);
 const excerpt = resolveBlogExcerpt(post.excerpt, post.body);

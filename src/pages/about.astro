@@ -11,6 +11,9 @@ import Team from "@/components/sections/team.astro";
 import Locations from "@/components/sections/locations.astro";
 import ClientLogos from "@/components/catalog/client-logos.astro";
 import Layout from "@/layouts/default.astro";
+import { setPublicPageCache } from "@/lib/http/cache";
+
+setPublicPageCache(Astro.response.headers);
 
 let featuredClients: ClientLogo[] = [];
 let members: TeamMember[] = [];

@@ -4,6 +4,9 @@ import { services } from "@/lib/db/schema";
 import { desc } from "drizzle-orm";
 import Layout from "@/layouts/default.astro";
 import ServiceCard from "@/components/catalog/service-card.astro";
+import { setPublicPageCache } from "@/lib/http/cache";
+
+setPublicPageCache(Astro.response.headers);
 
 // Fetch all services directly from DB
 const allServices = await db

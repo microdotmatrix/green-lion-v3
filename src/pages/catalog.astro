@@ -3,6 +3,9 @@ import { db } from "@/lib/db";
 import { productCatalogs } from "@/lib/db/schema";
 import Layout from "@/layouts/default.astro";
 import { eq } from "drizzle-orm";
+import { setPublicPageCache } from "@/lib/http/cache";
+
+setPublicPageCache(Astro.response.headers);
 
 const [activeCatalog] = await db
   .select()
