@@ -86,6 +86,11 @@ const catalogNavItems = [
 
 const businessNavItems = [
   {
+    title: "Inbound Samples",
+    url: "/admin/inbound-samples",
+    icon: PackageOpen,
+  },
+  {
     title: "Quotes",
     url: "/admin/quotes",
     icon: FileText,
@@ -265,7 +270,10 @@ export function AdminLayout({ user, children }: AdminLayoutProps) {
                     <SidebarMenuItem key={item.title}>
                       <SidebarMenuButton
                         asChild
-                        isActive={currentPath === item.url}
+                        isActive={
+                          currentPath === item.url ||
+                          currentPath.startsWith(`${item.url}/`)
+                        }
                         tooltip={item.title}
                       >
                         <a href={item.url}>

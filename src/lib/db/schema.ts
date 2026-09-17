@@ -1,6 +1,7 @@
 import { relations, sql } from "drizzle-orm";
 import {
   boolean,
+  check,
   decimal,
   index,
   integer,
@@ -12,6 +13,7 @@ import {
 } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
+import type { SampleStatus } from "../inbound-samples";
 
 export const user = pgTable("user", {
   id: text("id").primaryKey(),
@@ -26,6 +28,48 @@ export const user = pgTable("user", {
     .$onUpdate(() => /* @__PURE__ */ new Date())
     .notNull(),
 });
+
+export const inboundSamples = pgTable(
+  "inbound_samples",
+  {
+    id: varchar("id")
+      .primaryKey()
+      .default(sql`gen_random_uuid()`),
+    manufacturer: text("manufacturer").notNull(),
+    partNumber: text("part_number").notNull(),
+    imageUrl: text("image_url").notNull().default(""),
+    capacity: text("capacity").notNull().default(""),
+    voltage: text("voltage").notNull().default(""),
+    notes: text("notes").notNull().default(""),
+    testingNotes: text("testing_notes").notNull().default(""),
+    status: text("status").$type<SampleStatus>().notNull().default("received"),
+    uploadedBy: text("uploaded_by").references(() => user.id, {
+      onDelete: "set null",
+    }),
+    uploaderName: text("uploader_name").notNull(),
+    approved: boolean("approved"),
+    reviewedBy: text("reviewed_by").references(() => user.id, {
+      onDelete: "set null",
+    }),
+    reviewerName: text("reviewer_name"),
+    reviewedAt: timestamp("reviewed_at"),
+    version: integer("version").notNull().default(1),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+    updatedAt: timestamp("updated_at").notNull().defaultNow(),
+  },
+  (table) => [
+    index("inbound_samples_created_at_idx").on(table.createdAt),
+    index("inbound_samples_status_idx").on(table.status),
+    check(
+      "inbound_samples_status_check",
+      sql`${table.status} IN ('received', 'pending_evaluation', 'testing', 'evaluated')`,
+    ),
+    check(
+      "inbound_samples_review_check",
+      sql`(${table.approved} IS NULL AND ${table.reviewedBy} IS NULL AND ${table.reviewerName} IS NULL AND ${table.reviewedAt} IS NULL) OR (${table.approved} IS NOT NULL AND ${table.status} = 'evaluated' AND ${table.reviewerName} IS NOT NULL AND ${table.reviewedAt} IS NOT NULL)`,
+    ),
+  ],
+);
 
 export const session = pgTable(
   "session",
@@ -904,9 +948,12 @@ export const sampleRequests = pgTable("sample_requests", {
     .notNull(),
 });
 
-export const sampleRequestsRelations = relations(sampleRequests, ({ many }) => ({
-  items: many(sampleRequestItems),
-}));
+export const sampleRequestsRelations = relations(
+  sampleRequests,
+  ({ many }) => ({
+    items: many(sampleRequestItems),
+  }),
+);
 
 // Individual line items in a sample request — snapshots product data so
 // printed labels remain accurate even if the source product is edited later
@@ -929,9 +976,7 @@ export const sampleRequestItems = pgTable(
     createdAt: timestamp("created_at").defaultNow().notNull(),
   },
   (table) => [
-    index("sample_request_items_sampleRequestId_idx").on(
-      table.sampleRequestId,
-    ),
+    index("sample_request_items_sampleRequestId_idx").on(table.sampleRequestId),
   ],
 );
 

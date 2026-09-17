@@ -1,0 +1,11 @@
+---
+import { AdminInboundSamplesPage } from "@/components/admin/pages/admin-inbound-samples-page";
+import AdminLayout from "@/layouts/admin.astro";
+---
+
+<AdminLayout
+  title="Inbound Samples"
+  description="Receive and evaluate manufacturer samples"
+>
+  <AdminInboundSamplesPage client:load />
+</AdminLayout>

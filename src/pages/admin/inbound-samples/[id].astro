@@ -1,0 +1,15 @@
+---
+import { AdminInboundSampleDetailPage } from "@/components/admin/pages/admin-inbound-samples-page";
+import AdminLayout from "@/layouts/admin.astro";
+---
+
+<AdminLayout
+  title="Evaluate Sample"
+  description="Review inbound sample specifications and testing"
+>
+  <AdminInboundSampleDetailPage
+    sampleId={Astro.params.id}
+    reviewerName={Astro.locals.user?.name ?? ""}
+    client:load
+  />
+</AdminLayout>
